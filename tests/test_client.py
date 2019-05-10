@@ -18,4 +18,4 @@ class TestPublisher:
 
         assert result is True
         publisher._client.publish.assert_called_with(
-            ANY, b'{"foo":"bar"}', event_type='cancellation')
+            ANY, b'{"foo": "bar"}', event_type='cancellation')

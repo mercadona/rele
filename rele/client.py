@@ -1,10 +1,10 @@
+import json
 import logging
 from contextlib import suppress
 
 from django.conf import settings
 from google.api_core import exceptions
 from google.cloud import pubsub_v1
-from rest_framework.renderers import JSONRenderer
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +49,7 @@ class Publisher(metaclass=_PublisherSingleton):
             credentials=settings.RELE_GC_CREDENTIALS)
 
     def publish(self, topic, data, **attrs):
-        data = JSONRenderer().render(data)
+        data = json.dumps(data).encode()
         logger.info(f'Publishing to {topic}',
                     extra={'pubsub_publisher_data': data})
         topic_path = self._client.topic_path(
