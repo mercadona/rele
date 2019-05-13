@@ -6,39 +6,22 @@ services:
 addons:
   postgresql: "9.6"
 
+python:
+  - "3.5"
+  - "3.6"
+  - "3.7"
+
 sudo: false
 
-matrix:
-  include:
-    - python: 3.7
-      env: TOXENV=py37-django-master
-    - python: 3.6
-      env: TOXENV=py36-django-22
-    - python: 3.6
-      env: TOXENV=py36-django-111
-    - python: 3.6
-      env: TOXENV=py36-django-master
-
-  allow_failures:
-    - env: TOXENV=py36-django-master
-    - env: TOXENV=py37-django-master
-
-cache:
-  directories:
-    - $HOME/.cache/pip
-    - $TRAVIS_BUILD_DIR/.tox
-
 install:
-  - pip install coveralls tox
+  - make install-requirements
+  - make install-test-requirements
 
 before_script:
   - psql -c 'create database travis_ci_test;' -U postgres
 
 script:
-  - tox -e $TOXENV
-
-after_script:
-  - coveralls
+  - make test
 
 notifications:
   email: false
