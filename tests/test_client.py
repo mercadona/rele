@@ -1,3 +1,4 @@
+import concurrent
 from unittest.mock import ANY, MagicMock
 
 from google.cloud.pubsub_v1 import PublisherClient
@@ -11,11 +12,12 @@ class TestPublisher:
         message = {'foo': 'bar'}
         publisher = Publisher()
         publisher._client = MagicMock(spec=PublisherClient)
+        publisher._client.publish.return_value = concurrent.futures.Future()
 
         result = publisher.publish(topic='order-cancelled',
                                    data=message,
-                                   event_type='cancellation')
+                                   myattr='hello')
 
-        assert result is True
+        assert isinstance(result, concurrent.futures.Future)
         publisher._client.publish.assert_called_with(
-            ANY, b'{"foo":"bar"}', event_type='cancellation')
+            ANY, b'{"foo":"bar"}', myattr='hello')
