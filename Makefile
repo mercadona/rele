@@ -22,11 +22,8 @@ lint: ## check style with flake8
 test: ## run tests quickly with the default Python
 	python runtests.py tests
 
-test-all: ## run tests on every Python version with tox
-	tox
-
 coverage: ## check code coverage quickly with the default Python
-	coverage run --source django_pubsy runtests.py tests
+	coverage run --source rele runtests.py tests
 	coverage report -m
 	coverage html
 	open htmlcov/index.html
@@ -38,3 +35,10 @@ release: clean ## package and upload a release
 sdist: clean ## package
 	python setup.py sdist
 	ls -l dist
+
+install-requirements:
+	pip install -r requirements.txt
+
+install-test-requirements:
+	pip install -r requirements_test.txt
+

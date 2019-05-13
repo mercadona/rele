@@ -1,0 +1,26 @@
+language: python
+
+services:
+  - postgresql
+
+addons:
+  postgresql: "9.6"
+
+python:
+  - "3.6"
+  - "3.7-dev"
+
+sudo: false
+
+install:
+  - make install-requirements
+  - make install-test-requirements
+
+before_script:
+  - psql -c 'create database travis_ci_test;' -U postgres
+
+script:
+  - make test
+
+notifications:
+  email: false
