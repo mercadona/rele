@@ -8,7 +8,7 @@ from rele import Publisher
 
 class TestPublisher:
 
-    def test_returns_true_when_published_called(self):
+    def test_returns_future_when_published_called(self):
         message = {'foo': 'bar'}
         publisher = Publisher()
         publisher._client = MagicMock(spec=PublisherClient)
