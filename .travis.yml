@@ -17,6 +17,7 @@ install:
   - make install-test-requirements
 
 before_script:
+  - make lint
   - psql -c 'create database travis_ci_test;' -U postgres
 
 script:
