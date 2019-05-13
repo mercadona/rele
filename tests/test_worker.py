@@ -12,14 +12,14 @@ def sub_stub(data, **kwargs):
 
 class TestWorker:
 
-    @patch.object(Subscriber, 'subscribe')
+    @patch.object(Subscriber, 'consume')
     def test_start_subscribes_and_saves_futures_when_subscriptions_given(
-            self, mock_subscribe):
+            self, mock_consume):
         subscriptions = (sub_stub,)
         worker = Worker(subscriptions)
         worker.start()
 
-        mock_subscribe.assert_called_once_with(
+        mock_consume.assert_called_once_with(
             subscription_name='rele-some-cool-topic',
             callback=ANY
         )
