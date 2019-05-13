@@ -1,5 +1,7 @@
 # Relé
 
+[![Build Status](https://travis-ci.org/mercadona/rele.svg?branch=master)](https://travis-ci.org/mercadona/rele)
+
 Relé makes integration with Google PubSub easier and is ready to integrate seamlessly into any Django project.
 
 ## Motivation and Features
