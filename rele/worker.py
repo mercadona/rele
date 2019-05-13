@@ -23,7 +23,7 @@ class Worker:
 
     def start(self):
         for subscription in self._subscriptions:
-            self._futures.append(self._subscriber.subscribe(
+            self._futures.append(self._subscriber.consume(
                 subscription_name=subscription.name,
                 callback=Callback(subscription)
             ))

@@ -25,23 +25,13 @@ class Subscriber:
             self._client.create_subscription(
                 name=subscription_path, topic=topic_path)
 
-    def subscribe(self, subscription_name, callback):
+    def consume(self, subscription_name, callback):
         subscription_path = self._client.subscription_path(
             settings.RELE_GC_PROJECT_ID, subscription_name)
         return self._client.subscribe(subscription_path, callback=callback)
 
 
-class _PublisherSingleton(type):
-    _instance = None
-
-    def __call__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super(_PublisherSingleton, cls).__call__(
-                *args, **kwargs)
-        return cls._instance
-
-
-class Publisher(metaclass=_PublisherSingleton):
+class Publisher:
     PUBLISH_TIMEOUT = 3.0
 
     def __init__(self):
