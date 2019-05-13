@@ -88,4 +88,4 @@ should print out the message.
 
 Does the code actually work?
 
-      pytest
+      make test
