@@ -57,7 +57,7 @@ setup(
         'rele.management.commands',
     ],
     include_package_data=True,
-    install_requires=['django', 'google-cloud-pubsub'],
+    install_requires=['django', 'djangorestframework', 'google-cloud-pubsub'],
     license='Apache Software License 2.0',
     zip_safe=False,
     keywords='rele',
