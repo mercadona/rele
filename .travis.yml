@@ -6,22 +6,23 @@ services:
 addons:
   postgresql: "9.6"
 
-python:
-  - "3.5"
-  - "3.6"
-  - "3.7"
-
 sudo: false
 
-env:
-  - TOXENV=py35-django-111
-  - TOXENV=py35-django-20
-  - TOXENV=py36-django-111
-  - TOXENV=py36-django-20
-  - TOXENV=py36-django-master
-  - TOXENV=py37-django-master
-
 matrix:
+  include:
+    - python: 3.7
+      env: TOXENV=py37-django-master
+    - python: 3.6
+      env: TOXENV=py36-django-20
+    - python: 3.6
+      env: TOXENV=py36-django-111
+    - python: 3.6
+      env: TOXENV=py36-django-master
+    - python: 3.5
+      env: TOXENV=py35-django-20
+    - python: 3.5
+      env: TOXENV=py35-django-111
+
   allow_failures:
     - env: TOXENV=py36-django-master
     - env: TOXENV=py37-django-master
