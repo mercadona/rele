@@ -6,14 +6,16 @@ Relé makes integration with Google PubSub easier and is ready to integrate seam
 
 ## Motivation and Features
 
-The [Publish–subscribe pattern](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) and specifically the Google Cloud [PubSub library](https://pypi.org/project/google-cloud-pubsub/) are very powerful tools but you can easily cut your fingers on it. Relé makes integration seamless by providing Publisher, Subscriber and Worker classes with the following features:
+The [Publish-Subscribe pattern](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) and specifically the Google Cloud [PubSub library](https://pypi.org/project/google-cloud-pubsub/) are very powerful tools but you can easily cut your fingers on it. Relé makes integration seamless by providing Publisher, Subscriber and Worker classes with the following features:
 
-* A Publisher:
+* A `publish` function:
   * Singleton: Ensures there is no memory leak when instantiating a `PublisherClient` every time you publish will result in a memory leak because the transport is not closed by the Google library.
-  * Automatic building of topic paths
 * A `sub` decorator to declare subscribers:
-  * Super easy declaration of subscribers
-* A Worker:
+  * In-built acks
+  * Automatic subscription topic naming
+* `Publisher` and `Subscription` classes:
+  * Automatic gc client configuration and building of topic and subscription paths
+* A `Worker` class:
   * In-built DB connection management so open connections don't increase over time
 * A `python manage.py runrele` management command
   * Automatic creation of Subscriptions
@@ -28,9 +30,10 @@ The [Publish–subscribe pattern](https://en.wikipedia.org/wiki/Publish%E2%80%93
 Add it to your `INSTALLED_APPS`:
 
 ```python
-INSTALLED_APPS = (
+INSTALLED_APPS = [
+   ...
    'rele',
-)
+]
 ```
 
 You'll also need to set up two variables with the Google Cloud credentials:
@@ -44,35 +47,45 @@ make sure `CONN_MAX_AGE` is not set explicitly.
 
 ## Usage
 
+### Publishing
+
+```python
+import rele
+
+def myfunc():
+      # ...
+      rele.publish(topic='lets-tell-everyone',
+                   data={'foo': 'bar'},
+                   myevent='arrival')
+```
+
+### Declaring Subscriptions
+
+Just decorate your function with the `sub` decorator:
+
 ```python
 # your_app.subs.py
 
-from rele import Publisher, sub
-
-def publish():
-      client = Publisher()
-      client.publish(topic='lets-tell-everyone',
-                     data={'foo': 'bar'},
-                     myevent='arrival')
+from rele import sub
 
 @sub(topic='lets-tell-everyone')
 def sub_function(data, **kwargs):
       event = kwargs.get('myevent')
-      print(f'I am a task doing stuff with the newest event: {event}')
+      print(f'I am a task doing stuff with an event: {event}')
 ```
 
-### Subscription `suffix`
+#### Subscription `suffix`
 
 In order for multiple subscriptions to consume from the same topic, you'll want to add
 a unique suffix to the subscriptions, so they both listen to all the gossip going around.
 
 ```python
 @sub(topic='lets-tell-everyone', suffix='sub1')
-def sub_1(data, **kwargs):
+def purpose_1(data, **kwargs):
      pass
 
 @sub(topic='lets-tell-everyone', suffix='sub2')
-def sub_2(data, **kwargs):
+def purpose_2(data, **kwargs):
      pass
 ```
 
