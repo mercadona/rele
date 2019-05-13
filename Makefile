@@ -36,9 +36,9 @@ sdist: clean ## package
 	python setup.py sdist
 	ls -l dist
 
-install-requirements:
+install-requirements: ## install package requirements
 	pip install -r requirements.txt
 
-install-test-requirements:
+install-test-requirements: ## install requirements for testing
 	pip install -r requirements_test.txt
 
