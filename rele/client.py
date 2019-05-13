@@ -17,7 +17,7 @@ class Subscriber:
 
     def create_subscription(self, subscription, topic):
         subscription_path = self._client.subscription_path(
-            settings.GC_PROJECT_ID, subscription)
+            settings.RELE_GC_PROJECT_ID, subscription)
         topic_path = self._client.topic_path(
             settings.RELE_GC_PROJECT_ID, topic)
 
@@ -27,7 +27,7 @@ class Subscriber:
 
     def subscribe(self, subscription_name, callback):
         subscription_path = self._client.subscription_path(
-            settings.GC_PROJECT_ID, subscription_name)
+            settings.RELE_GC_PROJECT_ID, subscription_name)
         return self._client.subscribe(subscription_path, callback=callback)
 
 
@@ -42,23 +42,19 @@ class _PublisherSingleton(type):
 
 
 class Publisher(metaclass=_PublisherSingleton):
-    PUBLISH_TIMEOUT = 2.0
+    PUBLISH_TIMEOUT = 3.0
 
     def __init__(self):
         self._client = pubsub_v1.PublisherClient(
             credentials=settings.RELE_GC_CREDENTIALS)
 
-    def publish(self, topic, data, **attrs):
+    def publish(self, topic, data, blocking=False, **attrs):
         data = JSONRenderer().render(data)
-        logger.info(f'Publishing to {topic}',
-                    extra={'pubsub_publisher_data': data})
-        topic_path = self._client.topic_path(
-            settings.RELE_GC_PROJECT_ID, topic)
+        logger.info(f'Publishing to {topic}', extra={'pubsub_publisher_data': data})
+        topic_path = self._client.topic_path(settings.RELE_GC_PROJECT_ID, topic)
         future = self._client.publish(topic_path, data, **attrs)
-        try:
-            future.result(timeout=self.PUBLISH_TIMEOUT)
-        except Exception:
-            logger.error('Exception while publishing to %s', topic,
-                         exc_info=True, extra={'pubsub_data': data})
-            return False
-        return True
+        if not blocking:
+            return future
+
+        future.result(timeout=self.PUBLISH_TIMEOUT)
+        return future
