@@ -37,8 +37,8 @@ sdist: clean ## package
 	ls -l dist
 
 install-requirements: ## install package requirements
-	pip install -r requirements.txt
+	pip install -r requirements/base.txt
 
 install-test-requirements: ## install requirements for testing
-	pip install -r requirements_test.txt
+	pip install -r requirements/test.txt
 
