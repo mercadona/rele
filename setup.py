@@ -24,19 +24,8 @@ def get_version(*file_paths):
 version = get_version('rele', '__init__.py')
 
 
-if sys.argv[-1] == 'publish':
-    try:
-        import wheel
-        print('Wheel version: ', wheel.__version__)
-    except ImportError:
-        print('Wheel library missing. Please run "pip install wheel"')
-        sys.exit()
-    os.system('python setup.py sdist upload')
-    os.system('python setup.py bdist_wheel upload')
-    sys.exit()
-
 if sys.argv[-1] == 'tag':
-    print('Tagging the version on git:')
+    print('Tagging the version on git: %s' % version)
     os.system('git tag -a %s -m "version %s"' % (version, version))
     os.system('git push --tags')
     sys.exit()
@@ -48,8 +37,9 @@ setup(
     version=version,
     description="""Google PubSub for Django""",
     long_description=readme,
-    author='Mercadona',
-    author_email='mercadonaonline@mercadona.es',
+    long_description_content_type='text/markdown',
+    author='MercadonaTech',
+    author_email='software.online@mercadona.es',
     url='https://github.com/mercadona/rele',
     packages=[
         'rele',
