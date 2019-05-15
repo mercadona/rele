@@ -11,7 +11,9 @@ python:
   - "3.7-dev"
 
 sudo: false
-
+stages:
+  - test
+  - deploy
 install:
   - make install-requirements
   - make install-test-requirements
@@ -25,3 +27,17 @@ script:
 
 notifications:
   email: false
+
+jobs:
+  include:
+    - stage: deploy
+      python: "3.7"
+      install: skip
+      script: skip
+      deploy:
+        provider: pypi
+        user: mercadonatech
+        password:
+          secure: VdUpV7zA2G6u8zw1vaWea40fyztSnUyjQzrJ6eVrUOcJBmqb/YmmVbERddEVsR4lWuou+Z1x4/FGEapPGsb/nLpTMbLN7W1WuXRyz9EeTjO1d3b2ubz8rJvVvvFm4sbUQDqbKEj64vfgkkD3Ixlrhhb1x2qNLh8iipeR1vxfpFWiP4Dpem3vcm8tHN5keg9BCeedNVQIIt+65sh7vZNENLLTZck/7nU5tmoFM0LZfUMOVVuiyUhMaOH4eEVPAnuZTcIWuMFpiczXwgtRDP5qA5deAEsQQj6SUy8kpdI+gxRahWr5OxNECkBsgVNaqB4MwYtY4HjduupCjt92WkC7xt/nyhI4nuVGREEb2Qdyhp+esU+xE3l/U23eV923d6YaM5Ylg9Rd0Hc486NZEndvtPtzGypjjVTSx9q/fdCoI3i7pf1XFUAIQvPBAttxKMocMpm0BpFn9nMPKyc3eaB48zUX+slclK2eSPydPQN5NGyz/izk+QekbLjP4GmG+sdhZaCLA9ojk/GAqQjPrwaV6KwGHKytjHh0fnG0KDqi3+Lxl17E0cDgCVN7TolG7FbVm2tf2Y9sDrcaXzD9FSgpH/WmR9eeW9bMFUDzm4NtYoRtFFU5DlSYbf+sPUiHU9Urqc4ad1uvGTC2VI2CVtOLdMOSjc04ZDTe5nxahN1dzPo=
+        on:
+          tags: true
