@@ -28,9 +28,8 @@ coverage: ## check code coverage quickly with the default Python
 	coverage html
 	open htmlcov/index.html
 
-release: clean ## package and upload a release
-	python setup.py sdist upload
-	python setup.py bdist_wheel upload
+release: clean install-deploy-requirements sdist ## package and upload a release
+	twine upload dist/*
 
 sdist: clean ## package
 	python setup.py sdist
@@ -42,3 +41,5 @@ install-requirements: ## install package requirements
 install-test-requirements: ## install requirements for testing
 	pip install -r requirements/test.txt
 
+install-deploy-requirements:  ## install requirements for deployment
+	pip install -r requirements/deploy.txt
