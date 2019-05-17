@@ -29,7 +29,7 @@ coverage: ## check code coverage quickly with the default Python
 	open htmlcov/index.html
 
 release: clean install-deploy-requirements sdist ## package and upload a release
-	twine upload dist/*
+	twine upload -u mercadonatech dist/*
 
 sdist: clean ## package
 	python setup.py sdist
