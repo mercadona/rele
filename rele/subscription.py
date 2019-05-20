@@ -75,10 +75,10 @@ def sub(topic, suffix=None):
         def purpose_2(data, **kwargs):
              pass
 
-    :param topic: string The topic that is being subscribed too.
+    :param topic: string The topic that is being subscribed to.
     :param suffix: string An options suffix to the subscription name.
-    Useful when you have two subscribers in the same project that are subscribed to
-    the same topic.
+                   Useful when you have two subscribers in the same project that
+                   are subscribed to the same topic.
     :return: Subscription
     """
 
