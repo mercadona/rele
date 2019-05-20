@@ -50,6 +50,37 @@ class Callback:
 
 
 def sub(topic, suffix=None):
+    """Decorator function that makes declaring a PubSub Subscription simple.
+
+    The Subscriber returned will automatically create and name
+    the subscription for the topic.
+    The subscription name will be the topic name prefixed by the project name.
+
+    For example, if the topic name to subscribe too is `lets-tell-everyone`,
+    the subscriber will be named `project-name-lets-tell-everyone`.
+
+    Additionally, if a `suffix` param is added, the subscriber will be
+    `project-name-lets-tell-everyone-my-suffix`.
+
+    It is recommended to add **kwargs to your `sub` function. This will allow
+    message attributes to be sent without breaking the subscriber implementation.
+
+    Usage::
+
+        @sub(topic='lets-tell-everyone', suffix='sub1')
+        def purpose_1(data, **kwargs):
+             pass
+
+        @sub(topic='lets-tell-everyone', suffix='sub2')
+        def purpose_2(data, **kwargs):
+             pass
+
+    :param topic: string The topic that is being subscribed too.
+    :param suffix: string An options suffix to the subscription name.
+    Useful when you have two subscribers in the same project that are subscribed to
+    the same topic.
+    :return: Subscription
+    """
 
     def decorator(func):
         return Subscription(func=func, topic=topic, suffix=suffix)
