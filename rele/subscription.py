@@ -1,5 +1,6 @@
 import json
 import logging
+from enum import Enum
 
 from django import db
 from django.conf import settings
@@ -26,6 +27,13 @@ class Subscription:
 
 class Callback:
 
+    class SubscriptionStatus(Enum):
+        RECEIVED = 'received'
+        FAILED = 'failed'
+
+        def __str__(self):
+            return self.value
+
     def __init__(self, subscription, suffix=None):
         self._subscription = subscription
         self._suffix = suffix
@@ -34,7 +42,7 @@ class Callback:
         db.close_old_connections()
 
         logger.info(f'Start processing message for {self._subscription}',
-                    extra=self._build_metrics())
+                    extra=self._build_metrics(self.SubscriptionStatus.RECEIVED))
         data = json.loads(message.data.decode('utf-8'))
         try:
             self._subscription(data, **dict(message.attributes))
@@ -42,7 +50,8 @@ class Callback:
             logger.error(f'Exception raised while processing message '
                          f'for {self._subscription}: '
                          f'{str(e.__class__.__name__)}',
-                         exc_info=True)
+                         exc_info=True,
+                         extra=self._build_metrics(self.SubscriptionStatus.FAILED))
         else:
             message.ack()
             logger.info(f'Successfully processed message for '
@@ -50,14 +59,14 @@ class Callback:
         finally:
             db.close_old_connections()
 
-    def _build_metrics(self):
+    def _build_metrics(self, status):
         return {
             'metrics': {
                 'name': 'task',
                 'data': {
                     'executor': self._subscription.project_name,
                     'type': self._subscription.topic,
-                    'status': 'received'
+                    'status': str(status)
                 }
             }
         }

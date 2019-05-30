@@ -81,3 +81,11 @@ class TestCallback:
         assert log2.message == ('Exception raised while processing message for'
                                 ' rele-some-cool-topic - '
                                 'crashy_sub_stub: ValueError')
+        assert log2.metrics == {
+            'name': 'task',
+            'data': {
+                'executor': 'rele',
+                'type': 'some-cool-topic',
+                'status': 'failed'
+            }
+        }
