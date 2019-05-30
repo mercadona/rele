@@ -57,8 +57,8 @@ class TestCallback:
             'name': 'task',
             'data': {
                 'executor': 'rele',
-                'topic': 'some-cool-topic',
-                'status': 'sending'
+                'type': 'some-cool-topic',
+                'status': 'received'
             }
         }
         log2 = caplog.records[1]
