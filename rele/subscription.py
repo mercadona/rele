@@ -57,7 +57,7 @@ class Callback:
                 'data': {
                     'executor': self._subscription.project_name,
                     'type': self._subscription.topic,
-                    'status': 'sending'
+                    'status': 'received'
                 }
             }
         }
