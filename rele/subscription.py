@@ -12,7 +12,8 @@ class Subscription:
     def __init__(self, func, topic, suffix=None):
         self._func = func
         self.topic = topic
-        self.name = f'{settings.BASE_DIR.split("/")[-1]}-{topic}'
+        self.project_name = settings.BASE_DIR.split("/")[-1]
+        self.name = f'{self.project_name}-{topic}'
         if suffix:
             self.name += f'-{suffix}'
 
@@ -32,7 +33,8 @@ class Callback:
     def __call__(self, message):
         db.close_old_connections()
 
-        logger.info(f'Start processing message for {self._subscription}')
+        logger.info(f'Start processing message for {self._subscription}',
+                    extra=self._build_task_info())
         data = json.loads(message.data.decode('utf-8'))
         try:
             self._subscription(data, **dict(message.attributes))
@@ -47,6 +49,18 @@ class Callback:
                         f'{self._subscription}')
         finally:
             db.close_old_connections()
+
+    def _build_task_info(self):
+        return {
+            'metrics': {
+                'name': 'task',
+                'data': {
+                    'executor': self._subscription.project_name,
+                    'topic': self._subscription.topic,
+                    'status': 'sending'
+                }
+            }
+        }
 
 
 def sub(topic, suffix=None):

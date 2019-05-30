@@ -53,6 +53,14 @@ class TestCallback:
         log1 = caplog.records[0]
         assert log1.message == ('Start processing message for '
                                 'rele-some-cool-topic - sub_stub')
+        assert log1.metrics == {
+            'name': 'task',
+            'data': {
+                'executor': 'rele',
+                'topic': 'some-cool-topic',
+                'status': 'sending'
+            }
+        }
         log2 = caplog.records[1]
         assert log2.message == 'I am a task doing stuff with ID 123 (es)'
 
