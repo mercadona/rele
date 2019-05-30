@@ -34,7 +34,7 @@ class Callback:
         db.close_old_connections()
 
         logger.info(f'Start processing message for {self._subscription}',
-                    extra=self._build_task_info())
+                    extra=self._build_metrics())
         data = json.loads(message.data.decode('utf-8'))
         try:
             self._subscription(data, **dict(message.attributes))
@@ -50,7 +50,7 @@ class Callback:
         finally:
             db.close_old_connections()
 
-    def _build_task_info(self):
+    def _build_metrics(self):
         return {
             'metrics': {
                 'name': 'task',
