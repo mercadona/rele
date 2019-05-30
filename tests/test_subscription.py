@@ -57,7 +57,7 @@ class TestCallback:
             'name': 'task',
             'data': {
                 'executor': 'rele',
-                'topic': 'some-cool-topic',
+                'type': 'some-cool-topic',
                 'status': 'sending'
             }
         }
