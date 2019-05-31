@@ -45,6 +45,13 @@ class TestCallback:
         return pubsub_v1.subscriber.message.Message(
             rele_message, 'ack-id', MagicMock())
 
+    @pytest.fixture
+    def message_wrapper_empty(self):
+        rele_message = pubsub_v1.types.PubsubMessage(
+            data=b'', attributes={'lang': 'es'}, message_id='1')
+        return pubsub_v1.subscriber.message.Message(
+            rele_message, 'ack-id', MagicMock())
+
     def test_acks_message_when_callback_called(self, caplog, message_wrapper):
         with caplog.at_level(logging.DEBUG):
             callback = Callback(sub_stub)
@@ -68,8 +75,9 @@ class TestCallback:
 
     def test_does_not_ack_message_when_callback_raises(
             self, caplog, message_wrapper):
+
         @sub(topic='some-cool-topic')
-        def crashy_sub_stub(message, **kwargs):
+        def crashy_sub_stub(data, **kwargs):
             raise ValueError('I am an exception from a sub')
 
         callback = Callback(crashy_sub_stub)
@@ -80,3 +88,15 @@ class TestCallback:
         assert failed_log.message == ('Exception raised while processing '
                                       'message for rele-some-cool-topic - '
                                       'crashy_sub_stub: ValueError')
+
+    def test_sets_data_none_when_data_empty(
+            self, caplog, message_wrapper_empty):
+
+        @sub(topic='some-cool-topic')
+        def some_sub_stub(data, **kwargs):
+            return data if data is None else False
+
+        callback = Callback(some_sub_stub)
+        res = callback(message_wrapper_empty)
+
+        assert res is None
