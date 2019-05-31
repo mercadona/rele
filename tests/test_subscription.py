@@ -88,8 +88,18 @@ class TestCallback:
         assert failed_log.message == ('Exception raised while processing '
                                       'message for rele-some-cool-topic - '
                                       'crashy_sub_stub: ValueError')
+       assert failed_log.metrics == {
+            'name': 'subscriptions',
+            'data': {
+                'agent': 'rele',
+                'topic': 'some-cool-topic',
+                'status': 'failed',
+                'subscription': 'rele-some-cool-topic',
+                'duration_seconds': 0
+            }
+        }
 
-    def test_sets_data_none_when_data_empty(
+def test_sets_data_none_when_data_empty(
             self, caplog, message_wrapper_empty):
 
         @sub(topic='some-cool-topic')
