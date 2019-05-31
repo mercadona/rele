@@ -48,12 +48,12 @@ class Publisher:
                 credentials=settings.RELE_GC_CREDENTIALS)
 
     def publish(self, topic, data, blocking=False, **attrs):
-        data = JSONRenderer().render(data)
+        payload = JSONRenderer().render(data)
         logger.info(f'Publishing to {topic}',
                     extra={'pubsub_publisher_attrs': attrs})
         topic_path = self._client.topic_path(
             settings.RELE_GC_PROJECT_ID, topic)
-        future = self._client.publish(topic_path, data, **attrs)
+        future = self._client.publish(topic_path, payload, **attrs)
         if not blocking:
             return future
 
