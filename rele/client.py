@@ -50,7 +50,9 @@ class Publisher:
     def publish(self, topic, data, blocking=False, **attrs):
         payload = JSONRenderer().render(data)
         logger.info(f'Publishing to {topic}',
-                    extra={'pubsub_publisher_attrs': attrs})
+                    extra={
+                        'pubsub_publisher_attrs': attrs,
+                        'metrics': self._build_metrics(topic)})
         topic_path = self._client.topic_path(
             settings.RELE_GC_PROJECT_ID, topic)
         future = self._client.publish(topic_path, payload, **attrs)
@@ -59,3 +61,12 @@ class Publisher:
 
         future.result(timeout=self.PUBLISH_TIMEOUT)
         return future
+
+    def _build_metrics(self, topic):
+        return{
+            'name': 'publications',
+            'data': {
+                'agent': settings.BASE_DIR.split('/')[-1],
+                'topic': topic,
+            }
+        }
