@@ -50,7 +50,7 @@ class Callback:
         else:
             message.ack()
             logger.info(f'Successfully processed message for '
-                        f'{self._subscription}', extra=self._build_metrics('success', start_processing_time))
+                        f'{self._subscription}', extra=self._build_metrics('succeded', start_processing_time))
         finally:
             db.close_old_connections()
 
