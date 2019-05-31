@@ -95,7 +95,7 @@ class TestCallback:
                 'topic': 'some-cool-topic',
                 'status': 'failed',
                 'subscription': 'rele-some-cool-topic',
-                'duration_seconds': pytest.approx(0.0, 0.1)
+                'duration_seconds': pytest.approx(0.5, abs=0.5)
             }
         }
 
@@ -113,7 +113,7 @@ class TestCallback:
                 'topic': 'some-cool-topic',
                 'status': 'success',
                 'subscription': 'rele-some-cool-topic',
-                'duration_seconds': pytest.approx(0.0, 0.1)
+                'duration_seconds': pytest.approx(0.5, abs=0.5)
             }
         }
 
