@@ -59,7 +59,6 @@ class Callback:
                     'topic': self._subscription.topic,
                     'status': 'received',
                     'subscription': self._subscription.name,
-                    'duration_seconds': 0
                 }
             }
         }

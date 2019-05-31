@@ -60,7 +60,6 @@ class TestCallback:
                 'topic': 'some-cool-topic',
                 'status': 'received',
                 'subscription': 'rele-some-cool-topic',
-                'duration_seconds': 0
             }
         }
         log2 = caplog.records[1]
