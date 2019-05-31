@@ -83,7 +83,7 @@ class TestCallback:
         assert message_wrapper_log.message == ('I am a task doing '
                                                'stuff with ID 123 (es)')
 
-    def test_log_when_callback_when_execution_is_succesful(
+    def test_log_when_execution_is_succesful(
             self, message_wrapper, caplog):
         callback = Callback(sub_stub)
         callback(message_wrapper)
