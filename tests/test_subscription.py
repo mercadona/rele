@@ -89,7 +89,7 @@ class TestCallback:
         assert failed_log.message == ('Exception raised while processing '
                                       'message for rele-some-cool-topic - '
                                       'crashy_sub_stub: ValueError')
-       assert failed_log.metrics == {
+        assert failed_log.metrics == {
             'name': 'subscriptions',
             'data': {
                 'agent': 'rele',
@@ -112,7 +112,7 @@ class TestCallback:
             'data': {
                 'agent': 'rele',
                 'topic': 'some-cool-topic',
-                'status': 'process',
+                'status': 'processed',
                 'subscription': 'rele-some-cool-topic',
                 'duration_seconds': pytest.approx(0.0, 0.1)
             }
