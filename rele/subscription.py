@@ -34,8 +34,11 @@ class Callback:
         db.close_old_connections()
 
         logger.debug(f'Start processing message for {self._subscription}',
-                    extra=self._build_metrics())
-        data = json.loads(message.data.decode('utf-8'))
+                     extra=self._build_metrics())
+        if message.data == b'':
+            data = None
+        else:
+            data = json.loads(message.data.decode('utf-8'))
         try:
             self._subscription(data, **dict(message.attributes))
         except Exception as e:
