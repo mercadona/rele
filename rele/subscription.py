@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 
 from django import db
 from django.conf import settings
@@ -31,10 +32,11 @@ class Callback:
         self._suffix = suffix
 
     def __call__(self, message):
+        start_processing_time = time.time()
         db.close_old_connections()
 
         logger.debug(f'Start processing message for {self._subscription}',
-                     extra=self._build_metrics())
+                     extra=self._build_metrics('received'))
         if message.data == b'':
             data = None
         else:
@@ -45,26 +47,37 @@ class Callback:
             logger.error(f'Exception raised while processing message '
                          f'for {self._subscription}: '
                          f'{str(e.__class__.__name__)}',
-                         exc_info=True)
+                         exc_info=True,
+                         extra=self._build_metrics('failed', start_processing_time))
         else:
             message.ack()
             logger.info(f'Successfully processed message for '
-                        f'{self._subscription}')
+                        f'{self._subscription}', extra=self._build_metrics('succeeded', start_processing_time))
         finally:
             db.close_old_connections()
 
-    def _build_metrics(self):
+    def _build_metrics(self, status, start_processing_time=None):
         return {
             'metrics': {
                 'name': 'subscriptions',
-                'data': {
-                    'agent': self._subscription.project_name,
-                    'topic': self._subscription.topic,
-                    'status': 'received',
-                    'subscription': self._subscription.name,
-                }
+                'data': self.build_data_metrics(status, start_processing_time)
             }
         }
+
+    def build_data_metrics(self, status, start_processing_time):
+        result = {
+            'agent': self._subscription.project_name,
+            'topic': self._subscription.topic,
+            'status': status,
+            'subscription': self._subscription.name,
+        }
+
+        if start_processing_time is not None:
+            end_processing_time = time.time()
+            result['duration_seconds'] = round(
+                end_processing_time - start_processing_time, 3)
+
+        return result
 
 
 def sub(topic, suffix=None):
