@@ -1,5 +1,4 @@
 import logging
-from unittest import mock
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -84,7 +83,7 @@ class TestCallback:
         assert failed_log.metrics == {
             'name': 'subscriptions',
             'data': {
-              'agent': 'rele',
+                'agent': 'rele',
                 'topic': 'some-cool-topic',
                 'status': 'failed',
                 'subscription': 'rele-some-cool-topic',
@@ -94,11 +93,11 @@ class TestCallback:
 
     def test_log_when_callback_is_succesfull(self, message_wrapper, caplog):
         callback = Callback(sub_stub)
-        res = callback(message_wrapper)
+        callback(message_wrapper)
 
         success_log = caplog.records[1]
         assert success_log.message == ('Successfully processed message for '
-                                'rele-some-cool-topic - sub_stub')
+                                       'rele-some-cool-topic - sub_stub')
         assert success_log.metrics == {
             'name': 'subscriptions',
             'data': {
