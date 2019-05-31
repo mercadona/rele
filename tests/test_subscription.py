@@ -71,8 +71,6 @@ class TestCallback:
                 'subscription': 'rele-some-cool-topic',
             }
         }
-        log2 = caplog.records[1]
-        assert log2.message == 'I am a task doing stuff with ID 123 (es)'
 
     def test_acks_message_when_execution_successful(
             self, caplog, message_wrapper):
@@ -106,7 +104,6 @@ class TestCallback:
 
     def test_log_does_not_ack_called_message_when_execution_fails(
             self, caplog, message_wrapper):
-
         @sub(topic='some-cool-topic')
         def crashy_sub_stub(data, **kwargs):
             raise ValueError('I am an exception from a sub')
@@ -130,8 +127,7 @@ class TestCallback:
             }
         }
 
-
-     def test_sets_data_none_when_data_empty(
+    def test_sets_data_none_when_data_empty(
             self, caplog, message_wrapper_empty):
 
         @sub(topic='some-cool-topic')
