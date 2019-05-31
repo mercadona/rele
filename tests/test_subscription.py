@@ -111,7 +111,7 @@ class TestCallback:
             'data': {
                 'agent': 'rele',
                 'topic': 'some-cool-topic',
-                'status': 'succeded',
+                'status': 'succeeded',
                 'subscription': 'rele-some-cool-topic',
                 'duration_seconds': pytest.approx(0.5, abs=0.5)
             }
