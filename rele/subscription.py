@@ -33,7 +33,7 @@ class Callback:
     def __call__(self, message):
         db.close_old_connections()
 
-        logger.info(f'Start processing message for {self._subscription}',
+        logger.debug(f'Start processing message for {self._subscription}',
                     extra=self._build_metrics())
         data = json.loads(message.data.decode('utf-8'))
         try:
