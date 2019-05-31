@@ -1,5 +1,6 @@
 import logging
-from unittest.mock import MagicMock, patch
+from unittest import mock
+from unittest.mock import MagicMock, patch, ANY
 
 import pytest
 from google.cloud import pubsub_v1
@@ -95,7 +96,25 @@ class TestCallback:
                 'topic': 'some-cool-topic',
                 'status': 'failed',
                 'subscription': 'rele-some-cool-topic',
-                'duration_seconds': 0
+                'duration_seconds': pytest.approx(0.0, 0.1)
+            }
+        }
+
+    def test_log_when_callback_is_succesfull(self, message_wrapper, caplog):
+        callback = Callback(sub_stub)
+        res = callback(message_wrapper)
+
+        log1 = caplog.records[1]
+        assert log1.message == ('Successfully processed message for '
+                                'rele-some-cool-topic - sub_stub')
+        assert log1.metrics == {
+            'name': 'subscriptions',
+            'data': {
+                'agent': 'rele',
+                'topic': 'some-cool-topic',
+                'status': 'process',
+                'subscription': 'rele-some-cool-topic',
+                'duration_seconds': pytest.approx(0.0, 0.1)
             }
         }
 
