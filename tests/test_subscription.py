@@ -92,7 +92,7 @@ class TestCallback:
         assert failed_log.metrics == {
             'name': 'subscriptions',
             'data': {
-                'agent': 'rele',
+              'agent': 'rele',
                 'topic': 'some-cool-topic',
                 'status': 'failed',
                 'subscription': 'rele-some-cool-topic',
@@ -104,15 +104,15 @@ class TestCallback:
         callback = Callback(sub_stub)
         res = callback(message_wrapper)
 
-        log1 = caplog.records[1]
-        assert log1.message == ('Successfully processed message for '
+        success_log = caplog.records[1]
+        assert success_log.message == ('Successfully processed message for '
                                 'rele-some-cool-topic - sub_stub')
-        assert log1.metrics == {
+        assert success_log.metrics == {
             'name': 'subscriptions',
             'data': {
                 'agent': 'rele',
                 'topic': 'some-cool-topic',
-                'status': 'processed',
+                'status': 'success',
                 'subscription': 'rele-some-cool-topic',
                 'duration_seconds': pytest.approx(0.0, 0.1)
             }
