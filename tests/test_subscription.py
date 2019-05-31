@@ -46,19 +46,21 @@ class TestCallback:
             rele_message, 'ack-id', MagicMock())
 
     def test_acks_message_when_callback_called(self, caplog, message_wrapper):
-        callback = Callback(sub_stub)
-        res = callback(message_wrapper)
+        with caplog.at_level(logging.DEBUG):
+            callback = Callback(sub_stub)
+            res = callback(message_wrapper)
 
         assert res is None
         log1 = caplog.records[0]
         assert log1.message == ('Start processing message for '
                                 'rele-some-cool-topic - sub_stub')
         assert log1.metrics == {
-            'name': 'task',
+            'name': 'subscriptions',
             'data': {
-                'executor': 'rele',
-                'type': 'some-cool-topic',
-                'status': 'received'
+                'agent': 'rele',
+                'topic': 'some-cool-topic',
+                'status': 'received',
+                'subscription': 'rele-some-cool-topic',
             }
         }
         log2 = caplog.records[1]
@@ -74,10 +76,7 @@ class TestCallback:
         res = callback(message_wrapper)
 
         assert res is None
-        log1 = caplog.records[0]
-        assert log1.message == ('Start processing message for rele-'
-                                'some-cool-topic - crashy_sub_stub')
-        log2 = caplog.records[1]
-        assert log2.message == ('Exception raised while processing message for'
-                                ' rele-some-cool-topic - '
-                                'crashy_sub_stub: ValueError')
+        failed_log = caplog.records[-1]
+        assert failed_log.message == ('Exception raised while processing '
+                                      'message for rele-some-cool-topic - '
+                                      'crashy_sub_stub: ValueError')
