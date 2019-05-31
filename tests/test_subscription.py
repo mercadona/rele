@@ -45,7 +45,8 @@ class TestCallback:
         return pubsub_v1.subscriber.message.Message(
             rele_message, 'ack-id', MagicMock())
 
-    def test_log_start_processing_when_callback_called(self, caplog, message_wrapper):
+    def test_log_start_processing_when_callback_called(
+            self, caplog, message_wrapper):
         with caplog.at_level(logging.DEBUG):
             callback = Callback(sub_stub)
             res = callback(message_wrapper)
@@ -66,16 +67,19 @@ class TestCallback:
         log2 = caplog.records[1]
         assert log2.message == 'I am a task doing stuff with ID 123 (es)'
 
-    def test_acks_message_when_execution_successfull(self, caplog, message_wrapper):
+    def test_acks_message_when_execution_successful(
+            self, caplog, message_wrapper):
         with caplog.at_level(logging.DEBUG):
             callback = Callback(sub_stub)
             res = callback(message_wrapper)
 
         assert res is None
         message_wrapper_log = caplog.records[1]
-        assert message_wrapper_log.message == 'I am a task doing stuff with ID 123 (es)'
+        assert message_wrapper_log.message == ('I am a task doing '
+                                               'stuff with ID 123 (es)')
 
-    def test_log_when_callback_when_execution_is_succesfull(self, message_wrapper, caplog):
+    def test_log_when_callback_when_execution_is_succesful(
+            self, message_wrapper, caplog):
         callback = Callback(sub_stub)
         callback(message_wrapper)
 
