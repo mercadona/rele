@@ -50,21 +50,21 @@ class TestCallback:
             callback = Callback(sub_stub)
             res = callback(message_wrapper)
 
-            assert res is None
-            log1 = caplog.records[0]
-            assert log1.message == ('Start processing message for '
-                                    'rele-some-cool-topic - sub_stub')
-            assert log1.metrics == {
-                'name': 'subscriptions',
-                'data': {
-                    'agent': 'rele',
-                    'topic': 'some-cool-topic',
-                    'status': 'received',
-                    'subscription': 'rele-some-cool-topic',
-                }
+        assert res is None
+        log1 = caplog.records[0]
+        assert log1.message == ('Start processing message for '
+                                'rele-some-cool-topic - sub_stub')
+        assert log1.metrics == {
+            'name': 'subscriptions',
+            'data': {
+                'agent': 'rele',
+                'topic': 'some-cool-topic',
+                'status': 'received',
+                'subscription': 'rele-some-cool-topic',
             }
-            log2 = caplog.records[1]
-            assert log2.message == 'I am a task doing stuff with ID 123 (es)'
+        }
+        log2 = caplog.records[1]
+        assert log2.message == 'I am a task doing stuff with ID 123 (es)'
 
     def test_does_not_ack_message_when_callback_raises(
             self, caplog, message_wrapper):
@@ -76,7 +76,7 @@ class TestCallback:
         res = callback(message_wrapper)
 
         assert res is None
-        failed_log = caplog.records[0]
+        failed_log = caplog.records[-1]
         assert failed_log.message == ('Exception raised while processing '
                                       'message for rele-some-cool-topic - '
                                       'crashy_sub_stub: ValueError')
