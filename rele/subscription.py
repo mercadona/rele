@@ -44,7 +44,6 @@ class Callback:
         try:
             self._subscription(data, **dict(message.attributes))
         except Exception as e:
-
             logger.error(f'Exception raised while processing message '
                          f'for {self._subscription}: '
                          f'{str(e.__class__.__name__)}',
