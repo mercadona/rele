@@ -35,6 +35,7 @@ class Callback:
 
         logger.debug(f'Start processing message for {self._subscription}',
                     extra=self._build_metrics())
+
         data = json.loads(message.data.decode('utf-8'))
         try:
             self._subscription(data, **dict(message.attributes))
@@ -42,7 +43,8 @@ class Callback:
             logger.error(f'Exception raised while processing message '
                          f'for {self._subscription}: '
                          f'{str(e.__class__.__name__)}',
-                         exc_info=True)
+                         exc_info=True,
+                         extra=self._build_metrics('failed'))
         else:
             message.ack()
             logger.info(f'Successfully processed message for '
@@ -50,14 +52,14 @@ class Callback:
         finally:
             db.close_old_connections()
 
-    def _build_metrics(self):
+    def _build_metrics(self, status):
         return {
             'metrics': {
                 'name': 'subscriptions',
                 'data': {
                     'agent': self._subscription.project_name,
                     'topic': self._subscription.topic,
-                    'status': 'received',
+                    'status': status,
                     'subscription': self._subscription.name,
                 }
             }

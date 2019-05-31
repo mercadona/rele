@@ -80,3 +80,13 @@ class TestCallback:
         assert failed_log.message == ('Exception raised while processing '
                                       'message for rele-some-cool-topic - '
                                       'crashy_sub_stub: ValueError')
+       assert log2.metrics == {
+            'name': 'subscriptions',
+            'data': {
+                'agent': 'rele',
+                'topic': 'some-cool-topic',
+                'status': 'failed',
+                'subscription': 'rele-some-cool-topic',
+                'duration_seconds': 0
+            }
+        }
