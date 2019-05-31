@@ -53,11 +53,13 @@ class Callback:
     def _build_metrics(self):
         return {
             'metrics': {
-                'name': 'task',
+                'name': 'subscription',
                 'data': {
-                    'executor': self._subscription.project_name,
-                    'type': self._subscription.topic,
-                    'status': 'received'
+                    'agent': self._subscription.project_name,
+                    'topic': self._subscription.topic,
+                    'status': 'received',
+                    'subscription': self._subscription.name,
+                    'duration': 0
                 }
             }
         }

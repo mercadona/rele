@@ -54,11 +54,13 @@ class TestCallback:
         assert log1.message == ('Start processing message for '
                                 'rele-some-cool-topic - sub_stub')
         assert log1.metrics == {
-            'name': 'task',
+            'name': 'subscription',
             'data': {
-                'executor': 'rele',
-                'type': 'some-cool-topic',
-                'status': 'received'
+                'agent': 'rele',
+                'topic': 'some-cool-topic',
+                'status': 'received',
+                'subscription': 'rele-some-cool-topic',
+                'duration': 0
             }
         }
         log2 = caplog.records[1]
