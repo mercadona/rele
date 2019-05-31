@@ -1,6 +1,6 @@
 import logging
 from unittest import mock
-from unittest.mock import MagicMock, patch, ANY
+from unittest.mock import MagicMock, patch
 
 import pytest
 from google.cloud import pubsub_v1
