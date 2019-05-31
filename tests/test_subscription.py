@@ -76,7 +76,7 @@ class TestCallback:
         res = callback(message_wrapper)
 
         assert res is None
-        log2 = caplog.records[0]
-        assert log2.message == ('Exception raised while processing message for'
+        failed_log = caplog.records[0]
+        assert failed_log.message == ('Exception raised while processing message for'
                                 ' rele-some-cool-topic - '
                                 'crashy_sub_stub: ValueError')
