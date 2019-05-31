@@ -103,7 +103,7 @@ class TestCallback:
         callback = Callback(sub_stub)
         callback(message_wrapper)
 
-        success_log = caplog.records[1]
+        success_log = caplog.records[-1]
         assert success_log.message == ('Successfully processed message for '
                                        'rele-some-cool-topic - sub_stub')
         assert success_log.metrics == {
