@@ -54,7 +54,7 @@ class TestCallback:
         assert log1.message == ('Start processing message for '
                                 'rele-some-cool-topic - sub_stub')
         assert log1.metrics == {
-            'name': 'subscription',
+            'name': 'subscriptions',
             'data': {
                 'agent': 'rele',
                 'topic': 'some-cool-topic',

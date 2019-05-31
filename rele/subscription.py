@@ -53,7 +53,7 @@ class Callback:
     def _build_metrics(self):
         return {
             'metrics': {
-                'name': 'subscription',
+                'name': 'subscriptions',
                 'data': {
                     'agent': self._subscription.project_name,
                     'topic': self._subscription.topic,
