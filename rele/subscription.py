@@ -36,7 +36,8 @@ class Callback:
         db.close_old_connections()
 
         logger.debug(f'Start processing message for {self._subscription}',
-                     extra=self._build_metrics('received'))
+                     extra={'metrics':
+                                self._build_metrics('received')})
         if message.data == b'':
             data = None
         else:
@@ -48,20 +49,22 @@ class Callback:
                          f'for {self._subscription}: '
                          f'{str(e.__class__.__name__)}',
                          exc_info=True,
-                         extra=self._build_metrics('failed', start_processing_time))
+                         extra={'metrics':
+                                    self._build_metrics('failed', start_processing_time)
+                                })
         else:
             message.ack()
             logger.info(f'Successfully processed message for '
-                        f'{self._subscription}', extra=self._build_metrics('succeeded', start_processing_time))
+                        f'{self._subscription}', extra={
+                'metrics':
+                    self._build_metrics('succeeded', start_processing_time)})
         finally:
             db.close_old_connections()
 
     def _build_metrics(self, status, start_processing_time=None):
         return {
-            'metrics': {
-                'name': 'subscriptions',
-                'data': self.build_data_metrics(status, start_processing_time)
-            }
+            'name': 'subscriptions',
+            'data': self.build_data_metrics(status, start_processing_time)
         }
 
     def build_data_metrics(self, status, start_processing_time):

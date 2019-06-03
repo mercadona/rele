@@ -35,7 +35,7 @@ class TestPublisher:
         assert log.message == 'Publishing to order-cancelled'
         assert log.pubsub_publisher_attrs == {'myattr': 'hello'}
         assert log.metrics == {
-            'name': 'subscriptions',
+            'name': 'publications',
             'data': {
                 'agent': 'rele',
                 'topic': 'order-cancelled',
