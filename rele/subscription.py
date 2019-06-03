@@ -36,8 +36,9 @@ class Callback:
         db.close_old_connections()
 
         logger.debug(f'Start processing message for {self._subscription}',
-                     extra={'metrics':
-                                self._build_metrics('received')})
+                     extra={
+                         'metrics': self._build_metrics('received')
+                     })
         if message.data == b'':
             data = None
         else:
@@ -46,18 +47,17 @@ class Callback:
             self._subscription(data, **dict(message.attributes))
         except Exception as e:
             logger.error(f'Exception raised while processing message '
-                         f'for {self._subscription}: '
-                         f'{str(e.__class__.__name__)}',
+                         f'for {self._subscription}: {str(e.__class__.__name__)}',
                          exc_info=True,
-                         extra={'metrics':
-                                    self._build_metrics('failed', start_processing_time)
-                                })
+                         extra={
+                             'metrics': self._build_metrics('failed', start_processing_time)
+                         })
         else:
             message.ack()
-            logger.info(f'Successfully processed message for '
-                        f'{self._subscription}', extra={
-                'metrics':
-                    self._build_metrics('succeeded', start_processing_time)})
+            logger.info(f'Successfully processed message for {self._subscription}',
+                        extra={
+                            'metrics': self._build_metrics('succeeded', start_processing_time)
+                        })
         finally:
             db.close_old_connections()
 
