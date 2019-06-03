@@ -20,7 +20,7 @@ class TestPublisher:
 
         assert isinstance(result, concurrent.futures.Future)
         publisher._client.publish.assert_called_with(
-            ANY, b'{"foo":"bar"}', myattr='hello')
+            ANY, b'{"foo": "bar"}', myattr='hello')
 
     def test_save_log_when_published_called(self, caplog):
         message = {'foo': 'bar'}

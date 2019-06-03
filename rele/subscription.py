@@ -32,17 +32,14 @@ class Callback:
         self._suffix = suffix
 
     def __call__(self, message):
-        start_processing_time = time.time()
+        start_time = time.time()
         db.close_old_connections()
 
         logger.debug(f'Start processing message for {self._subscription}',
                      extra={
                          'metrics': self._build_metrics('received')
                      })
-        if message.data == b'':
-            data = None
-        else:
-            data = json.loads(message.data.decode('utf-8'))
+        data = json.loads(message.data.decode('utf-8'))
         try:
             self._subscription(data, **dict(message.attributes))
         except Exception as e:
@@ -50,13 +47,13 @@ class Callback:
                          f'for {self._subscription}: {str(e.__class__.__name__)}',
                          exc_info=True,
                          extra={
-                             'metrics': self._build_metrics('failed', start_processing_time)
+                             'metrics': self._build_metrics('failed', start_time)
                          })
         else:
             message.ack()
             logger.info(f'Successfully processed message for {self._subscription}',
                         extra={
-                            'metrics': self._build_metrics('succeeded', start_processing_time)
+                            'metrics': self._build_metrics('succeeded', start_time)
                         })
         finally:
             db.close_old_connections()
@@ -64,10 +61,10 @@ class Callback:
     def _build_metrics(self, status, start_processing_time=None):
         return {
             'name': 'subscriptions',
-            'data': self.build_data_metrics(status, start_processing_time)
+            'data': self._build_data_metrics(status, start_processing_time)
         }
 
-    def build_data_metrics(self, status, start_processing_time):
+    def _build_data_metrics(self, status, start_processing_time):
         result = {
             'agent': self._subscription.project_name,
             'topic': self._subscription.topic,
