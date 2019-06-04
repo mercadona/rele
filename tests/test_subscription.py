@@ -126,15 +126,3 @@ class TestCallback:
                 'duration_seconds': pytest.approx(0.5, abs=0.5)
             }
         }
-
-    def test_sets_data_none_when_data_empty(
-            self, caplog, message_wrapper_empty):
-
-        @sub(topic='some-cool-topic')
-        def some_sub_stub(data, **kwargs):
-            return data if data is None else False
-
-        callback = Callback(some_sub_stub)
-        res = callback(message_wrapper_empty)
-
-        assert res is None

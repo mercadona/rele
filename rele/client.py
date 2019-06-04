@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 from contextlib import suppress
@@ -5,7 +6,7 @@ from contextlib import suppress
 from django.conf import settings
 from google.api_core import exceptions
 from google.cloud import pubsub_v1
-from rest_framework.renderers import JSONRenderer
+from rest_framework.utils import encoders
 
 logger = logging.getLogger(__name__)
 
@@ -48,11 +49,12 @@ class Publisher:
                 credentials=settings.RELE_GC_CREDENTIALS)
 
     def publish(self, topic, data, blocking=False, **attrs):
-        payload = JSONRenderer().render(data)
+        payload = json.dumps(data, cls=encoders.JSONEncoder).encode('utf-8')
         logger.info(f'Publishing to {topic}',
                     extra={
                         'pubsub_publisher_attrs': attrs,
-                        'metrics': self._build_metrics(topic)})
+                        'metrics': self._build_metrics(topic)
+                    })
         topic_path = self._client.topic_path(
             settings.RELE_GC_PROJECT_ID, topic)
         future = self._client.publish(topic_path, payload, **attrs)
@@ -63,7 +65,7 @@ class Publisher:
         return future
 
     def _build_metrics(self, topic):
-        return{
+        return {
             'name': 'publications',
             'data': {
                 'agent': settings.BASE_DIR.split('/')[-1],
