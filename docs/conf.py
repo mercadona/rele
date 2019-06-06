@@ -14,12 +14,14 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
 
+import rele
 
 # -- Project information -----------------------------------------------------
 
 project = 'Rele'
 copyright = '2019, Mercadona'
 author = 'Mercadona'
+version = rele.__version__
 
 
 # -- General configuration ---------------------------------------------------
