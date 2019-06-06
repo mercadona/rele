@@ -12,6 +12,7 @@
 /env/
 MANIFEST
 coverage.*
+docs/_build
 
 !.gitignore
 !.travis.yml
