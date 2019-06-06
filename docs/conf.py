@@ -18,7 +18,7 @@ import rele
 
 # -- Project information -----------------------------------------------------
 
-project = 'Rele'
+project = 'Relé'
 copyright = '2019, Mercadona S.A.'
 author = 'Mercadona'
 version = rele.__version__
