@@ -43,3 +43,9 @@ install-test-requirements: ## install requirements for testing
 
 install-deploy-requirements:  ## install requirements for deployment
 	pip install -r requirements/deploy.txt
+
+install-docs-requirements:  ## install requirements for documentation
+	pip install -r requirements/docs.txt
+
+build-html-doc:
+	DJANGO_SETTINGS_MODULE=tests.settings make html -C docs
