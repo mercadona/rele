@@ -56,6 +56,12 @@ html_theme_options = {'font_family':'Heebo'}
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+html_sidebars = {
+    '**': [
+        'sidebar.html'
+    ]
+}
+
 # Setup function
 def setup(app):
     app.add_stylesheet('style.css')
