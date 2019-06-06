@@ -14,6 +14,8 @@ Release v\ |version|. (`Installation <https://github.com/mercadona/rele>`_)
 .. image:: https://img.shields.io/badge/license-Apache%202-blue.svg
     :target: https://github.com/mercadona/rele/blob/master/LICENSE
 
+-------------------
+
 **Relé** makes integration with Google PubSub easier and is ready to integrate seamlessly into any Django project.
 
 Motivation and Features
