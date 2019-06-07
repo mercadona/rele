@@ -11,8 +11,12 @@ Additionally, be sure that you read and follow our
 
 ## Code
 
-We ask that you *start a discussion* before attempting to make a contribution. It is always 
-best to have community input before proposing changes that may be rejected.   
+We ask that you start a discussion before attempting to make a code contribution. For feature 
+requests, issues, bugs, etc. please 
+[create an issue via Github](https://github.com/mercadona/rele/issues/new) where we can all 
+discuss the contribution to the project. 
+
+It is always best to have community input before proposing changes that may later be rejected.
 
 ### Pull Requests
 
@@ -24,8 +28,8 @@ best to have community input before proposing changes that may be rejected.
 ## Issues
 
 When you open an issue make sure you include the full stack trace and
-that you list all pertinent information (operating system, message
-broker, Python implementation) as part of the issue description.
+that you list all pertinent information (operating system, Python implementation, etc.) 
+as part of the issue description.
 
 Please include a minimal, reproducible test case with every bug
 report.
