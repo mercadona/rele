@@ -1,4 +1,6 @@
-# Relé
+<p align="center">
+<img src="docs/_static/rele_logo.png" align="center" height="200">
+</p>
 
 [![Build Status](https://travis-ci.org/mercadona/rele.svg?branch=master)](https://travis-ci.org/mercadona/rele)
 
@@ -31,7 +33,7 @@ Add it to your `INSTALLED_APPS`:
 
 ```python
 INSTALLED_APPS = [
-   ...
+   ...,
    'rele',
 ]
 ```
