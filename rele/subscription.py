@@ -93,7 +93,7 @@ def sub(topic, suffix=None):
     Additionally, if a `suffix` param is added, the subscriber will be
     `project-name-lets-tell-everyone-my-suffix`.
 
-    It is recommended to add **kwargs to your `sub` function. This will allow
+    It is recommended to add `**kwargs` to your `sub` function. This will allow
     message attributes to be sent without breaking the subscriber implementation.
 
     Usage::
