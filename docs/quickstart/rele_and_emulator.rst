@@ -1,10 +1,10 @@
-Using Relé and pub/sub emulator
+Using the Google Cloud Pub/Sub emulator
 ===========================================================
 
-It can be helpful to be able run the emulator in the our development environment.
+It can be helpful to be able run the emulator in our development environment.
 To be able to do that we can follow the steps below:
 
-1) Run Pub/Sub emulator in the cloud-sdk container and map the port 8085.
+1) Run the Google Cloud Pub/Sub emulator in the cloud-sdk container and map the port 8085.
 
 .. code:: bash
 
