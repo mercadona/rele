@@ -1,4 +1,4 @@
-Using relé and pub/sub emulator
+Using Relé and pub/sub emulator
 ===========================================================
 
 It can be helpful to be able run the emulator in the our development environment.
