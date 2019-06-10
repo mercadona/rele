@@ -19,7 +19,7 @@ def publish(topic, data, **kwargs):
             rele.publish(topic='lets-tell-everyone',
                        data={'foo': 'bar'},
                        myevent='arrival')
-    
+
     :param topic: str PubSub topic name
     :param data: dict-like Data to be sent as the message.
     :param kwargs: Any optional key-value pairs that are included as attributes in

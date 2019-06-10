@@ -36,6 +36,11 @@ _______
 
    subscription
 
+.. toctree::
+   :maxdepth: 2
+
+   publish
+
 Indices and tables
 ==================
 
