@@ -41,6 +41,11 @@ _______
 
    publish
 
+.. toctree::
+   :maxdepth: 2
+
+   worker
+
 Indices and tables
 ==================
 
