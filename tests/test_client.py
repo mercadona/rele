@@ -14,21 +14,22 @@ class TestPublisher:
     def setup_method(cls):
         cls.publisher = Publisher()
         cls.publisher._client = MagicMock(spec=PublisherClient)
-        cls.publisher._client.publish.return_value = concurrent.futures.Future()
+        cls.publisher._client.publish\
+                             .return_value = concurrent.futures.Future()
 
     @patch('time.time', return_value=1560244246.863829)
     def test_returns_future_when_published_called(self, mocked_time):
         message = {'foo': 'bar'}
         result = self.publisher.publish(topic='order-cancelled',
-                                   data=message,
-                                   myattr='hello')
+                                        data=message,
+                                        myattr='hello')
 
         assert isinstance(result, concurrent.futures.Future)
 
-        self.publisher._client.publish.assert_called_with(ANY,
-                                                          b'{"foo": "bar"}',
-                                                          myattr='hello',
-                                                          published_at='1560244246.863829')
+        self.publisher._client.publish.assert_called_with(
+            ANY, b'{"foo": "bar"}',
+            myattr='hello',
+            published_at='1560244246.863829')
 
     @patch('time.time', return_value=1560244246.863829)
     def test_save_log_when_published_called(self, mocked_time, caplog):
@@ -61,6 +62,5 @@ class TestPublisher:
                                data=message,
                                published_at=expected_time)
 
-        self.publisher._client.publish.assert_called_with(ANY,
-                                                          b'{"foo": "bar"}',
-                                                          published_at=expected_time)
+        self.publisher._client.publish.assert_called_with(
+            ANY, b'{"foo": "bar"}', published_at=expected_time)
