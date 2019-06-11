@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import time
 from contextlib import suppress
 
 from django.conf import settings
@@ -48,6 +49,8 @@ class Publisher:
             self._client = pubsub_v1.PublisherClient(credentials=credentials)
 
     def publish(self, topic, data, blocking=False, **attrs):
+        attrs['published_at'] = str(time.time())
+
         logger.info(f'Publishing to {topic}',
                     extra={
                         'pubsub_publisher_attrs': attrs,
