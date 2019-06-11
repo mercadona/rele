@@ -28,6 +28,14 @@ The Publish-Subscribe pattern and specifically the Google Cloud PubSub library a
     * A **Worker** class
     * A **python manage.py runrele** management command
 
+Quickstart
+__________
+
+.. toctree::
+   :maxdepth: 2
+
+   quickstart/rele_and_emulator
+
 Modules
 _______
 
