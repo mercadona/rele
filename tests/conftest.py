@@ -1,0 +1,14 @@
+import pytest
+import concurrent
+from unittest.mock import MagicMock
+from google.cloud.pubsub_v1 import PublisherClient
+from rele import Publisher
+
+
+@pytest.fixture(scope='class')
+def publisher():
+    publisher = Publisher()
+    publisher._client = MagicMock(spec=PublisherClient)
+    publisher._client.publish.return_value = concurrent.futures.Future()
+
+    return publisher

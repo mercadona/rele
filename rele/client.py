@@ -48,7 +48,7 @@ class Publisher:
         else:
             self._client = pubsub_v1.PublisherClient(credentials=credentials)
 
-    def publish(self, topic, data, published_at=None, blocking=False, **attrs):
+    def publish(self, topic, data, blocking=False, **attrs):
         """Publish data to Pub/Sub.
 
         Usage::
@@ -58,13 +58,12 @@ class Publisher:
 
         :param topic: string topic to publish the data.
         :param data: dict with the content of the message.
-        :param published_at: string, default None.
         :param blocking: boolean, default False.
         :param attrs: Extra parameters to be published.
         :return: future
         """
 
-        attrs['published_at'] = published_at or str(time.time())
+        attrs['published_at'] = str(time.time())
 
         logger.info(f'Publishing to {topic}',
                     extra={

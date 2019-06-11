@@ -1,43 +1,34 @@
+import pytest
 import concurrent
-import time
-from unittest.mock import ANY, MagicMock, patch
-
-from google.cloud.pubsub_v1 import PublisherClient
-
-from rele import Publisher
+from unittest.mock import ANY, patch
 
 from . import settings
 
 
+@pytest.mark.usefixtures('publisher')
 class TestPublisher:
-    @classmethod
-    def setup_method(cls):
-        cls.publisher = Publisher()
-        cls.publisher._client = MagicMock(spec=PublisherClient)
-        cls.publisher._client.publish\
-                             .return_value = concurrent.futures.Future()
-
     @patch('time.time', return_value=1560244246.863829)
-    def test_returns_future_when_published_called(self, mocked_time):
+    def test_returns_future_when_published_called(self, _time, publisher):
         message = {'foo': 'bar'}
-        result = self.publisher.publish(topic='order-cancelled',
-                                        data=message,
-                                        myattr='hello')
+        result = publisher.publish(topic='order-cancelled',
+                                   data=message,
+                                   myattr='hello')
 
         assert isinstance(result, concurrent.futures.Future)
 
-        self.publisher._client.publish.assert_called_with(
-            ANY, b'{"foo": "bar"}',
+        publisher._client.publish.assert_called_with(
+            ANY,
+            b'{"foo": "bar"}',
             myattr='hello',
             published_at='1560244246.863829')
 
     @patch('time.time', return_value=1560244246.863829)
-    def test_save_log_when_published_called(self, mocked_time, caplog):
+    def test_save_log_when_published_called(self, _time, publisher, caplog):
         message = {'foo': 'bar'}
 
-        self.publisher.publish(topic='order-cancelled',
-                               data=message,
-                               myattr='hello')
+        publisher.publish(topic='order-cancelled',
+                          data=message,
+                          myattr='hello')
 
         log = caplog.records[0]
 
@@ -54,13 +45,9 @@ class TestPublisher:
             }
         }
 
-    def test_set_published_at_as_argument(self):
-        message = {'foo': 'bar'}
-        expected_time = str(time.time())
+    @patch('time.time', return_value=1560244246.863829)
+    def test_publish_sets_published_at(self, _time, publisher):
+        publisher.publish(topic='order-cancelled', data={'foo': 'bar'})
 
-        self.publisher.publish(topic='order-cancelled',
-                               data=message,
-                               published_at=expected_time)
-
-        self.publisher._client.publish.assert_called_with(
-            ANY, b'{"foo": "bar"}', published_at=expected_time)
+        publisher._client.publish.assert_called_with(
+            ANY, b'{"foo": "bar"}', published_at='1560244246.863829')
