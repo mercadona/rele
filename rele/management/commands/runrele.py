@@ -4,6 +4,7 @@ import signal
 import time
 
 from django.apps import apps
+from django.conf import settings
 from django.core.management import BaseCommand
 from django.utils.module_loading import module_has_submodule
 
@@ -21,7 +22,9 @@ class Command(BaseCommand):
                           f'subscription(s)...')
         for sub in subs:
             self.stdout.write(f'  {sub}')
-        worker = Worker(subs)
+        worker = Worker(settings.RELE_GC_PROJECT_ID,
+                        settings.RELE_GC_CREDENTIALS,
+                        subs)
         worker.setup()
         worker.start()
 
