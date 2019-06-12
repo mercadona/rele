@@ -3,18 +3,20 @@ import logging
 import time
 
 from django import db
-from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
 
 class Subscription:
 
-    def __init__(self, func, topic, suffix=None):
+    def __init__(self, func, topic, prefix=None, suffix=None):
         self._func = func
         self.topic = topic
-        self.project_name = settings.BASE_DIR.split("/")[-1]
-        self.name = f'{self.project_name}-{topic}'
+        self.prefix = prefix
+        self.name = ''
+        if self.prefix:
+            self.name = f'{self.prefix}-'
+        self.name += topic
         if suffix:
             self.name += f'-{suffix}'
 
@@ -66,7 +68,7 @@ class Callback:
 
     def _build_data_metrics(self, status, start_processing_time):
         result = {
-            'agent': self._subscription.project_name,
+            'agent': self._subscription.prefix or 'rele',
             'topic': self._subscription.topic,
             'status': status,
             'subscription': self._subscription.name,
