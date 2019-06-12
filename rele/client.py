@@ -24,7 +24,12 @@ class Subscriber:
         else:
             self._client = pubsub_v1.SubscriberClient(credentials=credentials)
 
-    def create_subscription(self, subscription, topic, ack_deadline_seconds=DEFAULT_ACK_DEADLINE):
+    def get_default_ack_deadline(self):
+        return int(os.environ.get('DEFAULT_ACK_DEADLINE', self.DEFAULT_ACK_DEADLINE))
+
+    def create_subscription(self, subscription, topic, ack_deadline_seconds=None):
+        ack_deadline_seconds = ack_deadline_seconds or self.get_default_ack_deadline()
+
         subscription_path = self._client.subscription_path(
             self._gc_project_id, subscription)
         topic_path = self._client.topic_path(self._gc_project_id, topic)

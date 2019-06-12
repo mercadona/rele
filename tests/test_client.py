@@ -1,3 +1,4 @@
+import os
 import concurrent
 from unittest.mock import ANY, patch
 
@@ -98,3 +99,26 @@ class TestSubscriber:
         _mocked_client.assert_called_once_with(ack_deadline_seconds=100,
                                                name=expected_subscription,
                                                topic=expected_topic)
+
+    @patch.object(SubscriberClient, 'create_subscription')
+    def test_create_subscription_with_ack_deadlines_from_environment(
+            self, _mocked_client, project_id, subscriber):
+        expected_subscription = (f'projects/{project_id}/subscriptions/'
+                                 f'test-topic')
+        expected_topic = (f'projects/{project_id}/topics/'
+                          f'{project_id}-test-topic')
+
+        with patch.dict(os.environ, {'DEFAULT_ACK_DEADLINE': '200'}):
+            subscriber.create_subscription('test-topic',
+                                           f'{project_id}-test-topic')
+
+        _mocked_client.assert_called_once_with(ack_deadline_seconds=200,
+                                               name=expected_subscription,
+                                               topic=expected_topic)
+
+    def test_get_default_ack_deadline(self, subscriber):
+        assert subscriber.get_default_ack_deadline() == 60
+
+    def test_get_default_ack_deadline_from_evironment_variable(self, subscriber):
+        with patch.dict(os.environ, {'DEFAULT_ACK_DEADLINE': '200'}):
+            assert subscriber.get_default_ack_deadline() == 200
