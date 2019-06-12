@@ -80,17 +80,6 @@ def sub_function(data, **kwargs):
       print(f'I am a task doing stuff with an event: {event}')
 ```
 
-#### Subscription `prefix`
-
-An optional prefix to the subscription name. Useful to namespace your subscription
-with your project name.
-
-```python
-@sub(topic='lets-tell-everyone', prefix='my-project')
-def purpose_1(data, **kwargs):
-     pass
-```
-
 #### Subscription `suffix`
 
 In order for multiple subscriptions to consume from the same topic, you'll want to add
