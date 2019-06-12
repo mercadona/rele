@@ -21,7 +21,8 @@ before_script:
   - psql -c 'create database travis_ci_test;' -U postgres
 
 script:
-  - make test
+  - make coverage
+  - codecov
 
 notifications:
   email: false
