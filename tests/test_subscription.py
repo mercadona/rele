@@ -9,7 +9,7 @@ from rele import Callback, Subscription, sub
 logger = logging.getLogger(__name__)
 
 
-@sub(topic='some-cool-topic')
+@sub(topic='some-cool-topic', prefix='rele')
 def sub_stub(data, **kwargs):
     logger.info(f'I am a task doing stuff with ID {data["id"]} '
                 f'({kwargs["lang"]})')
@@ -104,7 +104,7 @@ class TestCallback:
 
     def test_log_does_not_ack_called_message_when_execution_fails(
             self, caplog, message_wrapper):
-        @sub(topic='some-cool-topic')
+        @sub(topic='some-cool-topic', prefix='rele')
         def crashy_sub_stub(data, **kwargs):
             raise ValueError('I am an exception from a sub')
 

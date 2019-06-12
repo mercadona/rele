@@ -42,6 +42,9 @@ INSTALLED_APPS = [
 You'll also need to set up two variables with the Google Cloud credentials:
 `RELE_GC_CREDENTIALS` and `RELE_GC_PROJECT_ID`.
 
+You can use `RELE_SUB_PREFIX` to add a prefix to all your subscription names, for
+example, with your project name.
+
 NOTE: Ensure that [`CONN_MAX_AGE`](https://docs.djangoproject.com/en/2.2/ref/settings/#conn-max-age)
 is set to 0 in your worker. The Django default value is 0.
 
@@ -75,6 +78,17 @@ from rele import sub
 def sub_function(data, **kwargs):
       event = kwargs.get('myevent')
       print(f'I am a task doing stuff with an event: {event}')
+```
+
+#### Subscription `prefix`
+
+An optional prefix to the subscription name. Useful to namespace your subscription
+with your project name.
+
+```python
+@sub(topic='lets-tell-everyone', prefix='my-project')
+def purpose_1(data, **kwargs):
+     pass
 ```
 
 #### Subscription `suffix`
