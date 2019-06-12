@@ -45,8 +45,8 @@ You'll also need to set up two variables with the Google Cloud credentials:
 NOTE: Ensure that [`CONN_MAX_AGE`](https://docs.djangoproject.com/en/2.2/ref/settings/#conn-max-age)
 is set to 0 in your worker. The Django default value is 0.
 
-In other words, the environment where you run `python manage.py runrele`,
-make sure `CONN_MAX_AGE` is not set explicitly.
+In other words, make sure `CONN_MAX_AGE` is not set explicitly in the environment where you run
+ `python manage.py runrele`.
 
 ## Usage
 
