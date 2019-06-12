@@ -3,6 +3,13 @@ from .client import Publisher
 _publisher = None
 
 
+def init_global_publisher(gc_project_id, credentials):
+    global _publisher
+    if not _publisher:
+        _publisher = Publisher(gc_project_id, credentials)
+    return _publisher
+
+
 def publish(topic, data, **kwargs):
     """Shortcut method to publishing data to PubSub.
 
@@ -17,16 +24,15 @@ def publish(topic, data, **kwargs):
         def myfunc():
             # ...
             rele.publish(topic='lets-tell-everyone',
-                       data={'foo': 'bar'},
-                       myevent='arrival')
+                         data={'foo': 'bar'},
+                         myevent='arrival')
 
     :param topic: str PubSub topic name
     :param data: dict-like Data to be sent as the message.
-    :param kwargs: Any optional key-value pairs that are included as attributes in
-        the message
+    :param kwargs: Any optional key-value pairs that are included as attributes
+        in the message
     :return: None
     """
-    global _publisher
     if not _publisher:
-        _publisher = Publisher()
+        raise ValueError('init_global_publisher must be called first.')
     _publisher.publish(topic, data, **kwargs)

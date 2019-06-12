@@ -17,16 +17,16 @@ class Worker:
 
     :param subscriptions: list, List of :class:`rele.subscription.Subscription`
     """
-    def __init__(self, subscriptions):
-        self._subscriber = Subscriber()
+    def __init__(self, gc_project_id, credentials, subscriptions):
+        self._subscriber = Subscriber(gc_project_id, credentials)
         self._futures = []
         self._subscriptions = subscriptions
 
     def setup(self):
         """Create the subscriptions on a Google PubSub topic.
 
-        If the subscription already exists, the subscription will not be re-created.
-        Therefore, it is idempotent.
+        If the subscription already exists, the subscription will not be
+        re-created. Therefore, it is idempotent.
         """
         for subscription in self._subscriptions:
             self._subscriber.create_subscription(subscription.name,
