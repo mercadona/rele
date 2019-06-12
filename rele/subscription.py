@@ -107,6 +107,10 @@ def sub(topic, prefix=None, suffix=None):
 
     Usage::
 
+        @sub(topic='lets-tell-to-alice', prefix='shop')
+        def bob_purpose(data, **kwargs):
+             pass
+
         @sub(topic='lets-tell-everyone', suffix='sub1')
         def purpose_1(data, **kwargs):
              pass
