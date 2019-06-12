@@ -49,7 +49,7 @@ class Publisher:
             self._client = pubsub_v1.PublisherClient(credentials=credentials)
 
     def publish(self, topic, data, blocking=False, **attrs):
-        """Publish data to Pub/Sub.
+        """Publishes data to Pub/Sub adding a timestamp `published_at` to the attrs.
 
         Usage::
 
