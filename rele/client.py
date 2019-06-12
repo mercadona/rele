@@ -15,6 +15,7 @@ USE_EMULATOR = True if os.environ.get('PUBSUB_EMULATOR_HOST') else False
 
 
 class Subscriber:
+    DEFAULT_ACK_DEADLINE = 60
 
     def __init__(self, gc_project_id, credentials):
         self._gc_project_id = gc_project_id
@@ -23,7 +24,7 @@ class Subscriber:
         else:
             self._client = pubsub_v1.SubscriberClient(credentials=credentials)
 
-    def create_subscription(self, subscription, topic, ack_deadline_seconds=60):
+    def create_subscription(self, subscription, topic, ack_deadline_seconds=DEFAULT_ACK_DEADLINE):
         subscription_path = self._client.subscription_path(
             self._gc_project_id, subscription)
         topic_path = self._client.topic_path(self._gc_project_id, topic)
