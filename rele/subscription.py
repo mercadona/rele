@@ -27,9 +27,6 @@ class Subscription:
     def set_prefix(self, prefix):
         self._prefix = prefix
 
-    def set_suffix(self, suffix):
-        self._suffix = suffix
-
     def __call__(self, data, **kwargs):
         self._func(data, **kwargs)
 
