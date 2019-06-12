@@ -9,11 +9,11 @@ logger = logging.getLogger(__name__)
 
 class Subscription:
 
-    def __init__(self, func, topic, prefix=None, suffix=None):
+    def __init__(self, func, topic, prefix='', suffix=''):
         self._func = func
         self.topic = topic
-        self._prefix = prefix or ''
-        self._suffix = suffix or ''
+        self._prefix = prefix
+        self._suffix = suffix
 
     @property
     def name(self):
