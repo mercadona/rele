@@ -7,7 +7,7 @@ from rele import Subscriber, Worker, sub
 from . import settings
 
 
-@sub(topic='some-cool-topic')
+@sub(topic='some-cool-topic', prefix='rele')
 def sub_stub(data, **kwargs):
     print(f'I am a task doing stuff.')
 

@@ -31,6 +31,8 @@ RELE_GC_CREDENTIALS = service_account.Credentials.from_service_account_file(
     f'{BASE_DIR}/tests/dummy-pub-sub-credentials.json'
 )
 
+RELE_SUB_PREFIX = 'rele'
+
 logging_config.dictConfig({
     'version': 1,
     'disable_existing_loggers': False,

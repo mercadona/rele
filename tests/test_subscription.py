@@ -9,10 +9,16 @@ from rele import Callback, Subscription, sub
 logger = logging.getLogger(__name__)
 
 
-@sub(topic='some-cool-topic')
+@sub(topic='some-cool-topic', prefix='rele')
 def sub_stub(data, **kwargs):
     logger.info(f'I am a task doing stuff with ID {data["id"]} '
                 f'({kwargs["lang"]})')
+
+
+@sub(topic='some-fancy-topic')
+def sub_fancy_stub(data, **kwargs):
+    logger.info(f'I used to have a prefix, but not anymore, only {data["id"]}'
+                f'id {kwargs["lang"]}')
 
 
 class TestSubscription:
@@ -21,6 +27,11 @@ class TestSubscription:
         assert isinstance(sub_stub, Subscription)
         assert sub_stub.topic == 'some-cool-topic'
         assert sub_stub.name == 'rele-some-cool-topic'
+
+    def test_subs_without_prefix_return_subscription_objects(self):
+        assert isinstance(sub_fancy_stub, Subscription)
+        assert sub_fancy_stub.topic == 'some-fancy-topic'
+        assert sub_fancy_stub.name == 'some-fancy-topic'
 
     def test_executes_callback_when_called(self, caplog):
         res = sub_stub({'id': 123}, **{'lang': 'es'})
@@ -104,7 +115,7 @@ class TestCallback:
 
     def test_log_does_not_ack_called_message_when_execution_fails(
             self, caplog, message_wrapper):
-        @sub(topic='some-cool-topic')
+        @sub(topic='some-cool-topic', prefix='rele')
         def crashy_sub_stub(data, **kwargs):
             raise ValueError('I am an exception from a sub')
 
