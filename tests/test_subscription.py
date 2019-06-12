@@ -21,6 +21,7 @@ def sub_fancy_stub(data, **kwargs):
     logger.info(f'I used to have a prefix, but not anymore, only {data["id"]}'
                 f'id {kwargs["lang"]}')
 
+
 @sub(topic='published-time-type')
 def sub_published_time_type(data, **kwargs):
     logger.info(f'{type(kwargs["published_at"])}')
