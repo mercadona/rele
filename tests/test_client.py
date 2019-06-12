@@ -2,8 +2,6 @@ import pytest
 import concurrent
 from unittest.mock import ANY, patch
 
-from . import settings
-
 
 @pytest.mark.usefixtures('publisher')
 class TestPublisher:
