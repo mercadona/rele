@@ -1,6 +1,12 @@
 import pytest
 import concurrent
-from unittest.mock import ANY
+from unittest.mock import ANY, patch
+
+from google.cloud.pubsub_v1 import SubscriberClient
+
+from rele.client import Subscriber
+
+from . import settings
 
 
 @pytest.mark.usefixtures('publisher', 'time_mock')
@@ -48,3 +54,40 @@ class TestPublisher:
 
         publisher._client.publish.assert_called_with(
             ANY, b'{"foo": "bar"}', published_at=str(published_at))
+
+
+class TestSubscriber:
+    @patch.object(SubscriberClient, 'create_subscription')
+    def test_create_subscription_without_ack_deadlines(self, _mocked_client):
+        project_id = settings.RELE_GC_PROJECT_ID
+        credentials = settings.RELE_GC_CREDENTIALS
+
+        subscriber = Subscriber(project_id, credentials)
+
+        expected_subscription = f'projects/{project_id}/subscriptions/test-topic'
+        expected_topic = f'projects/{project_id}/topics/{project_id}-test-topic'
+
+        subscriber.create_subscription('test-topic',
+                                       f'{settings.RELE_GC_PROJECT_ID}-test-topic')
+
+        _mocked_client.assert_called_once_with(ack_deadline_seconds=60,
+                                               name=expected_subscription,
+                                               topic=expected_topic)
+
+    @patch.object(SubscriberClient, 'create_subscription')
+    def test_create_subscription_with_ack_deadlines(self, _mocked_client):
+        project_id = settings.RELE_GC_PROJECT_ID
+        credentials = settings.RELE_GC_CREDENTIALS
+
+        subscriber = Subscriber(project_id, credentials)
+
+        expected_subscription = f'projects/{project_id}/subscriptions/test-topic'
+        expected_topic = f'projects/{project_id}/topics/{project_id}-test-topic'
+
+        subscriber.create_subscription('test-topic',
+                                       f'{settings.RELE_GC_PROJECT_ID}-test-topic',
+                                       ack_deadline_seconds=100)
+
+        _mocked_client.assert_called_once_with(ack_deadline_seconds=100,
+                                               name=expected_subscription,
+                                               topic=expected_topic)
