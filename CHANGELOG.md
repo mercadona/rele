@@ -1,6 +1,12 @@
 Changelog
 =========
 
+`0.4.0` (Unreleased)
+
+* BREAKING: Explicit publisher and subscriber configuration (#43)
+* Sphinx documentation (#27, #34, #40, #41)
+* Contributing guidelines (#32)
+
 `0.3.1` (2019-06-04)
 
 * Add prometheus metrics key to logs (#16 - #20, #22, #23)

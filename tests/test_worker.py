@@ -4,6 +4,8 @@ import pytest
 
 from rele import Subscriber, Worker, sub
 
+from . import settings
+
 
 @sub(topic='some-cool-topic')
 def sub_stub(data, **kwargs):
@@ -16,7 +18,9 @@ class TestWorker:
     def test_start_subscribes_and_saves_futures_when_subscriptions_given(
             self, mock_consume):
         subscriptions = (sub_stub,)
-        worker = Worker(subscriptions)
+        worker = Worker(settings.RELE_GC_PROJECT_ID,
+                        settings.RELE_GC_CREDENTIALS,
+                        subscriptions)
         worker.start()
 
         mock_consume.assert_called_once_with(
@@ -28,7 +32,9 @@ class TestWorker:
     def test_setup_creates_subscription_when_topic_given(
             self, mock_create_subscription):
         subscriptions = (sub_stub,)
-        worker = Worker(subscriptions)
+        worker = Worker(settings.RELE_GC_PROJECT_ID,
+                        settings.RELE_GC_CREDENTIALS,
+                        subscriptions)
         worker.setup()
 
         topic = 'some-cool-topic'
@@ -38,7 +44,9 @@ class TestWorker:
     @patch('rele.worker.db.connections.close_all')
     def test_stop_closes_db_connections(self, mock_db_close_all):
         subscriptions = (sub_stub,)
-        worker = Worker(subscriptions)
+        worker = Worker(settings.RELE_GC_PROJECT_ID,
+                        settings.RELE_GC_CREDENTIALS,
+                        subscriptions)
 
         with pytest.raises(SystemExit):
             worker.stop()
