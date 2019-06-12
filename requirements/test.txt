@@ -1,5 +1,5 @@
 flake8>=2.1.0
-pytest
+pytest>=4.6.3
 coverage==4.4.1
-pytest-cov
+pytest-cov>=2.7.1
 codecov>=2.0.0

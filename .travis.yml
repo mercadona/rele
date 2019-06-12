@@ -15,7 +15,6 @@ sudo: false
 install:
   - make install-requirements
   - make install-test-requirements
-  - pip install --upgrade pytest
 
 before_script:
   - make lint
