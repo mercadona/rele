@@ -52,6 +52,8 @@ class Command(BaseCommand):
             for attr_name in dir(sub_module):
                 attribute = getattr(sub_module, attr_name)
                 if isinstance(attribute, Subscription):
+                    if settings.RELE_PREFIX and not attribute.prefix:
+                        attribute.set_prefix(settings.RELE_SUB_PREFIX)
                     subscriptions.append(attribute)
         return subscriptions
 

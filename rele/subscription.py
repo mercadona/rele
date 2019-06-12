@@ -3,20 +3,29 @@ import logging
 import time
 
 from django import db
-from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
 
 class Subscription:
 
-    def __init__(self, func, topic, suffix=None):
+    def __init__(self, func, topic, prefix='', suffix=''):
         self._func = func
         self.topic = topic
-        self.project_name = settings.BASE_DIR.split("/")[-1]
-        self.name = f'{self.project_name}-{topic}'
-        if suffix:
-            self.name += f'-{suffix}'
+        self._prefix = prefix
+        self._suffix = suffix
+
+    @property
+    def name(self):
+        name_parts = [self._prefix, self.topic, self._suffix]
+        return '-'.join(filter(lambda x: x, name_parts))
+
+    @property
+    def prefix(self):
+        return self._prefix
+
+    def set_prefix(self, prefix):
+        self._prefix = prefix
 
     def __call__(self, data, **kwargs):
         self._func(data, **kwargs)
@@ -66,7 +75,7 @@ class Callback:
 
     def _build_data_metrics(self, status, start_processing_time):
         result = {
-            'agent': self._subscription.project_name,
+            'agent': self._subscription.prefix or 'rele',
             'topic': self._subscription.topic,
             'status': status,
             'subscription': self._subscription.name,
@@ -80,7 +89,7 @@ class Callback:
         return result
 
 
-def sub(topic, suffix=None):
+def sub(topic, prefix=None, suffix=None):
     """Decorator function that makes declaring a PubSub Subscription simple.
 
     The Subscriber returned will automatically create and name
@@ -98,6 +107,10 @@ def sub(topic, suffix=None):
 
     Usage::
 
+        @sub(topic='lets-tell-to-alice', prefix='shop')
+        def bob_purpose(data, **kwargs):
+             pass
+
         @sub(topic='lets-tell-everyone', suffix='sub1')
         def purpose_1(data, **kwargs):
              pass
@@ -107,13 +120,15 @@ def sub(topic, suffix=None):
              pass
 
     :param topic: string The topic that is being subscribed to.
-    :param suffix: string An options suffix to the subscription name.
+    :param prefix: string An optional prefix to the subscription name.
+                   Useful to namespace your subscription with your project name.
+    :param suffix: string An optional suffix to the subscription name.
                    Useful when you have two subscribers in the same project that
                    are subscribed to the same topic.
     :return: Subscription
     """
 
     def decorator(func):
-        return Subscription(func=func, topic=topic, suffix=suffix)
+        return Subscription(func=func, topic=topic, prefix=prefix, suffix=suffix)
 
     return decorator
