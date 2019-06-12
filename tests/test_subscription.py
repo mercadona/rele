@@ -1,4 +1,5 @@
 import logging
+import time
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -19,6 +20,10 @@ def sub_stub(data, **kwargs):
 def sub_fancy_stub(data, **kwargs):
     logger.info(f'I used to have a prefix, but not anymore, only {data["id"]}'
                 f'id {kwargs["lang"]}')
+
+@sub(topic='published-time-type')
+def sub_published_time_type(data, **kwargs):
+    logger.info(f'{type(kwargs["published_at"])}')
 
 
 class TestSubscription:
@@ -52,7 +57,10 @@ class TestCallback:
     @pytest.fixture
     def message_wrapper(self):
         rele_message = pubsub_v1.types.PubsubMessage(
-            data=b'{"id": 123}', attributes={'lang': 'es'}, message_id='1')
+            data=b'{"id": 123}',
+            attributes={'lang': 'es', 'published_at': str(time.time())},
+            message_id='1')
+
         return pubsub_v1.subscriber.message.Message(
             rele_message, 'ack-id', MagicMock())
 
@@ -137,3 +145,11 @@ class TestCallback:
                 'duration_seconds': pytest.approx(0.5, abs=0.5)
             }
         }
+
+    def test_published_time_as_message_attribute(
+            self, message_wrapper, caplog):
+        callback = Callback(sub_published_time_type)
+        callback(message_wrapper)
+
+        success_log = caplog.records[-2]
+        assert success_log.message == "<class 'float'>"

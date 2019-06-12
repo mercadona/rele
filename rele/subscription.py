@@ -28,6 +28,9 @@ class Subscription:
         self._prefix = prefix
 
     def __call__(self, data, **kwargs):
+        if 'published_at' in kwargs:
+            kwargs['published_at'] = float(kwargs['published_at'])
+
         self._func(data, **kwargs)
 
     def __str__(self):
@@ -49,6 +52,7 @@ class Callback:
                          'metrics': self._build_metrics('received')
                      })
         data = json.loads(message.data.decode('utf-8'))
+
         try:
             self._subscription(data, **dict(message.attributes))
         except Exception as e:
