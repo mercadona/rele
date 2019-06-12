@@ -15,12 +15,23 @@ def sub_stub(data, **kwargs):
                 f'({kwargs["lang"]})')
 
 
+@sub(topic='some-fancy-topic')
+def sub_fancy_stub(data, **kwargs):
+    logger.info(f'I used to have a prefix, but not anymore, only {data["id"]}'
+                f'id {kwargs["lang"]}')
+
+
 class TestSubscription:
 
     def test_subs_return_subscription_objects(self):
         assert isinstance(sub_stub, Subscription)
         assert sub_stub.topic == 'some-cool-topic'
         assert sub_stub.name == 'rele-some-cool-topic'
+
+    def test_subs_without_prefix_return_subscription_objects(self):
+        assert isinstance(sub_fancy_stub, Subscription)
+        assert sub_fancy_stub.topic == 'some-fancy-topic'
+        assert sub_fancy_stub.name == 'some-fancy-topic'
 
     def test_executes_callback_when_called(self, caplog):
         res = sub_stub({'id': 123}, **{'lang': 'es'})
