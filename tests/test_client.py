@@ -119,6 +119,7 @@ class TestSubscriber:
     def test_get_default_ack_deadline(self, subscriber):
         assert subscriber.get_default_ack_deadline() == 60
 
-    def test_get_default_ack_deadline_from_evironment_variable(self, subscriber):
+    def test_get_default_ack_deadline_from_evironment_variable(
+            self, subscriber):
         with patch.dict(os.environ, {'DEFAULT_ACK_DEADLINE': '200'}):
             assert subscriber.get_default_ack_deadline() == 200
