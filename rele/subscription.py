@@ -4,6 +4,8 @@ import time
 
 from django import db
 
+from .middleware import run_middleware_hook
+
 logger = logging.getLogger(__name__)
 
 
@@ -44,8 +46,9 @@ class Callback:
         self._suffix = suffix
 
     def __call__(self, message):
-        start_time = time.time()
+        run_middleware_hook('pre_process_message')
         db.close_old_connections()
+        start_time = time.time()
 
         logger.debug(f'Start processing message for {self._subscription}',
                      extra={
@@ -69,6 +72,7 @@ class Callback:
                             'metrics': self._build_metrics('succeeded', start_time)
                         })
         finally:
+            run_middleware_hook('post_message_process')
             db.close_old_connections()
 
     def _build_metrics(self, status, start_processing_time=None):

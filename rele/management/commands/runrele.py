@@ -8,7 +8,8 @@ from django.conf import settings
 from django.core.management import BaseCommand
 from django.utils.module_loading import module_has_submodule
 
-from rele import Subscription, Worker
+import rele
+from rele import config
 
 logger = logging.getLogger(__name__)
 
@@ -17,14 +18,17 @@ class Command(BaseCommand):
     help = 'Start subscriber threads to consume rele topics.'
 
     def handle(self, *args, **options):
+        config.setup(settings.RELE_GC_PROJECT_ID,
+                          settings.RELE_GC_CREDENTIALS,
+                          settings.RELE_MIDDLEWARE)
         subs = self._autodiscover_subs()
         self.stdout.write(f'Configuring worker with {len(subs)} '
                           f'subscription(s)...')
         for sub in subs:
             self.stdout.write(f'  {sub}')
-        worker = Worker(settings.RELE_GC_PROJECT_ID,
-                        settings.RELE_GC_CREDENTIALS,
-                        subs)
+        worker = rele.Worker(settings.RELE_GC_PROJECT_ID,
+                             settings.RELE_GC_CREDENTIALS,
+                             subs)
         worker.setup()
         worker.start()
 
@@ -51,7 +55,7 @@ class Command(BaseCommand):
             sub_module = importlib.import_module(sub_module_path)
             for attr_name in dir(sub_module):
                 attribute = getattr(sub_module, attr_name)
-                if isinstance(attribute, Subscription):
+                if isinstance(attribute, rele.Subscription):
                     if settings.RELE_PREFIX and not attribute.prefix:
                         attribute.set_prefix(settings.RELE_SUB_PREFIX)
                     subscriptions.append(attribute)
