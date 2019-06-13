@@ -40,9 +40,10 @@ Modules
 _______
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
-   subscription
+    subscription
+    modules/client
 
 .. toctree::
    :maxdepth: 2
