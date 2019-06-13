@@ -13,7 +13,8 @@ class TestPublisher:
     def test_returns_future_when_published_called(self):
         message = {'foo': 'bar'}
         publisher = Publisher(settings.RELE_GC_PROJECT_ID,
-                              settings.RELE_GC_CREDENTIALS)
+                              settings.RELE_GC_CREDENTIALS,
+                              'rele')
         publisher._client = MagicMock(spec=PublisherClient)
         publisher._client.publish.return_value = concurrent.futures.Future()
 
@@ -27,7 +28,7 @@ class TestPublisher:
 
     def test_save_log_when_published_called(self, caplog):
         message = {'foo': 'bar'}
-        publisher = Publisher(1, settings.RELE_GC_CREDENTIALS)
+        publisher = Publisher(1, settings.RELE_GC_CREDENTIALS, 'custom_rele')
         publisher._client = MagicMock(spec=PublisherClient)
         publisher._client.publish.return_value = concurrent.futures.Future()
 
@@ -40,7 +41,7 @@ class TestPublisher:
         assert log.metrics == {
             'name': 'publications',
             'data': {
-                'agent': 'rele',
+                'agent': 'custom_rele',
                 'topic': 'order-cancelled',
             }
         }

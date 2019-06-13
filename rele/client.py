@@ -3,7 +3,6 @@ import logging
 import os
 from contextlib import suppress
 
-from django.conf import settings
 from google.api_core import exceptions
 from google.cloud import pubsub_v1
 from rest_framework.utils import encoders
@@ -39,9 +38,10 @@ class Subscriber:
 
 class Publisher:
 
-    def __init__(self, gc_project_id, credentials, timeout=3.0):
+    def __init__(self, gc_project_id, credentials, app_name, timeout=3.0):
         self._gc_project_id = gc_project_id
         self._timeout = timeout
+        self._app_name = app_name
         if USE_EMULATOR:
             self._client = pubsub_v1.PublisherClient()
         else:
@@ -66,7 +66,7 @@ class Publisher:
         return {
             'name': 'publications',
             'data': {
-                'agent': settings.BASE_DIR.split('/')[-1],
+                'agent': self._app_name,
                 'topic': topic,
             }
         }
