@@ -33,6 +33,7 @@ RELE_GC_CREDENTIALS = service_account.Credentials.from_service_account_file(
 RELE_SUB_PREFIX = 'rele'
 
 RELE_MIDDLEWARE = [
+    'rele.contrib.LoggingMiddleware',
     # 'rele.middleware.LoggingMiddleware'
     # 'rele.middleware.DBConnectionsMiddleware'
 ]

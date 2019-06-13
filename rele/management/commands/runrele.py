@@ -19,8 +19,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         config.setup(settings.RELE_GC_PROJECT_ID,
-                          settings.RELE_GC_CREDENTIALS,
-                          settings.RELE_MIDDLEWARE)
+                     settings.RELE_GC_CREDENTIALS,
+                     settings.RELE_MIDDLEWARE)
         subs = self._autodiscover_subs()
         self.stdout.write(f'Configuring worker with {len(subs)} '
                           f'subscription(s)...')

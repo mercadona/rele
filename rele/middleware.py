@@ -6,7 +6,10 @@ _middlewares = []
 def register_middleware(paths):
     global _middlewares
     for path in paths:
-        middleware = importlib.import_module(path)
+        *module_parts, middleware_class = path.split('.')
+        module_path = '.'.join(module_parts)
+        module = importlib.import_module(module_path)
+        middleware = getattr(module, middleware_class)()
         middleware.setup()
         _middlewares.append(middleware)
 
@@ -21,22 +24,22 @@ class BaseMiddleware:
     def setup(self):
         pass
 
-    def pre_publish(self):
+    def pre_publish(self, topic, data, attrs):
         pass
 
-    def post_publish(self):
+    def post_publish(self, topic):
         pass
 
-    def pre_message_process(self, message, extra=None):
+    def pre_process_message(self, message):
         pass
 
-    def post_message_process(self):
+    def post_process_message(self):
         pass
 
-    def message_process_success(self):
+    def post_process_message_success(self):
         pass
 
-    def message_process_failure(self):
+    def post_process_message_failure(self):
         pass
 
     def pre_worker_start(self):

@@ -46,7 +46,7 @@ class Callback:
         self._suffix = suffix
 
     def __call__(self, message):
-        run_middleware_hook('pre_process_message')
+        run_middleware_hook('pre_process_message', message)
         db.close_old_connections()
         start_time = time.time()
 
@@ -72,7 +72,7 @@ class Callback:
                             'metrics': self._build_metrics('succeeded', start_time)
                         })
         finally:
-            run_middleware_hook('post_message_process')
+            run_middleware_hook('post_process_message')
             db.close_old_connections()
 
     def _build_metrics(self, status, start_processing_time=None):
