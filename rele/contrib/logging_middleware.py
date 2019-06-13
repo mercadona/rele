@@ -1,4 +1,5 @@
 import logging
+import time
 
 from django.conf import settings
 
@@ -6,39 +7,76 @@ from rele.middleware import BaseMiddleware
 
 
 class LoggingMiddleware(BaseMiddleware):
+
     def __init__(self):
         self._logger = None
+        self._app_name = settings.BASE_DIR.split('/')[-1]
 
     def setup(self):
         self._logger = logging.getLogger(__name__)
 
-    def pre_publish(self, topic, data, attrs):
-        self._logger.info(f'Publishing to {topic}',
-                          extra={
-                              'pubsub_publisher_attrs': attrs,
-                              'metrics': self._build_metrics(topic)
-                          })
-
-    def _build_metrics(self, topic):
-        return {
-            'name': 'publications',
-            'data': {
-                'agent': settings.BASE_DIR.split('/')[-1],
-                'topic': topic,
-            }
+    def _build_data_metrics(self, subscription, status, start_processing_time=None):
+        result = {
+            'agent': self._app_name,
+            'topic': subscription.topic,
+            'status': status,
+            'subscription': subscription.name,
         }
 
-    def pre_message_process(self, message):
-        pass
+        if start_processing_time is not None:
+            end_processing_time = time.time()
+            result['duration_seconds'] = round(
+                end_processing_time - start_processing_time, 3)
 
-    def post_message_process(self):
-        pass
+        return result
 
-    def message_process_success(self):
-        pass
+    def pre_publish(self, topic, data, attrs):
+        self._logger.info(
+            f'Publishing to {topic}',
+            extra={
+                'pubsub_publisher_attrs': attrs,
+                'metrics': {
+                    'name': 'publications',
+                    'data': {
+                        'agent': self._app_name,
+                        'topic': topic,
+                    }
+                }
+            })
 
-    def message_process_failure(self):
-        pass
+    def pre_process_message(self, subscription):
+        self._logger.debug(
+            f'Start processing message for {subscription}',
+            extra={
+                'metrics': {
+                    'name': 'subscriptions',
+                    'data': self._build_data_metrics(subscription, 'received')
+                }
+            })
+
+    def post_process_message_success(self, subscription, start_time):
+        self._logger.info(
+            f'Successfully processed message for {subscription}',
+            extra={
+                'metrics': {
+                    'name': 'subscriptions',
+                    'data': self._build_data_metrics(
+                        subscription, 'succeeded', start_time)
+                }
+            })
+
+    def post_process_message_failure(self, subscription, exception, start_time):
+        self._logger.error(
+            f'Exception raised while processing message '
+            f'for {subscription}: {str(exception.__class__.__name__)}',
+            exc_info=True,
+            extra={
+                'metrics': {
+                    'name': 'subscriptions',
+                    'data': self._build_data_metrics(
+                        subscription, 'failed', start_time)
+                }
+            })
 
     def pre_worker_start(self):
         pass
@@ -46,9 +84,8 @@ class LoggingMiddleware(BaseMiddleware):
     def post_worker_start(self):
         pass
 
-    def pre_worker_stop(self):
-        pass
+    def pre_worker_stop(self, subscriptions):
+        self._logger.info(f'Cleaning up {len(subscriptions)} subscription(s)...')
 
     def post_worker_stop(self):
         pass
-

@@ -5,6 +5,7 @@ _middlewares = []
 
 def register_middleware(paths):
     global _middlewares
+    _middlewares = []
     for path in paths:
         *module_parts, middleware_class = path.split('.')
         module_path = '.'.join(module_parts)
@@ -30,16 +31,16 @@ class BaseMiddleware:
     def post_publish(self, topic):
         pass
 
-    def pre_process_message(self, message):
+    def pre_process_message(self, subscription):
         pass
 
     def post_process_message(self):
         pass
 
-    def post_process_message_success(self):
+    def post_process_message_success(self, subscription, start_time):
         pass
 
-    def post_process_message_failure(self):
+    def post_process_message_failure(self, subscription, exception, start_time):
         pass
 
     def pre_worker_start(self):

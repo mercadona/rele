@@ -34,7 +34,6 @@ RELE_SUB_PREFIX = 'rele'
 
 RELE_MIDDLEWARE = [
     'rele.contrib.LoggingMiddleware',
-    # 'rele.middleware.LoggingMiddleware'
     # 'rele.middleware.DBConnectionsMiddleware'
 ]
 

@@ -99,6 +99,7 @@ class TestCallback:
             res = callback(message_wrapper)
 
         assert res is None
+        assert len(caplog.records) == 3
         message_wrapper_log = caplog.records[1]
         assert message_wrapper_log.message == ('I am a task doing '
                                                'stuff with ID 123 (es)')

@@ -8,8 +8,7 @@ from django.conf import settings
 from django.core.management import BaseCommand
 from django.utils.module_loading import module_has_submodule
 
-import rele
-from rele import config
+from rele import config, Worker
 
 logger = logging.getLogger(__name__)
 
@@ -26,9 +25,9 @@ class Command(BaseCommand):
                           f'subscription(s)...')
         for sub in subs:
             self.stdout.write(f'  {sub}')
-        worker = rele.Worker(settings.RELE_GC_PROJECT_ID,
-                             settings.RELE_GC_CREDENTIALS,
-                             subs)
+        worker = Worker(settings.RELE_GC_PROJECT_ID,
+                        settings.RELE_GC_CREDENTIALS,
+                        subs)
         worker.setup()
         worker.start()
 
