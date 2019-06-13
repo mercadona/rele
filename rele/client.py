@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import time
 from contextlib import suppress
 
 from django.conf import settings
@@ -48,6 +49,22 @@ class Publisher:
             self._client = pubsub_v1.PublisherClient(credentials=credentials)
 
     def publish(self, topic, data, blocking=False, **attrs):
+        """Publishes data to Pub/Sub adding a timestamp `published_at` to the attrs.
+
+        Usage::
+
+            publisher = Publisher()
+            publisher.publish('topic_name', {'foo': 'bar'})
+
+        :param topic: string topic to publish the data.
+        :param data: dict with the content of the message.
+        :param blocking: boolean, default False.
+        :param attrs: Extra parameters to be published.
+        :return: future
+        """
+
+        attrs['published_at'] = str(time.time())
+
         logger.info(f'Publishing to {topic}',
                     extra={
                         'pubsub_publisher_attrs': attrs,
