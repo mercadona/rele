@@ -6,6 +6,6 @@ Provide a description of what has been implemented.
 
 Give an explanation of why.
 
-### :eslabón: Related issue
+### :link: Related issue
 
 Add related issue's number. Example: Fix #1
