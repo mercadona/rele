@@ -3,7 +3,23 @@ import concurrent
 from unittest.mock import MagicMock, patch
 from google.cloud.pubsub_v1 import PublisherClient
 from rele import Publisher
+from rele.client import Subscriber
 from tests import settings
+
+
+@pytest.fixture()
+def project_id():
+    return 'test-project-id'
+
+
+@pytest.fixture()
+def credentials():
+    return 'my-credentials'
+
+
+@pytest.fixture()
+def subscriber(project_id, credentials):
+    return Subscriber(project_id, credentials)
 
 
 @pytest.fixture(scope='class')
