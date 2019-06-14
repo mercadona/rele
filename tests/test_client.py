@@ -8,6 +8,7 @@ from google.cloud.pubsub_v1 import SubscriberClient
 
 @pytest.mark.usefixtures('publisher', 'time_mock')
 class TestPublisher:
+
     def test_returns_future_when_published_called(
             self, published_at, publisher):
         message = {'foo': 'bar'}

@@ -4,10 +4,11 @@ import os
 import time
 from contextlib import suppress
 
-from django.conf import settings
 from google.api_core import exceptions
 from google.cloud import pubsub_v1
 from rest_framework.utils import encoders
+
+from rele.middleware import run_middleware_hook
 
 logger = logging.getLogger(__name__)
 
@@ -72,12 +73,7 @@ class Publisher:
         """
 
         attrs['published_at'] = str(time.time())
-
-        logger.info(f'Publishing to {topic}',
-                    extra={
-                        'pubsub_publisher_attrs': attrs,
-                        'metrics': self._build_metrics(topic)
-                    })
+        run_middleware_hook('pre_publish', topic, data, attrs)
         payload = json.dumps(data, cls=encoders.JSONEncoder).encode('utf-8')
         topic_path = self._client.topic_path(self._gc_project_id, topic)
         future = self._client.publish(topic_path, payload, **attrs)
@@ -85,13 +81,5 @@ class Publisher:
             return future
 
         future.result(timeout=self._timeout)
+        run_middleware_hook('post_publish', topic)
         return future
-
-    def _build_metrics(self, topic):
-        return {
-            'name': 'publications',
-            'data': {
-                'agent': settings.BASE_DIR.split('/')[-1],
-                'topic': topic,
-            }
-        }

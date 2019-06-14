@@ -3,6 +3,7 @@ from unittest.mock import ANY, patch
 import pytest
 
 from rele import Subscriber, Worker, sub
+from rele.middleware import register_middleware
 
 from . import settings
 
@@ -41,8 +42,9 @@ class TestWorker:
         subscription = 'rele-some-cool-topic'
         mock_create_subscription.assert_called_once_with(subscription, topic)
 
-    @patch('rele.worker.db.connections.close_all')
+    @patch('rele.contrib.django_db_middleware.db.connections.close_all')
     def test_stop_closes_db_connections(self, mock_db_close_all):
+        register_middleware(['rele.contrib.DjangoDBMiddleware'])
         subscriptions = (sub_stub,)
         worker = Worker(settings.RELE_GC_PROJECT_ID,
                         settings.RELE_GC_CREDENTIALS,

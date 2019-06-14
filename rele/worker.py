@@ -1,9 +1,8 @@
 import logging
 import sys
 
-from django import db
-
 from .client import Subscriber
+from .middleware import run_middleware_hook
 from .subscription import Callback
 
 logger = logging.getLogger(__name__)
@@ -65,9 +64,9 @@ class Worker:
         :param signal: Needed for signal.signal https://docs.python.org/3/library/signal.html#signal.signal
         :param frame: Needed for signal.signal https://docs.python.org/3/library/signal.html#signal.signal
         """
-        logger.info(f'Cleaning up {len(self._futures)} subscription(s)...')
+        run_middleware_hook('pre_worker_stop', self._subscriptions)
         for future in self._futures:
             future.cancel()
 
-        db.connections.close_all()
+        run_middleware_hook('post_worker_stop')
         sys.exit(0)

@@ -4,20 +4,21 @@ from unittest.mock import MagicMock, patch
 from google.cloud.pubsub_v1 import PublisherClient
 from rele import Publisher
 from rele.client import Subscriber
+from rele.middleware import register_middleware
 from tests import settings
 
 
-@pytest.fixture()
+@pytest.fixture
 def project_id():
     return 'test-project-id'
 
 
-@pytest.fixture()
+@pytest.fixture
 def credentials():
     return 'my-credentials'
 
 
-@pytest.fixture()
+@pytest.fixture
 def subscriber(project_id, credentials):
     return Subscriber(project_id, credentials)
 
@@ -42,3 +43,8 @@ def time_mock(published_at):
     with patch('time.time') as mock:
         mock.return_value = published_at
         yield mock
+
+
+@pytest.fixture(autouse=True)
+def default_middleware():
+    register_middleware(['rele.contrib.LoggingMiddleware'])
