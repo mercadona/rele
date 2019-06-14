@@ -14,7 +14,7 @@ class Worker:
     Facilitates the creation of subscriptions if not already created,
     and the starting and stopping the consumption of them.
 
-    :param subscriptions: list, List of :class:`~rele.subscription.Subscription`
+    :param subscriptions: list :class:`~rele.subscription.Subscription`
     """
     def __init__(self, subscriptions, gc_project_id, credentials):
         self._subscriber = Subscriber(gc_project_id, credentials)
@@ -61,8 +61,8 @@ class Worker:
 
         Exits with code 0 for a clean exit.
 
-        :param signal: Needed for `signal.signal <https://docs.python.org/3/library/signal.html#signal.signal>`_
-        :param frame: Needed for `signal.signal <https://docs.python.org/3/library/signal.html#signal.signal>`_
+        :param signal: Needed for `signal.signal <https://docs.python.org/3/library/signal.html#signal.signal>`_  # noqa
+        :param frame: Needed for `signal.signal <https://docs.python.org/3/library/signal.html#signal.signal>`_  # noqa
         """
         run_middleware_hook('pre_worker_stop', self._subscriptions)
         for future in self._futures:

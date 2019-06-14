@@ -13,7 +13,8 @@ class LoggingMiddleware(BaseMiddleware):
         self._logger = logging.getLogger(__name__)
         self._app_name = config.app_name
 
-    def _build_data_metrics(self, subscription, status, start_processing_time=None):
+    def _build_data_metrics(
+            self, subscription, status, start_processing_time=None):
         result = {
             'agent': self._app_name,
             'topic': subscription.topic,
@@ -63,7 +64,8 @@ class LoggingMiddleware(BaseMiddleware):
                 }
             })
 
-    def post_process_message_failure(self, subscription, exception, start_time):
+    def post_process_message_failure(
+            self, subscription, exception, start_time):
         self._logger.error(
             f'Exception raised while processing message '
             f'for {subscription}: {str(exception.__class__.__name__)}',
@@ -77,4 +79,5 @@ class LoggingMiddleware(BaseMiddleware):
             })
 
     def pre_worker_stop(self, subscriptions):
-        self._logger.info(f'Cleaning up {len(subscriptions)} subscription(s)...')
+        self._logger.info(
+            f'Cleaning up {len(subscriptions)} subscription(s)...')

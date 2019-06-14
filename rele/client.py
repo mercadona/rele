@@ -26,10 +26,13 @@ class Subscriber:
             self._client = pubsub_v1.SubscriberClient(credentials=credentials)
 
     def get_default_ack_deadline(self):
-        return int(os.environ.get('DEFAULT_ACK_DEADLINE', self.DEFAULT_ACK_DEADLINE))
+        return int(os.environ.get('DEFAULT_ACK_DEADLINE',
+                                  self.DEFAULT_ACK_DEADLINE))
 
-    def create_subscription(self, subscription, topic, ack_deadline_seconds=None):
-        ack_deadline_seconds = ack_deadline_seconds or self.get_default_ack_deadline()
+    def create_subscription(
+            self, subscription, topic, ack_deadline_seconds=None):
+        ack_deadline_seconds = ack_deadline_seconds or \
+            self.get_default_ack_deadline()
 
         subscription_path = self._client.subscription_path(
             self._gc_project_id, subscription)
@@ -79,28 +82,29 @@ class Publisher:
             publisher = Publisher()
             publisher.publish('topic_name', {'foo': 'bar'})
 
-        By default, this method is non-blocking, meaning that the method does not
-        wait for the future to be returned.
+        By default, this method is non-blocking, meaning that the method does
+        not wait for the future to be returned.
 
-        If you would like to wait for the future so you can track the message later,
-        you can:
+        If you would like to wait for the future so you can track the message
+        later, you can:
 
         Usage::
 
             publisher = Publisher()
-            future = publisher.publish('topic_name', {'foo': 'bar'}, blocking=True)
+            future = publisher.publish('topic_name', {'foo': 'bar'}, blocking=True) # noqa
 
-        However, it should be noted that using `blocking=True` may incur a significant
-        performance hit.
+        However, it should be noted that using `blocking=True` may incur a
+        significant performance hit.
 
-        In addition, the method adds a timestamp `published_at` to the message attrs
-        using `epoch floating point number <https://docs.python.org/3/library/time.html#time.time>`_.
+        In addition, the method adds a timestamp `published_at` to the
+        message attrs using `epoch floating point number
+        <https://docs.python.org/3/library/time.html#time.time>`_.
 
         :param topic: string topic to publish the data.
         :param data: dict with the content of the message.
         :param blocking: boolean, default False.
         :param attrs: Extra parameters to be published.
-        :return: `Future <https://googleapis.github.io/google-cloud-python/latest/pubsub/subscriber/api/futures.html>`_
+        :return: `Future <https://googleapis.github.io/google-cloud-python/latest/pubsub/subscriber/api/futures.html>`_  # noqa
         """
 
         attrs['published_at'] = str(time.time())

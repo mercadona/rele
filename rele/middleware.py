@@ -44,7 +44,8 @@ class BaseMiddleware:
     def post_process_message_success(self, subscription, start_time):
         pass
 
-    def post_process_message_failure(self, subscription, exception, start_time):
+    def post_process_message_failure(
+            self, subscription, exception, start_time):
         pass
 
     def pre_worker_start(self):
