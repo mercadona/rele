@@ -1,2 +1,2 @@
 from .logging_middleware import LoggingMiddleware
-from .django_db_connections_middleware import DjangoDBMiddleware
+from .django_db_middleware import DjangoDBMiddleware
