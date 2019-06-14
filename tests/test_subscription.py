@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from google.cloud import pubsub_v1
 
+from rele.middleware import register_middleware
 from rele import Callback, Subscription, sub
 
 logger = logging.getLogger(__name__)
@@ -53,7 +54,7 @@ class TestCallback:
 
     @pytest.fixture(autouse=True)
     def mock_close_old_connections(self):
-        with patch('rele.subscription.db.'
+        with patch('rele.contrib.django_db_connections_middleware.db.'
                    'close_old_connections') as mock_old_connections:
             yield mock_old_connections
 
@@ -157,3 +158,12 @@ class TestCallback:
 
         success_log = caplog.records[-2]
         assert success_log.message == "<class 'float'>"
+
+    def test_old_django_connections_closed_when_middleware_is_used(
+            self, mock_close_old_connections, message_wrapper):
+        register_middleware(['rele.contrib.DjangoDBMiddleware'])
+        callback = Callback(sub_stub)
+        res = callback(message_wrapper)
+
+        assert res == 123
+        assert mock_close_old_connections.call_count == 2

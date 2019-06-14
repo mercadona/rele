@@ -33,7 +33,7 @@ RELE_SUB_PREFIX = 'rele'
 
 RELE_MIDDLEWARE = [
     'rele.contrib.LoggingMiddleware',
-    # 'rele.middleware.DBConnectionsMiddleware'
+    'rele.contrib.DjangoDBMiddleware',
 ]
 
 logging_config.dictConfig({

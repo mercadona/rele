@@ -2,8 +2,6 @@ import json
 import logging
 import time
 
-from django import db
-
 from .middleware import run_middleware_hook
 
 logger = logging.getLogger(__name__)
@@ -47,7 +45,6 @@ class Callback:
 
     def __call__(self, message):
         run_middleware_hook('pre_process_message', self._subscription)
-        db.close_old_connections()
         start_time = time.time()
 
         data = json.loads(message.data.decode('utf-8'))
@@ -64,7 +61,6 @@ class Callback:
             return res
         finally:
             run_middleware_hook('post_process_message')
-            db.close_old_connections()
 
 
 def sub(topic, prefix=None, suffix=None):
