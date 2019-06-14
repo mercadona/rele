@@ -33,7 +33,7 @@ class Subscription:
         if 'published_at' in kwargs:
             kwargs['published_at'] = float(kwargs['published_at'])
 
-        self._func(data, **kwargs)
+        return self._func(data, **kwargs)
 
     def __str__(self):
         return f'{self.name} - {self._func.__name__}'
@@ -53,7 +53,7 @@ class Callback:
         data = json.loads(message.data.decode('utf-8'))
 
         try:
-            self._subscription(data, **dict(message.attributes))
+            res = self._subscription(data, **dict(message.attributes))
         except Exception as e:
             run_middleware_hook('post_process_message_failure', self._subscription,
                                 e, start_time)
@@ -61,6 +61,7 @@ class Callback:
             message.ack()
             run_middleware_hook('post_process_message_success', self._subscription,
                                 start_time)
+            return res
         finally:
             run_middleware_hook('post_process_message')
             db.close_old_connections()
