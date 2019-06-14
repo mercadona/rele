@@ -49,7 +49,7 @@ class BaseMiddleware:
     def post_worker_start(self):
         pass
 
-    def pre_worker_stop(self):
+    def pre_worker_stop(self, subscriptions):
         pass
 
     def post_worker_stop(self):
