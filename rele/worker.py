@@ -18,7 +18,7 @@ class Worker:
     """
     def __init__(self, subscriptions, config):
         gc_project_id = config.gc_project_id
-        credentials = config.gc_credentials
+        credentials = config.credentials
 
         self._subscriber = Subscriber(gc_project_id, credentials)
         self._futures = []

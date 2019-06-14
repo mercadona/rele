@@ -38,7 +38,7 @@ class TestWorker:
 
     @patch('rele.contrib.django_db_middleware.db.connections.close_all')
     def test_stop_closes_db_connections(self, mock_db_close_all, config):
-        config['MIDDLEWARE'] = ['rele.contrib.DjangoDBMiddleware']
+        config.middleware = ['rele.contrib.DjangoDBMiddleware']
         register_middleware(config=config)
         subscriptions = (sub_stub,)
         worker = Worker(subscriptions, config=config)

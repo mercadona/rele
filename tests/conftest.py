@@ -2,6 +2,8 @@ import pytest
 import concurrent
 from unittest.mock import MagicMock, patch
 from google.cloud.pubsub_v1 import PublisherClient
+
+from rele.config import Config
 from rele import Publisher
 from rele.client import Subscriber
 from rele.middleware import register_middleware
@@ -19,13 +21,13 @@ def credentials():
 
 @pytest.fixture
 def config(credentials, project_id):
-    return {
+    return Config({
         'APP_NAME': 'rele',
         'SUB_PREFIX': 'rele',
         'GC_PROJECT_ID': project_id,
         'GC_CREDENTIALS': credentials,
         'MIDDLEWARE': ['rele.contrib.LoggingMiddleware']
-    }
+    })
 
 
 @pytest.fixture
@@ -35,8 +37,8 @@ def subscriber(project_id, credentials):
 
 @pytest.fixture
 def publisher(config):
-    publisher = Publisher(config.get('GC_PROJECT_ID'),
-                          config.get('GC_CREDENTIALS'))
+    publisher = Publisher(config.gc_project_id,
+                          config.credentials)
     publisher._client = MagicMock(spec=PublisherClient)
     publisher._client.publish.return_value = concurrent.futures.Future()
 

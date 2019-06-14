@@ -161,7 +161,7 @@ class TestCallback:
 
     def test_old_django_connections_closed_when_middleware_is_used(
             self, mock_close_old_connections, message_wrapper, config):
-        config['MIDDLEWARE'] = ['rele.contrib.DjangoDBMiddleware']
+        config.middleware = ['rele.contrib.DjangoDBMiddleware']
         register_middleware(config)
         callback = Callback(sub_stub)
         res = callback(message_wrapper)
