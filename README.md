@@ -4,6 +4,7 @@
 
 [![Build Status](https://travis-ci.org/mercadona/rele.svg?branch=master)](https://travis-ci.org/mercadona/rele)
 [![Documentation Status](https://readthedocs.org/projects/mercadonarele/badge/?version=latest)](https://mercadonarele.readthedocs.io/en/latest/?badge=latest)
+[![codecov](https://codecov.io/gh/mercadona/rele/branch/master/graph/badge.svg)](https://codecov.io/gh/mercadona/rele)
 
 Relé makes integration with Google PubSub easier and is ready to integrate seamlessly into any Django project.
 
