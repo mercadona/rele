@@ -8,7 +8,9 @@ logger = logging.getLogger(__name__)
 
 
 class Subscription:
+    """The Subscription class
 
+    """
     def __init__(self, func, topic, prefix='', suffix=''):
         self._func = func
         self.topic = topic
@@ -99,7 +101,7 @@ def sub(topic, prefix=None, suffix=None):
     :param suffix: string An optional suffix to the subscription name.
                    Useful when you have two subscribers in the same project that
                    are subscribed to the same topic.
-    :return: Subscription
+    :return: :class:`~rele.subscription.Subscription`
     """
 
     def decorator(func):

@@ -48,7 +48,21 @@ class Subscriber:
 
 
 class Publisher:
+    """The Publisher Class
 
+    Wraps the Google Cloud Publisher Client and handles.
+
+    It is important that this class remains a Singleton class in the process.
+    Otherwise, a memory leak will occur. To avoid this, it is strongly
+    recommended to use the :meth:`~rele.publishing.publish` method.
+
+    If the setting `USE_EMULATOR` evaluates to True, the Publisher Client will
+    not have any credentials assigned.
+
+    :param gc_project_id: string Google Cloud Project ID.
+    :param credentials: string Google Cloud Credentials.
+    :param timeout: integer, default 3.0 seconds.
+    """
     def __init__(self, gc_project_id, credentials, timeout=3.0):
         self._gc_project_id = gc_project_id
         self._timeout = timeout
@@ -58,18 +72,35 @@ class Publisher:
             self._client = pubsub_v1.PublisherClient(credentials=credentials)
 
     def publish(self, topic, data, blocking=False, **attrs):
-        """Publishes data to Pub/Sub adding a timestamp `published_at` to the attrs.
+        """Publishes message to Google PubSub topic.
 
         Usage::
 
             publisher = Publisher()
             publisher.publish('topic_name', {'foo': 'bar'})
 
+        By default, this method is non-blocking, meaning that the method does not
+        wait for the future to be returned.
+
+        If you would like to wait for the future so you can track the message later,
+        you can:
+
+        Usage::
+
+            publisher = Publisher()
+            future = publisher.publish('topic_name', {'foo': 'bar'}, blocking=True)
+
+        However, it should be noted that using `blocking=True` may incur a significant
+        performance hit.
+
+        In addition, the method adds a timestamp `published_at` to the message attrs
+        using `epoch floating point number <https://docs.python.org/3/library/time.html#time.time>`_.
+
         :param topic: string topic to publish the data.
         :param data: dict with the content of the message.
         :param blocking: boolean, default False.
         :param attrs: Extra parameters to be published.
-        :return: future
+        :return: `Future <https://googleapis.github.io/google-cloud-python/latest/pubsub/subscriber/api/futures.html>`_
         """
 
         attrs['published_at'] = str(time.time())
