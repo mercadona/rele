@@ -24,7 +24,7 @@ test: ## run tests quickly with the default Python
 	python runtests.py tests
 
 coverage: ## generates codecov report
-	python runtests.py tests --cov=rele
+	coverage run --source rele runtests.py tests
 
 release: clean install-deploy-requirements sdist ## package and upload a release
 	twine upload -u mercadonatech dist/*
