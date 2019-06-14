@@ -11,11 +11,12 @@ class Subscription:
     """The Subscription class
 
     """
-    def __init__(self, func, topic, prefix='', suffix=''):
+    def __init__(self, func, topic, prefix='', suffix='', filter_by=None):
         self._func = func
         self.topic = topic
         self._prefix = prefix
         self._suffix = suffix
+        self._filter_by = filter_by or (lambda **_: True)
 
     @property
     def name(self):
@@ -33,7 +34,10 @@ class Subscription:
         if 'published_at' in kwargs:
             kwargs['published_at'] = float(kwargs['published_at'])
 
-        return self._func(data, **kwargs)
+        if self._filter_by(**kwargs):
+            return self._func(data, **kwargs)
+
+        return None
 
     def __str__(self):
         return f'{self.name} - {self._func.__name__}'
@@ -65,7 +69,7 @@ class Callback:
             run_middleware_hook('post_process_message')
 
 
-def sub(topic, prefix=None, suffix=None):
+def sub(topic, prefix=None, suffix=None, filter_by=None):
     """Decorator function that makes declaring a PubSub Subscription simple.
 
     The Subscriber returned will automatically create and name
@@ -96,21 +100,28 @@ def sub(topic, prefix=None, suffix=None):
         def purpose_2(data, **kwargs):
              pass
 
+        @sub(topic='photo-updated',
+             filter_by=lambda **attrs: attrs.get('type') == 'landscape')
+        def sub_process_landscape_photos(data, **kwargs):
+            pass
+
     :param topic: string The topic that is being subscribed to.
     :param prefix: string An optional prefix to the subscription name.
                    Useful to namespace your subscription with your project name
     :param suffix: string An optional suffix to the subscription name.
                    Useful when you have two subscribers in the same project
                    that are subscribed to the same topic.
+    :param filter_by: function An optional function that
+                      filters the messages to be processed
+                      by the sub regarding their attributes.
     :return: :class:`~rele.subscription.Subscription`
     """
 
     def decorator(func):
-        return Subscription(
-            func=func,
-            topic=topic,
-            prefix=prefix,
-            suffix=suffix
-        )
+        return Subscription(func=func,
+                            topic=topic,
+                            prefix=prefix,
+                            suffix=suffix,
+                            filter_by=filter_by)
 
     return decorator
