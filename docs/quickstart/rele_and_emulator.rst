@@ -21,12 +21,22 @@ To be able to do that we can follow the steps below:
     export PUBSUB_EMULATOR_HOST=localhost:8085
 
 
-3) Set rele environment variables on the project settings.
+3) Set rele settings in the Django project.
 
 .. code:: python
 
-    RELE_GC_PROJECT_ID = os.environ.get('RELE_GC_PROJECT_ID', 'dummy-project-id')
-    RELE_GC_CREDENTIALS = os.environ.get('RELE_GC_CREDENTIALS')
+    # my_django_project/settings.py
+
+    RELE = {
+        'APP_NAME': 'my-awesome-app',
+        'SUB_PREFIX': 'test',
+        'GC_PROJECT_ID': 'my-awesome-project',
+        'GC_CREDENTIALS': 'my-credentials',
+        'MIDDLEWARE': [
+            'rele.contrib.LoggingMiddleware',
+            'rele.contrib.DjangoDBMiddleware',
+        ],
+    }
 
 
 In case it's necessary to create a topic manually we can add it using the django shell.
@@ -37,8 +47,9 @@ In case it's necessary to create a topic manually we can add it using the django
 
 .. code:: python
 
+    from django.conf import settings
     from google.cloud import pubsub_v1
 
     publisher_client = pubsub_v1.PublisherClient()
-    topic_path = publisher_client.topic_path(settings.RELE_GC_PROJECT_ID, 'topic_name')
+    topic_path = publisher_client.topic_path(settings.RELE.get('GC_PROJECT_ID'), 'topic_name')
     publisher_client.create_topic(topic_path)
