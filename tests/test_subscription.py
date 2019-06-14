@@ -60,14 +60,17 @@ class TestSubscription:
         assert log2.message == 'I am a task doing stuff with ID 123 (es)'
 
     def test_sub_executes_when_message_attributes_match_criteria(self, caplog):
-        sub_process_landscape_photos({'name': 'my_new_photo.jpeg'}, type='landscape')
+        data = {'name': 'my_new_photo.jpeg'}
+        sub_process_landscape_photos(data, type='landscape')
 
         assert len(caplog.records) == 1
         log = caplog.records[0]
         assert log.message == 'Received a photo of type landscape'
 
-    def test_sub_does_not_execute_when_message_attributes_dont_match_criteria(self, caplog):
-        sub_process_landscape_photos({'name': 'my_new_photo.jpeg'}, type='')
+    def test_sub_does_not_execute_when_message_attributes_dont_match_criteria(
+            self, caplog):
+        data = {'name': 'my_new_photo.jpeg'}
+        sub_process_landscape_photos(data, type='')
 
         assert len(caplog.records) == 0
 
