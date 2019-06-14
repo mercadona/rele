@@ -13,7 +13,7 @@ class Config:
 
 
 def setup(setting):
-    conf = Config(setting)
-    init_global_publisher(conf.gc_project_id, conf.credentials)
-    register_middleware(conf)
-    return conf
+    config = Config(setting)
+    init_global_publisher(config)
+    register_middleware(config)
+    return config

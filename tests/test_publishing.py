@@ -7,9 +7,9 @@ class TestPublish:
 
     @patch('rele.publishing.Publisher', autospec=True)
     def test_creates_global_publisher_when_published_called(
-            self, mock_publisher, project_id, credentials):
+            self, mock_publisher, config):
         mock_publisher.return_value = MagicMock(spec=Publisher)
-        publishing.init_global_publisher(project_id, credentials)
+        publishing.init_global_publisher(config)
         message = {'foo': 'bar'}
         publishing.publish(
             topic='order-cancelled', data=message, myattr='hello')
