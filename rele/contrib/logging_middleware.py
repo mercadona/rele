@@ -78,14 +78,5 @@ class LoggingMiddleware(BaseMiddleware):
                 }
             })
 
-    def pre_worker_start(self):
-        pass
-
-    def post_worker_start(self):
-        pass
-
     def pre_worker_stop(self, subscriptions):
         self._logger.info(f'Cleaning up {len(subscriptions)} subscription(s)...')
-
-    def post_worker_stop(self):
-        pass
