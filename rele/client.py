@@ -39,7 +39,21 @@ class Subscriber:
 
 
 class Publisher:
+    """The Publisher Class
 
+    Wraps the Google Cloud Publisher Client and handles.
+
+    It is important that this class remains a Singleton class in the process.
+    Otherwise, a memory leak will occur. To avoid this, it is strongly
+    recommended to use the :meth:`~rele.publishing.publish` method.
+
+    If the setting `USE_EMULATOR` evaluates to True, the Publisher Client will
+    not have any credentials assigned.
+
+    :param gc_project_id: string Google Cloud Project ID.
+    :param credentials: string Google Cloud Credentials.
+    :param timeout: integer, default 3.0 seconds.
+    """
     def __init__(self, gc_project_id, credentials, timeout=3.0):
         self._gc_project_id = gc_project_id
         self._timeout = timeout
