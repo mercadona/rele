@@ -54,7 +54,7 @@ class TestCallback:
 
     @pytest.fixture(autouse=True)
     def mock_close_old_connections(self):
-        with patch('rele.contrib.django_db_connections_middleware.db.'
+        with patch('rele.contrib.django_db_middleware.db.'
                    'close_old_connections') as mock_old_connections:
             yield mock_old_connections
 
