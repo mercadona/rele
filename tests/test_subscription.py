@@ -30,6 +30,16 @@ def sub_published_time_type(data, **kwargs):
     logger.info(f'{type(kwargs["published_at"])}')
 
 
+def landscape_filter(**kwargs):
+    return kwargs.get('type') == 'landscape'
+
+
+@sub(topic='photo-updated', filter_by=landscape_filter)
+def sub_process_landscape_photos(data, **kwargs):
+    photo_type = kwargs.get('type')
+    logger.info(f'Received a photo of type {photo_type}')
+
+
 class TestSubscription:
 
     def test_subs_return_subscription_objects(self):
@@ -48,6 +58,13 @@ class TestSubscription:
         assert res == 123
         log2 = caplog.records[0]
         assert log2.message == 'I am a task doing stuff with ID 123 (es)'
+
+    def test_sub_executes_when_message_attributes_match_criteria(self, caplog):
+        sub_process_landscape_photos({'name': 'my_new_photo.jpeg'}, type='landscape')
+
+        assert len(caplog.records) == 1
+        log = caplog.records[0]
+        assert log.message == 'Received a photo of type landscape'
 
 
 class TestCallback:

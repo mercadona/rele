@@ -11,11 +11,12 @@ class Subscription:
     """The Subscription class
 
     """
-    def __init__(self, func, topic, prefix='', suffix=''):
+    def __init__(self, func, topic, prefix='', suffix='', filter_by=None):
         self._func = func
         self.topic = topic
         self._prefix = prefix
         self._suffix = suffix
+        self._filter_by = filter_by
 
     @property
     def name(self):
@@ -33,7 +34,10 @@ class Subscription:
         if 'published_at' in kwargs:
             kwargs['published_at'] = float(kwargs['published_at'])
 
-        return self._func(data, **kwargs)
+        if self._filter_by:
+            self._filter_by(**kwargs)
+
+        self._func(data, **kwargs)
 
     def __str__(self):
         return f'{self.name} - {self._func.__name__}'
@@ -65,7 +69,7 @@ class Callback:
             run_middleware_hook('post_process_message')
 
 
-def sub(topic, prefix=None, suffix=None):
+def sub(topic, prefix=None, suffix=None, filter_by=None):
     """Decorator function that makes declaring a PubSub Subscription simple.
 
     The Subscriber returned will automatically create and name
@@ -106,11 +110,10 @@ def sub(topic, prefix=None, suffix=None):
     """
 
     def decorator(func):
-        return Subscription(
-            func=func,
-            topic=topic,
-            prefix=prefix,
-            suffix=suffix
-        )
+        return Subscription(func=func,
+                            topic=topic,
+                            prefix=prefix,
+                            suffix=suffix,
+                            filter_by=filter_by)
 
     return decorator
