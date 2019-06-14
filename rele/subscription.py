@@ -16,7 +16,7 @@ class Subscription:
         self.topic = topic
         self._prefix = prefix
         self._suffix = suffix
-        self._filter_by = filter_by
+        self._filter_by = filter_by or (lambda **_: True)
 
     @property
     def name(self):
