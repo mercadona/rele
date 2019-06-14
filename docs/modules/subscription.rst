@@ -1,7 +1,8 @@
-.. _subscription
+.. _ subscription
 
 Subscription
 ============
+
 
 .. automodule:: rele
    :members:
