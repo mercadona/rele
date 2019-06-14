@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core.management import BaseCommand
 from django.utils.module_loading import module_has_submodule
 
-from rele import config, Worker
+from rele import config, Worker, Subscription
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +54,7 @@ class Command(BaseCommand):
             sub_module = importlib.import_module(sub_module_path)
             for attr_name in dir(sub_module):
                 attribute = getattr(sub_module, attr_name)
-                if isinstance(attribute, rele.Subscription):
+                if isinstance(attribute, Subscription):
                     if settings.RELE_PREFIX and not attribute.prefix:
                         attribute.set_prefix(settings.RELE_SUB_PREFIX)
                     subscriptions.append(attribute)
