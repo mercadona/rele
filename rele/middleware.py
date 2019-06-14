@@ -3,6 +3,9 @@ import importlib
 _middlewares = []
 
 
+default_middleware = ['rele.contrib.LoggingMiddleware']
+
+
 def register_middleware(config):
     paths = config.middleware
     global _middlewares
