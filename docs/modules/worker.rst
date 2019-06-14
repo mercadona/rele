@@ -1,10 +1,10 @@
-.. _publish
+.. _ worker
 
-Publish
+Worker
 =======
 
 .. automodule:: rele
    :members:
 
-.. automodule:: rele.publishing
+.. automodule:: rele.worker
    :members:
