@@ -42,18 +42,10 @@ _______
 .. toctree::
     :maxdepth: 2
 
-    subscription
+    modules/subscription
     modules/client
-
-.. toctree::
-   :maxdepth: 2
-
-   publish
-
-.. toctree::
-   :maxdepth: 2
-
-   worker
+    modules/publish
+    modules/worker
 
 Indices and tables
 ==================
