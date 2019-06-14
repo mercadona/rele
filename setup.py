@@ -43,6 +43,7 @@ setup(
     url='https://github.com/mercadona/rele',
     packages=[
         'rele',
+        'rele.contrib',
         'rele.management',
         'rele.management.commands',
     ],
