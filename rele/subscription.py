@@ -35,7 +35,9 @@ class Subscription:
             kwargs['published_at'] = float(kwargs['published_at'])
 
         if self._filter_by(**kwargs):
-            self._func(data, **kwargs)
+            return self._func(data, **kwargs)
+
+        return None
 
     def __str__(self):
         return f'{self.name} - {self._func.__name__}'
