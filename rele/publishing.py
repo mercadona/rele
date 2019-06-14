@@ -3,10 +3,10 @@ from .client import Publisher
 _publisher = None
 
 
-def init_global_publisher(gc_project_id, credentials):
+def init_global_publisher(config):
     global _publisher
     if not _publisher:
-        _publisher = Publisher(gc_project_id, credentials)
+        _publisher = Publisher(config.gc_project_id, config.credentials)
     return _publisher
 
 
