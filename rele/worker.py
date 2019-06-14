@@ -1,8 +1,6 @@
 import logging
 import sys
 
-from django import db
-
 from .client import Subscriber
 from .middleware import run_middleware_hook
 from .subscription import Callback
@@ -70,5 +68,5 @@ class Worker:
         for future in self._futures:
             future.cancel()
 
-        db.connections.close_all()
+        run_middleware_hook('post_worker_stop')
         sys.exit(0)

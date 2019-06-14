@@ -10,3 +10,6 @@ class DjangoDBMiddleware(BaseMiddleware):
 
     def post_process_message(self):
         db.close_old_connections()
+
+    def post_worker_stop(self):
+        db.connections.close_all()
