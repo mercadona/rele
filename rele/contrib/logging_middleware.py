@@ -8,9 +8,9 @@ from rele.middleware import BaseMiddleware
 
 class LoggingMiddleware(BaseMiddleware):
 
-    def __init__(self):
+    def __init__(self, config):
         self._logger = None
-        self._app_name = settings.BASE_DIR.split('/')[-1]
+        self._app_name = config.get('APP_NAME')
 
     def setup(self):
         self._logger = logging.getLogger(__name__)

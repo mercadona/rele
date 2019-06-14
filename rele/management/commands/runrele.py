@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core.management import BaseCommand
 from django.utils.module_loading import module_has_submodule
 
-from rele import config, Worker
+from rele import config, Worker, Subscription
 
 logger = logging.getLogger(__name__)
 
@@ -17,17 +17,14 @@ class Command(BaseCommand):
     help = 'Start subscriber threads to consume rele topics.'
 
     def handle(self, *args, **options):
-        config.setup(settings.RELE_GC_PROJECT_ID,
-                     settings.RELE_GC_CREDENTIALS,
-                     settings.RELE_MIDDLEWARE)
-        subs = self._autodiscover_subs()
+        config.setup(config=settings.RELE)
+        sub_prefix = settings.RELE.get('SUB_PREFIX')
+        subs = self._autodiscover_subs(sub_prefix)
         self.stdout.write(f'Configuring worker with {len(subs)} '
                           f'subscription(s)...')
         for sub in subs:
             self.stdout.write(f'  {sub}')
-        worker = Worker(settings.RELE_GC_PROJECT_ID,
-                        settings.RELE_GC_CREDENTIALS,
-                        subs)
+        worker = Worker(subs, config=settings.RELE)
         worker.setup()
         worker.start()
 
@@ -48,15 +45,15 @@ class Command(BaseCommand):
                 self.stdout.write(" * Discovered subs module: %r" % module)
         return subs_modules
 
-    def _autodiscover_subs(self):
+    def _autodiscover_subs(self, sub_prefix):
         subscriptions = []
         for sub_module_path in self._discover_subs_modules():
             sub_module = importlib.import_module(sub_module_path)
             for attr_name in dir(sub_module):
                 attribute = getattr(sub_module, attr_name)
-                if isinstance(attribute, rele.Subscription):
-                    if settings.RELE_PREFIX and not attribute.prefix:
-                        attribute.set_prefix(settings.RELE_SUB_PREFIX)
+                if isinstance(attribute, Subscription):
+                    if sub_prefix and not attribute.prefix:
+                        attribute.set_prefix(sub_prefix)
                     subscriptions.append(attribute)
         return subscriptions
 

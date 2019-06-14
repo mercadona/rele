@@ -3,7 +3,8 @@ import importlib
 _middlewares = []
 
 
-def register_middleware(paths):
+def register_middleware(config):
+    paths = config.get('MIDDLEWARE')
     global _middlewares
     _middlewares = []
     for path in paths:
@@ -11,7 +12,7 @@ def register_middleware(paths):
         module_path = '.'.join(module_parts)
         module = importlib.import_module(module_path)
         middleware = getattr(module, middleware_class)()
-        middleware.setup()
+        middleware.setup(config)
         _middlewares.append(middleware)
 
 
@@ -22,7 +23,7 @@ def run_middleware_hook(hook_name, *args, **kwargs):
 
 class BaseMiddleware:
 
-    def setup(self):
+    def setup(self, config):
         pass
 
     def pre_publish(self, topic, data, attrs):
