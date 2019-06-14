@@ -36,8 +36,7 @@ def landscape_filter(**kwargs):
 
 @sub(topic='photo-updated', filter_by=landscape_filter)
 def sub_process_landscape_photos(data, **kwargs):
-    photo_type = kwargs.get('type')
-    logger.info(f'Received a photo of type {photo_type}')
+    return f'Received a photo of type {kwargs.get("type")}'
 
 
 class TestSubscription:
@@ -61,18 +60,16 @@ class TestSubscription:
 
     def test_sub_executes_when_message_attributes_match_criteria(self, caplog):
         data = {'name': 'my_new_photo.jpeg'}
-        sub_process_landscape_photos(data, type='landscape')
+        response = sub_process_landscape_photos(data, type='landscape')
 
-        assert len(caplog.records) == 1
-        log = caplog.records[0]
-        assert log.message == 'Received a photo of type landscape'
+        assert response == 'Received a photo of type landscape'
 
     def test_sub_does_not_execute_when_message_attributes_dont_match_criteria(
             self, caplog):
         data = {'name': 'my_new_photo.jpeg'}
-        sub_process_landscape_photos(data, type='')
+        response = sub_process_landscape_photos(data, type='')
 
-        assert len(caplog.records) == 0
+        assert response is None
 
 
 class TestCallback:
