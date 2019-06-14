@@ -16,7 +16,7 @@ class Subscription:
         self.topic = topic
         self._prefix = prefix
         self._suffix = suffix
-        self._filter_by = filter_by
+        self._filter_by = filter_by or (lambda **_: True)
 
     @property
     def name(self):
@@ -34,10 +34,8 @@ class Subscription:
         if 'published_at' in kwargs:
             kwargs['published_at'] = float(kwargs['published_at'])
 
-        if self._filter_by:
-            self._filter_by(**kwargs)
-
-        self._func(data, **kwargs)
+        if self._filter_by(**kwargs):
+            self._func(data, **kwargs)
 
     def __str__(self):
         return f'{self.name} - {self._func.__name__}'

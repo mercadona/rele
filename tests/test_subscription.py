@@ -66,6 +66,11 @@ class TestSubscription:
         log = caplog.records[0]
         assert log.message == 'Received a photo of type landscape'
 
+    def test_sub_does_not_execute_when_message_attributes_dont_match_criteria(self, caplog):
+        sub_process_landscape_photos({'name': 'my_new_photo.jpeg'}, type='')
+
+        assert len(caplog.records) == 0
+
 
 class TestCallback:
 
