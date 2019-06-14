@@ -4,7 +4,7 @@ _middlewares = []
 
 
 def register_middleware(config):
-    paths = config.get('MIDDLEWARE')
+    paths = config.middleware
     global _middlewares
     _middlewares = []
     for path in paths:

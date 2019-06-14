@@ -17,14 +17,13 @@ class Command(BaseCommand):
     help = 'Start subscriber threads to consume rele topics.'
 
     def handle(self, *args, **options):
-        config.setup(setting=settings.RELE)
-        sub_prefix = settings.RELE.get('SUB_PREFIX')
-        subs = self._autodiscover_subs(sub_prefix)
+        conf = config.setup(setting=settings.RELE)
+        subs = self._autodiscover_subs(conf.sub_prefix)
         self.stdout.write(f'Configuring worker with {len(subs)} '
                           f'subscription(s)...')
         for sub in subs:
             self.stdout.write(f'  {sub}')
-        worker = Worker(subs, config=settings.RELE)
+        worker = Worker(subs, config=conf)
         worker.setup()
         worker.start()
 

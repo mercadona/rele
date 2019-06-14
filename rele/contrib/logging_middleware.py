@@ -11,7 +11,7 @@ class LoggingMiddleware(BaseMiddleware):
 
     def setup(self, config):
         self._logger = logging.getLogger(__name__)
-        self._app_name = config.get('APP_NAME')
+        self._app_name = config.app_name
 
     def _build_data_metrics(self, subscription, status, start_processing_time=None):
         result = {
