@@ -111,8 +111,9 @@ def sub(topic, prefix=None, suffix=None, filter_by=None):
     :param suffix: string An optional suffix to the subscription name.
                    Useful when you have two subscribers in the same project
                    that are subscribed to the same topic.
-    :param filter_by: function An optional function that filters the messages to
-                      be processed by the sub regarding their attributes.
+    :param filter_by: function An optional function that
+                      filters the messages to be processed
+                      by the sub regarding their attributes.
     :return: :class:`~rele.subscription.Subscription`
     """
 
