@@ -46,7 +46,8 @@ class Command(BaseCommand):
         return subs_modules
 
     def _autodiscover_subs(self, sub_prefix):
-        return rele.config.load_subscriptions_from_paths(self._discover_subs_modules(), sub_prefix)
+        return rele.config.load_subscriptions_from_paths(
+            self._discover_subs_modules(), sub_prefix)
 
     def _wait_forever(self):
         self.stdout.write('Consuming subscriptions...')

@@ -18,7 +18,7 @@ clean-pyc: ## remove Python file artifacts
 	find . -name '*~' -exec rm -f {} +
 
 lint: ## check style with flake8
-	flake8 pubsub tests
+	flake8 rele tests
 
 test: ## run tests quickly with the default Python
 	python runtests.py tests

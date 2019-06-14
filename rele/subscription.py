@@ -54,12 +54,12 @@ class Callback:
         try:
             res = self._subscription(data, **dict(message.attributes))
         except Exception as e:
-            run_middleware_hook('post_process_message_failure', self._subscription,
-                                e, start_time)
+            run_middleware_hook('post_process_message_failure',
+                                self._subscription, e, start_time)
         else:
             message.ack()
-            run_middleware_hook('post_process_message_success', self._subscription,
-                                start_time)
+            run_middleware_hook('post_process_message_success',
+                                self._subscription, start_time)
             return res
         finally:
             run_middleware_hook('post_process_message')
@@ -79,7 +79,8 @@ def sub(topic, prefix=None, suffix=None):
     `project-name-lets-tell-everyone-my-suffix`.
 
     It is recommended to add `**kwargs` to your `sub` function. This will allow
-    message attributes to be sent without breaking the subscriber implementation.
+    message attributes to be sent without breaking the subscriber
+    implementation.
 
     Usage::
 
@@ -97,14 +98,19 @@ def sub(topic, prefix=None, suffix=None):
 
     :param topic: string The topic that is being subscribed to.
     :param prefix: string An optional prefix to the subscription name.
-                   Useful to namespace your subscription with your project name.
+                   Useful to namespace your subscription with your project name
     :param suffix: string An optional suffix to the subscription name.
-                   Useful when you have two subscribers in the same project that
-                   are subscribed to the same topic.
+                   Useful when you have two subscribers in the same project
+                   that are subscribed to the same topic.
     :return: :class:`~rele.subscription.Subscription`
     """
 
     def decorator(func):
-        return Subscription(func=func, topic=topic, prefix=prefix, suffix=suffix)
+        return Subscription(
+            func=func,
+            topic=topic,
+            prefix=prefix,
+            suffix=suffix
+        )
 
     return decorator
