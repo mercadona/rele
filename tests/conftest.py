@@ -45,6 +45,6 @@ def time_mock(published_at):
         yield mock
 
 
-@pytest.fixture(autouse=True, scope='session')
+@pytest.fixture(autouse=True)
 def default_middleware():
     register_middleware(['rele.contrib.LoggingMiddleware'])
