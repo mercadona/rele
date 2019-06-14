@@ -5,16 +5,9 @@ from unittest.mock import ANY, patch
 import pytest
 from google.cloud.pubsub_v1 import SubscriberClient
 
-from rele.middleware import register_middleware
-
 
 @pytest.mark.usefixtures('publisher', 'time_mock')
 class TestPublisher:
-
-    @pytest.fixture
-    def caplog(self, caplog):
-        register_middleware(['rele.contrib.LoggingMiddleware'])
-        return caplog
 
     def test_returns_future_when_published_called(
             self, published_at, publisher):
