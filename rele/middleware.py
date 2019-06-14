@@ -54,31 +54,3 @@ class BaseMiddleware:
 
     def post_worker_stop(self):
         pass
-
-
-# class DjangoDBMiddleware(BaseMiddleware):
-
-#     def pre_message_process(self):
-#         db.close_old_connections()
-
-
-# class PrometheusMiddleware(BaseMiddleware):
-
-#     def __init__(self, app_name):
-#         self._app_name = app_name
-
-#     def pre_message_publish(self):
-#         logger.info(f'Publishing to {topic}',
-#                     extra={
-#                         'pubsub_publisher_attrs': attrs,
-#                         'metrics': self._build_metrics(topic)
-#                     })
-
-#     def _build_metrics(self, topic):
-#         return {
-#             'name': 'publications',
-#             'data': {
-#                 'agent': self._app_name,
-#                 'topic': topic,
-#             }
-#         }
