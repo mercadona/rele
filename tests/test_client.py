@@ -5,10 +5,6 @@ from unittest.mock import ANY, patch
 import pytest
 from google.cloud.pubsub_v1 import SubscriberClient
 
-from rele.client import Subscriber
-
-from . import settings
-
 
 @pytest.mark.usefixtures('publisher', 'time_mock')
 class TestPublisher:
@@ -58,17 +54,6 @@ class TestPublisher:
 
 
 class TestSubscriber:
-
-    @pytest.fixture()
-    def project_id(self):
-        return settings.RELE_GC_PROJECT_ID
-
-    @pytest.fixture()
-    def subscriber(self, project_id):
-        credentials = settings.RELE_GC_CREDENTIALS
-
-        return Subscriber(project_id, credentials)
-
     @patch.object(SubscriberClient, 'create_subscription')
     def test_creates_subscription_with_default_ack_deadline_when_none_provided(
             self, _mocked_client, project_id, subscriber):
