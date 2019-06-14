@@ -16,10 +16,7 @@ class Worker:
 
     :param subscriptions: list, List of :class:`rele.subscription.Subscription`
     """
-    def __init__(self, subscriptions, config):
-        gc_project_id = config.gc_project_id
-        credentials = config.credentials
-
+    def __init__(self, subscriptions, gc_project_id, credentials):
         self._subscriber = Subscriber(gc_project_id, credentials)
         self._futures = []
         self._subscriptions = subscriptions

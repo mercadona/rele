@@ -26,7 +26,7 @@ MIDDLEWARE_CLASSES = ()
 
 RELE = {
     'APP_NAME': 'test-rele',
-    'PROJECT_ID': 'SOME-PROJECT-ID',
+    'GC_PROJECT_ID': 'SOME-PROJECT-ID',
     'GC_CREDENTIALS': service_account.Credentials.from_service_account_file(
         f'{BASE_DIR}/tests/dummy-pub-sub-credentials.json'
     ),

@@ -1,4 +1,3 @@
-import importlib
 import logging
 import signal
 import time
@@ -8,22 +7,24 @@ from django.conf import settings
 from django.core.management import BaseCommand
 from django.utils.module_loading import module_has_submodule
 
-from rele import config, Worker, Subscription
+from rele import Worker
+import rele
 
 logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    help = 'Start subscriber threads to consume rele topics.'
+    help = 'Start subscriber threads to consume Relé topics.'
 
     def handle(self, *args, **options):
-        rele_config = config.setup(setting=settings.RELE)
-        subs = self._autodiscover_subs(rele_config.sub_prefix)
+        subs = self._autodiscover_subs(settings.RELE['SUB_PREFIX'])
         self.stdout.write(f'Configuring worker with {len(subs)} '
                           f'subscription(s)...')
         for sub in subs:
             self.stdout.write(f'  {sub}')
-        worker = Worker(subs, config=rele_config)
+        worker = Worker(subs,
+                        settings.RELE['GC_PROJECT_ID'],
+                        settings.RELE['GC_CREDENTIALS'])
         worker.setup()
         worker.start()
 
@@ -45,16 +46,7 @@ class Command(BaseCommand):
         return subs_modules
 
     def _autodiscover_subs(self, sub_prefix):
-        subscriptions = []
-        for sub_module_path in self._discover_subs_modules():
-            sub_module = importlib.import_module(sub_module_path)
-            for attr_name in dir(sub_module):
-                attribute = getattr(sub_module, attr_name)
-                if isinstance(attribute, Subscription):
-                    if sub_prefix and not attribute.prefix:
-                        attribute.set_prefix(sub_prefix)
-                    subscriptions.append(attribute)
-        return subscriptions
+        return rele.config.load_subscriptions_from_paths(self._discover_subs_modules(), sub_prefix)
 
     def _wait_forever(self):
         self.stdout.write('Consuming subscriptions...')
