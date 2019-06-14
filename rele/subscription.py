@@ -100,12 +100,19 @@ def sub(topic, prefix=None, suffix=None, filter_by=None):
         def purpose_2(data, **kwargs):
              pass
 
+        @sub(topic='photo-updated',
+             filter_by=lambda **attrs: attrs.get('type') == 'landscape')
+        def sub_process_landscape_photos(data, **kwargs):
+            pass
+
     :param topic: string The topic that is being subscribed to.
     :param prefix: string An optional prefix to the subscription name.
                    Useful to namespace your subscription with your project name
     :param suffix: string An optional suffix to the subscription name.
                    Useful when you have two subscribers in the same project
                    that are subscribed to the same topic.
+    :param filter_by: function An optional function that filters the messages to
+                      be processed by the sub regarding their attributes.
     :return: :class:`~rele.subscription.Subscription`
     """
 

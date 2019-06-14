@@ -47,6 +47,6 @@ install-docs-requirements:  ## install requirements for documentation
 
 install-dev-requirements: install-requirements install-test-requirements install-docs-requirements
 
-build-html-doc:
+build-html-doc: ## builds the project documentation in HTML format
 	DJANGO_SETTINGS_MODULE=tests.settings make html -C docs
 	open docs/_build/html/index.html
