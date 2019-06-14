@@ -71,13 +71,6 @@ class TestSubscription:
 
         assert response is None
 
-    def test_sub_does_not_execute_when_message_attributes_dont_match_criteria(
-            self, caplog):
-        data = {'name': 'my_new_photo.jpeg'}
-        sub_process_landscape_photos(data, type='')
-
-        assert len(caplog.records) == 0
-
 
 class TestCallback:
 
