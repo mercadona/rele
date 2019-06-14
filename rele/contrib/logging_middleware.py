@@ -1,19 +1,17 @@
 import logging
 import time
 
-from django.conf import settings
-
 from rele.middleware import BaseMiddleware
 
 
 class LoggingMiddleware(BaseMiddleware):
 
-    def __init__(self, config):
+    def __init__(self):
         self._logger = None
-        self._app_name = config.get('APP_NAME')
 
-    def setup(self):
+    def setup(self, config):
         self._logger = logging.getLogger(__name__)
+        self._app_name = config.get('APP_NAME')
 
     def _build_data_metrics(self, subscription, status, start_processing_time=None):
         result = {

@@ -17,7 +17,7 @@ class Command(BaseCommand):
     help = 'Start subscriber threads to consume rele topics.'
 
     def handle(self, *args, **options):
-        config.setup(config=settings.RELE)
+        config.setup(setting=settings.RELE)
         sub_prefix = settings.RELE.get('SUB_PREFIX')
         subs = self._autodiscover_subs(sub_prefix)
         self.stdout.write(f'Configuring worker with {len(subs)} '

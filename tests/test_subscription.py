@@ -160,8 +160,9 @@ class TestCallback:
         assert success_log.message == "<class 'float'>"
 
     def test_old_django_connections_closed_when_middleware_is_used(
-            self, mock_close_old_connections, message_wrapper):
-        register_middleware(['rele.contrib.DjangoDBMiddleware'])
+            self, mock_close_old_connections, message_wrapper, config):
+        config['MIDDLEWARE'] = ['rele.contrib.DjangoDBMiddleware']
+        register_middleware(config)
         callback = Callback(sub_stub)
         res = callback(message_wrapper)
 
