@@ -1,4 +1,3 @@
-import importlib
 import logging
 import signal
 import time
@@ -8,26 +7,24 @@ from django.conf import settings
 from django.core.management import BaseCommand
 from django.utils.module_loading import module_has_submodule
 
-from rele import config, Worker
+from rele import Worker
+import rele
 
 logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    help = 'Start subscriber threads to consume rele topics.'
+    help = 'Start subscriber threads to consume Relé topics.'
 
     def handle(self, *args, **options):
-        config.setup(settings.RELE_GC_PROJECT_ID,
-                     settings.RELE_GC_CREDENTIALS,
-                     settings.RELE_MIDDLEWARE)
-        subs = self._autodiscover_subs()
+        subs = self._autodiscover_subs(settings.RELE['SUB_PREFIX'])
         self.stdout.write(f'Configuring worker with {len(subs)} '
                           f'subscription(s)...')
         for sub in subs:
             self.stdout.write(f'  {sub}')
-        worker = Worker(settings.RELE_GC_PROJECT_ID,
-                        settings.RELE_GC_CREDENTIALS,
-                        subs)
+        worker = Worker(subs,
+                        settings.RELE['GC_PROJECT_ID'],
+                        settings.RELE['GC_CREDENTIALS'])
         worker.setup()
         worker.start()
 
@@ -48,17 +45,8 @@ class Command(BaseCommand):
                 self.stdout.write(" * Discovered subs module: %r" % module)
         return subs_modules
 
-    def _autodiscover_subs(self):
-        subscriptions = []
-        for sub_module_path in self._discover_subs_modules():
-            sub_module = importlib.import_module(sub_module_path)
-            for attr_name in dir(sub_module):
-                attribute = getattr(sub_module, attr_name)
-                if isinstance(attribute, rele.Subscription):
-                    if settings.RELE_PREFIX and not attribute.prefix:
-                        attribute.set_prefix(settings.RELE_SUB_PREFIX)
-                    subscriptions.append(attribute)
-        return subscriptions
+    def _autodiscover_subs(self, sub_prefix):
+        return rele.config.load_subscriptions_from_paths(self._discover_subs_modules(), sub_prefix)
 
     def _wait_forever(self):
         self.stdout.write('Consuming subscriptions...')
