@@ -4,10 +4,7 @@ import os
 import re
 import sys
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from setuptools import setup, find_packages
 
 
 def get_version(*file_paths):
@@ -35,18 +32,13 @@ readme = open('README.md').read()
 setup(
     name='rele',
     version=version,
-    description="""Google PubSub for Django""",
+    description="""Relé makes integration with Google PubSub easier.""",
     long_description=readme,
     long_description_content_type='text/markdown',
     author='MercadonaTech',
     author_email='software.online@mercadona.es',
     url='https://github.com/mercadona/rele',
-    packages=[
-        'rele',
-        'rele.contrib',
-        'rele.management',
-        'rele.management.commands',
-    ],
+    packages=find_packages(exclude=("tests",)),
     include_package_data=True,
     install_requires=['django', 'djangorestframework', 'google-cloud-pubsub'],
     license='Apache Software License 2.0',
