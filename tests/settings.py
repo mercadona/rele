@@ -1,4 +1,3 @@
-# -*- coding: utf-8
 from __future__ import unicode_literals, absolute_import
 
 import os
@@ -30,8 +29,12 @@ RELE_GC_PROJECT_ID = 'SOME-PROJECT-ID'
 RELE_GC_CREDENTIALS = service_account.Credentials.from_service_account_file(
     f'{BASE_DIR}/tests/dummy-pub-sub-credentials.json'
 )
-
 RELE_SUB_PREFIX = 'rele'
+
+RELE_MIDDLEWARE = [
+    'rele.contrib.LoggingMiddleware',
+    'rele.contrib.DjangoDBMiddleware',
+]
 
 logging_config.dictConfig({
     'version': 1,
