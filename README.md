@@ -1,10 +1,21 @@
 <p align="center">
-<img src="docs/_static/rele_logo.png" align="center" height="200">
+    <img src="docs/_static/rele_logo.png" align="center" height="200">
 </p>
 
-[![Build Status](https://travis-ci.org/mercadona/rele.svg?branch=master)](https://travis-ci.org/mercadona/rele)
-[![Documentation Status](https://readthedocs.org/projects/mercadonarele/badge/?version=latest)](https://mercadonarele.readthedocs.io/en/latest/?badge=latest)
-[![codecov](https://codecov.io/gh/mercadona/rele/branch/master/graph/badge.svg)](https://codecov.io/gh/mercadona/rele)
+<p align="center">
+    <a href="https://travis-ci.org/mercadona/rele">
+        <img src="https://travis-ci.org/mercadona/rele.svg?branch=master"
+             alt="Build Status">
+    </a>
+    <a href="https://mercadonarele.readthedocs.io/en/latest/?badge=latest">
+        <img src="https://readthedocs.org/projects/mercadonarele/badge/?version=latest"
+             alt="Read the Docs">
+    </a>
+    <a href="https://codecov.io/gh/mercadona/rele">
+        <img src="https://codecov.io/gh/mercadona/rele/branch/master/graph/badge.svg"
+             alt="Code Coverage">
+    </a>
+</p>
 
 Relé makes integration with Google PubSub easier and is ready to integrate seamlessly into any Django project.
 
