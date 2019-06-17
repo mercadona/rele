@@ -37,9 +37,15 @@ def mock_tabulate():
         yield mock
 
 
+@pytest.fixture()
+def mock_discover_subs():
+    affected_path = 'rele.management.commands.document.discover_subs_modules'
+    with patch(affected_path, return_value=[__name__]) as mock:
+        yield mock
+
+
 class TestDocument:
 
-    @patch('rele.management.commands.document.discover_subs_modules', return_value=[__name__])
     def test_prints_table_when_called(self, mock_discover_subs, mock_tabulate):
         expected_headers = ['Topic', 'Subscriber(s)', 'Sub']
         expected_subscription_data = [
