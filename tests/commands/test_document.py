@@ -50,12 +50,15 @@ class TestDocument:
         expected_headers = ['Topic', 'Subscriber(s)', 'Sub']
         expected_subscription_data = [
             ('photo-updated', 'photo-updated', 'sub_process_landscape_photos'),
-            ('published-time-type', 'published-time-type', 'sub_published_time_type'),
+            ('published-time-type',
+             'published-time-type',
+             'sub_published_time_type'),
             ('some-cool-topic', 'rele-some-cool-topic', 'sub_stub'),
             ('some-fancy-topic', 'some-fancy-topic', 'sub_fancy_stub'),
         ]
 
         call_command('document')
 
-        mock_tabulate.assert_called_once_with(expected_subscription_data, headers=expected_headers)
+        mock_tabulate.assert_called_once_with(expected_subscription_data,
+                                              headers=expected_headers)
         mock_discover_subs.assert_called_once()
