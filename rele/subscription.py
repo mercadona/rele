@@ -41,13 +41,16 @@ class Subscription:
         if 'published_at' in kwargs:
             kwargs['published_at'] = float(kwargs['published_at'])
 
-        if self._filter_by and not self._filter_by(kwargs):
+        if self._filter_returns_false(kwargs):
             return
 
         return self._func(data, **kwargs)
 
     def __str__(self):
         return f'{self.name} - {self._func.__name__}'
+
+    def _filter_returns_false(self, kwargs):
+        return self._filter_by and not self._filter_by(kwargs)
 
 
 class Callback:
