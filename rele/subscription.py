@@ -41,7 +41,7 @@ class Subscription:
         if 'published_at' in kwargs:
             kwargs['published_at'] = float(kwargs['published_at'])
 
-        if self._filter_by and not self._filter_by(**kwargs):
+        if self._filter_by and not self._filter_by(kwargs):
             return
 
         return self._func(data, **kwargs)

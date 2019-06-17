@@ -30,7 +30,7 @@ def sub_published_time_type(data, **kwargs):
     logger.info(f'{type(kwargs["published_at"])}')
 
 
-def landscape_filter(**kwargs):
+def landscape_filter(kwargs):
     return kwargs.get('type') == 'landscape'
 
 
