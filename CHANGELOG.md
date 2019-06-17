@@ -3,6 +3,7 @@ Changelog
 
 `0.4.0` (Unreleased)
 
+* Set `DEFAULT_ACK_DEADLINE` (#49)
 * Filter by message attributes (#66) 
 * All Relé settings are defined in a dict (#60)
 
