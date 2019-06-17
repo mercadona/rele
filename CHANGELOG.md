@@ -25,8 +25,8 @@ RELE = {
     ),
     'GC_PROJECT_ID': 'dummy-project-id',
     'MIDDLEWARE': [
-        'rele.contrib.DjangoDBMiddleware',
         'rele.contrib.LoggingMiddleware',
+        'rele.contrib.DjangoDBMiddleware',
     ],
     'SUB_PREFIX': 'delivery',
     'APP_NAME': 'delivery',
