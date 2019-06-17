@@ -1,4 +1,4 @@
-__version__ = '0.3.1'
+__version__ = '0.4.0'
 
 from .client import Publisher, Subscriber  # noqa
 from .config import setup  # noqa
