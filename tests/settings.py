@@ -35,7 +35,6 @@ RELE = {
         'rele.contrib.LoggingMiddleware',
         'rele.contrib.DjangoDBMiddleware',
     ],
-    'FILTER_SUBS_BY': lambda attrs: attrs.get('type') == 'foo'
 }
 
 logging_config.dictConfig({
