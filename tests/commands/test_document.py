@@ -30,10 +30,15 @@ def sub_process_landscape_photos(data, **kwargs):
     return f'Received a photo of type {kwargs.get("type")}'
 
 
+@pytest.fixture()
+def mock_tabulate():
+    affected_path = 'rele.management.commands.document.tabulate'
+    with patch(affected_path, autospec=True, return_value='') as mock:
+        yield mock
+
+
 class TestDocument:
 
-    @patch('rele.management.commands.document.tabulate',
-           autospec=True, return_value='')
     @patch('rele.management.commands.document.discover_subs_modules', return_value=[__name__])
     def test_prints_table_when_called(self, mock_discover_subs, mock_tabulate):
         expected_headers = ['Topic', 'Subscriber(s)', 'Sub']
