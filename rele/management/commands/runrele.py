@@ -49,7 +49,7 @@ class Command(BaseCommand):
         return rele.config.load_subscriptions_from_paths(
             self._discover_subs_modules(),
             settings.RELE['SUB_PREFIX'],
-            settings.RELE['FILTER_SUBS_BY'])
+            settings.RELE.get('FILTER_SUBS_BY'))
 
     def _wait_forever(self):
         self.stdout.write('Consuming subscriptions...')
