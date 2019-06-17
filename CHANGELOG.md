@@ -1,11 +1,11 @@
 Changelog
 =========
 
-`0.4.0` (Unreleased)
+`0.4.0` (2019-06-17)
 
 * Set `DEFAULT_ACK_DEADLINE` (#49)
 * Filter by message attributes (#66) 
-* All Relé settings are defined in a dict (#60)
+* BREAKING: All Relé settings are defined in a dict (#60)
 
 Old structure:
 ```python
