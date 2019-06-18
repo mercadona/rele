@@ -8,7 +8,7 @@ from django.core.management import BaseCommand
 from rele import Worker
 import rele
 
-from .discover import discover_subs_modules
+from rele.management.discover import discover_subs_modules
 
 logger = logging.getLogger(__name__)
 

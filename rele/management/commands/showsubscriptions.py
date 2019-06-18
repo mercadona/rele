@@ -3,7 +3,7 @@ from tabulate import tabulate
 
 from rele.config import load_subscriptions_from_paths
 
-from .discover import discover_subs_modules
+from rele.management.discover import discover_subs_modules
 
 
 class Command(BaseCommand):
