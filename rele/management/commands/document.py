@@ -17,6 +17,7 @@ def discover_subs_modules():
 
 
 class Command(BaseCommand):
+    help = 'List information about the subscriptions registered using Relé.'
 
     def handle(self, *args, **options):
         headers = ['Topic', 'Subscriber(s)', 'Sub']
