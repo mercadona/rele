@@ -31,13 +31,6 @@ def sub_process_landscape_photos(data, **kwargs):
 
 
 @pytest.fixture()
-def mock_tabulate():
-    affected_path = 'rele.management.commands.showsubscriptions.tabulate'
-    with patch(affected_path, autospec=True, return_value='') as mock:
-        yield mock
-
-
-@pytest.fixture()
 def mock_discover_subs():
     affected_path = 'rele.management.commands.showsubscriptions.discover_subs_modules'
     with patch(affected_path, return_value=[__name__]) as mock:
@@ -46,19 +39,15 @@ def mock_discover_subs():
 
 class TestShowSubscriptions:
 
-    def test_prints_table_when_called(self, mock_discover_subs, mock_tabulate):
-        expected_headers = ['Topic', 'Subscriber(s)', 'Sub']
-        expected_subscription_data = [
-            ('photo-updated', 'photo-updated', 'sub_process_landscape_photos'),
-            ('published-time-type',
-             'published-time-type',
-             'sub_published_time_type'),
-            ('some-cool-topic', 'rele-some-cool-topic', 'sub_stub'),
-            ('some-fancy-topic', 'some-fancy-topic', 'sub_fancy_stub'),
-        ]
-
+    def test_prints_table_when_called(self, capfd, mock_discover_subs):
         call_command('showsubscriptions')
 
-        mock_tabulate.assert_called_once_with(expected_subscription_data,
-                                              headers=expected_headers)
         mock_discover_subs.assert_called_once()
+        captured = capfd.readouterr()
+        assert captured.out == '''Topic                Subscriber(s)         Sub
+-------------------  --------------------  ----------------------------
+photo-updated        photo-updated         sub_process_landscape_photos
+published-time-type  published-time-type   sub_published_time_type
+some-cool-topic      rele-some-cool-topic  sub_stub
+some-fancy-topic     some-fancy-topic      sub_fancy_stub
+'''
