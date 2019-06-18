@@ -70,8 +70,8 @@ RELE = {
         'rele.contrib.LoggingMiddleware',
         'rele.contrib.DjangoDBMiddleware',
     ],
-    'SUB_PREFIX': 'delivery-sub',
-    'APP_NAME': 'delivery',
+    'SUB_PREFIX': 'mysubprefix',
+    'APP_NAME': 'myappname',
 }
 ```
 
