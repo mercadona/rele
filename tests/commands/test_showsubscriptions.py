@@ -32,19 +32,19 @@ def sub_process_landscape_photos(data, **kwargs):
 
 @pytest.fixture()
 def mock_tabulate():
-    affected_path = 'rele.management.commands.document.tabulate'
+    affected_path = 'rele.management.commands.showsubscriptions.tabulate'
     with patch(affected_path, autospec=True, return_value='') as mock:
         yield mock
 
 
 @pytest.fixture()
 def mock_discover_subs():
-    affected_path = 'rele.management.commands.document.discover_subs_modules'
+    affected_path = 'rele.management.commands.showsubscriptions.discover_subs_modules'
     with patch(affected_path, return_value=[__name__]) as mock:
         yield mock
 
 
-class TestDocument:
+class TestShowSubscriptions:
 
     def test_prints_table_when_called(self, mock_discover_subs, mock_tabulate):
         expected_headers = ['Topic', 'Subscriber(s)', 'Sub']
@@ -57,7 +57,7 @@ class TestDocument:
             ('some-fancy-topic', 'some-fancy-topic', 'sub_fancy_stub'),
         ]
 
-        call_command('document')
+        call_command('showsubscriptions')
 
         mock_tabulate.assert_called_once_with(expected_subscription_data,
                                               headers=expected_headers)
