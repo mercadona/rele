@@ -1,5 +1,7 @@
 Changelog
 =========
+`0.4.1` Unreleased
+* Ability to install app only with rele
 
 `0.4.0` (2019-06-17)
 

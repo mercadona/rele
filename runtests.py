@@ -6,6 +6,9 @@ import os
 import sys
 
 import django
+from unittest.mock import patch
+
+from rele.apps import ReleConfig
 
 
 class PytestTestRunner(object):
@@ -44,7 +47,10 @@ def run_tests(*test_args):
         test_args = ['tests']
 
     os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.settings'
-    django.setup()
+
+    with patch.object(ReleConfig, 'ready'):
+        django.setup()
+
     test_runner = PytestTestRunner()
     failures = test_runner.run_tests(test_args)
     sys.exit(bool(failures))
