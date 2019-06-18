@@ -1,7 +1,8 @@
 Changelog
 =========
-`0.4.1` Unreleased
+`0.4.1` (2019-06-18)
 * Ability to install app only with rele
+* Define default filter_by in settings.RELE
 
 `0.4.0` (2019-06-17)
 
