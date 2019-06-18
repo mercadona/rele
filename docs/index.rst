@@ -32,9 +32,11 @@ Quickstart
 __________
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
-   quickstart/rele_and_emulator
+    quickstart/rele_and_emulator
+    quickstart/filters
+
 
 Modules
 _______

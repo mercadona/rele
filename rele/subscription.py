@@ -16,7 +16,7 @@ class Subscription:
         self.topic = topic
         self._prefix = prefix
         self._suffix = suffix
-        self._filter_by = filter_by or (lambda **_: True)
+        self._filter_by = filter_by
 
     @property
     def name(self):
@@ -30,17 +30,27 @@ class Subscription:
     def set_prefix(self, prefix):
         self._prefix = prefix
 
+    @property
+    def filter_by(self):
+        return self._filter_by
+
+    def set_filter_by(self, filter_by):
+        self._filter_by = filter_by
+
     def __call__(self, data, **kwargs):
         if 'published_at' in kwargs:
             kwargs['published_at'] = float(kwargs['published_at'])
 
-        if self._filter_by(**kwargs):
-            return self._func(data, **kwargs)
+        if self._filter_returns_false(kwargs):
+            return
 
-        return None
+        return self._func(data, **kwargs)
 
     def __str__(self):
         return f'{self.name} - {self._func.__name__}'
+
+    def _filter_returns_false(self, kwargs):
+        return self._filter_by and not self._filter_by(kwargs)
 
 
 class Callback:

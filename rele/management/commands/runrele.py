@@ -17,7 +17,7 @@ class Command(BaseCommand):
     help = 'Start subscriber threads to consume Relé topics.'
 
     def handle(self, *args, **options):
-        subs = self._autodiscover_subs(settings.RELE['SUB_PREFIX'])
+        subs = self._autodiscover_subs()
         self.stdout.write(f'Configuring worker with {len(subs)} '
                           f'subscription(s)...')
         for sub in subs:
@@ -45,9 +45,11 @@ class Command(BaseCommand):
                 self.stdout.write(" * Discovered subs module: %r" % module)
         return subs_modules
 
-    def _autodiscover_subs(self, sub_prefix):
+    def _autodiscover_subs(self):
         return rele.config.load_subscriptions_from_paths(
-            self._discover_subs_modules(), sub_prefix)
+            self._discover_subs_modules(),
+            settings.RELE['SUB_PREFIX'],
+            settings.RELE.get('FILTER_SUBS_BY'))
 
     def _wait_forever(self):
         self.stdout.write('Consuming subscriptions...')
