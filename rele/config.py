@@ -22,7 +22,9 @@ def setup(setting):
     return config
 
 
-def load_subscriptions_from_paths(sub_module_paths, sub_prefix=None):
+def load_subscriptions_from_paths(
+        sub_module_paths, sub_prefix=None, filter_by=None):
+
     subscriptions = []
     for sub_module_path in sub_module_paths:
         sub_module = importlib.import_module(sub_module_path)
@@ -31,5 +33,9 @@ def load_subscriptions_from_paths(sub_module_paths, sub_prefix=None):
             if isinstance(attribute, Subscription):
                 if sub_prefix and not attribute.prefix:
                     attribute.set_prefix(sub_prefix)
+
+                if filter_by and not attribute.filter_by:
+                    attribute.set_filter_by(filter_by)
+
                 subscriptions.append(attribute)
     return subscriptions
