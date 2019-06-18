@@ -32,7 +32,8 @@ def sub_process_landscape_photos(data, **kwargs):
 
 @pytest.fixture()
 def mock_discover_subs():
-    affected_path = 'rele.management.commands.showsubscriptions.discover_subs_modules'
+    affected_path = ('rele.management.commands.showsubscriptions'
+                     '.discover_subs_modules')
     with patch(affected_path, return_value=[__name__]) as mock:
         yield mock
 
