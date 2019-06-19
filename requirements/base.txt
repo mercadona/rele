@@ -1,3 +1,4 @@
 django
 djangorestframework
 google-cloud-pubsub
+tabulate
