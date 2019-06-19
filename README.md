@@ -57,11 +57,23 @@ INSTALLED_APPS = [
 ]
 ```
 
-You'll also need to set up two variables with the Google Cloud credentials:
-`RELE_GC_CREDENTIALS` and `RELE_GC_PROJECT_ID`.
+You'll also need to set up your settings.
 
-You can use `RELE_SUB_PREFIX` to add a prefix to all your subscription names, for
-example, with your project name.
+```python
+from google.oauth2 import service_account
+RELE = {
+    'GC_CREDENTIALS': service_account.Credentials.from_service_account_file(
+        'rele/settings/dummy-credentials.json'
+    ),
+    'GC_PROJECT_ID': 'dummy-project-id',
+    'MIDDLEWARE': [
+        'rele.contrib.LoggingMiddleware',
+        'rele.contrib.DjangoDBMiddleware',
+    ],
+    'SUB_PREFIX': 'mysubprefix',
+    'APP_NAME': 'myappname',
+}
+```
 
 NOTE: Ensure that [`CONN_MAX_AGE`](https://docs.djangoproject.com/en/2.2/ref/settings/#conn-max-age)
 is set to 0 in your worker. The Django default value is 0.
