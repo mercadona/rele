@@ -16,6 +16,7 @@ class Worker:
 
     :param subscriptions: list :class:`~rele.subscription.Subscription`
     """
+
     def __init__(self, subscriptions, gc_project_id, credentials):
         self._subscriber = Subscriber(gc_project_id, credentials)
         self._futures = []
@@ -28,8 +29,7 @@ class Worker:
         re-created. Therefore, it is idempotent.
         """
         for subscription in self._subscriptions:
-            self._subscriber.create_subscription(subscription.name,
-                                                 subscription.topic)
+            self._subscriber.create_subscription(subscription.name, subscription.topic)
 
     def start(self):
         """Begin consuming all subscriptions.
@@ -42,10 +42,11 @@ class Worker:
         for a graceful shutdown of the worker.
         """
         for subscription in self._subscriptions:
-            self._futures.append(self._subscriber.consume(
-                subscription_name=subscription.name,
-                callback=Callback(subscription)
-            ))
+            self._futures.append(
+                self._subscriber.consume(
+                    subscription_name=subscription.name, callback=Callback(subscription)
+                )
+            )
 
     def stop(self, signal=None, frame=None):
         """Manage the shutdown process of the worker.
@@ -64,9 +65,9 @@ class Worker:
         :param signal: Needed for `signal.signal <https://docs.python.org/3/library/signal.html#signal.signal>`_  # noqa
         :param frame: Needed for `signal.signal <https://docs.python.org/3/library/signal.html#signal.signal>`_  # noqa
         """
-        run_middleware_hook('pre_worker_stop', self._subscriptions)
+        run_middleware_hook("pre_worker_stop", self._subscriptions)
         for future in self._futures:
             future.cancel()
 
-        run_middleware_hook('post_worker_stop')
+        run_middleware_hook("post_worker_stop")
         sys.exit(0)

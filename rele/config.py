@@ -6,13 +6,12 @@ from .publishing import init_global_publisher
 
 
 class Config:
-
     def __init__(self, setting):
-        self.gc_project_id = setting.get('GC_PROJECT_ID')
-        self.credentials = setting.get('GC_CREDENTIALS')
-        self.app_name = setting.get('APP_NAME')
-        self.sub_prefix = setting.get('SUB_PREFIX')
-        self.middleware = setting.get('MIDDLEWARE', default_middleware)
+        self.gc_project_id = setting.get("GC_PROJECT_ID")
+        self.credentials = setting.get("GC_CREDENTIALS")
+        self.app_name = setting.get("APP_NAME")
+        self.sub_prefix = setting.get("SUB_PREFIX")
+        self.middleware = setting.get("MIDDLEWARE", default_middleware)
 
 
 def setup(setting):
@@ -22,8 +21,7 @@ def setup(setting):
     return config
 
 
-def load_subscriptions_from_paths(
-        sub_module_paths, sub_prefix=None, filter_by=None):
+def load_subscriptions_from_paths(sub_module_paths, sub_prefix=None, filter_by=None):
 
     subscriptions = []
     for sub_module_path in sub_module_paths:
