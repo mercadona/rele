@@ -1,3 +1,4 @@
+dist: xenial
 language: python
 
 services:
@@ -8,6 +9,7 @@ addons:
 
 python:
   - "3.6"
+  - "3.7"
   - "3.7-dev"
 
 sudo: false
