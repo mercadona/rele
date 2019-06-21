@@ -1,18 +1,17 @@
 dist: xenial
-language: python
+sudo: false
+notifications:
+  email: false
 
 services:
   - postgresql
-
 addons:
   postgresql: "9.6"
 
+language: python
 python:
   - "3.6"
   - "3.7"
-  - "3.7-dev"
-
-sudo: false
 
 install:
   - make install-requirements
@@ -26,5 +25,3 @@ script:
   - make coverage
   - codecov
 
-notifications:
-  email: false

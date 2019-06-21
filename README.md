@@ -22,6 +22,9 @@
         <img src="https://codecov.io/gh/mercadona/rele/branch/master/graph/badge.svg"
              alt="Code Coverage">
     </a>
+    <a href="https://pypi.org/project/rele/">
+        <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/rele.svg">
+    </a>
 </p>
 
 
