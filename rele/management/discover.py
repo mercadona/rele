@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 def discover_subs_modules():
-    logger.debug('Autodiscovering subs...')
+    logger.debug("Autodiscovering subs...")
     app_configs = apps.get_app_configs()
     subs_modules = []
     for conf in app_configs:

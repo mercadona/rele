@@ -11,7 +11,8 @@ class Subscription:
     """The Subscription class
 
     """
-    def __init__(self, func, topic, prefix='', suffix='', filter_by=None):
+
+    def __init__(self, func, topic, prefix="", suffix="", filter_by=None):
         self._func = func
         self.topic = topic
         self._prefix = prefix
@@ -21,7 +22,7 @@ class Subscription:
     @property
     def name(self):
         name_parts = [self._prefix, self.topic, self._suffix]
-        return '-'.join(filter(lambda x: x, name_parts))
+        return "-".join(filter(lambda x: x, name_parts))
 
     @property
     def prefix(self):
@@ -38,8 +39,8 @@ class Subscription:
         self._filter_by = filter_by
 
     def __call__(self, data, **kwargs):
-        if 'published_at' in kwargs:
-            kwargs['published_at'] = float(kwargs['published_at'])
+        if "published_at" in kwargs:
+            kwargs["published_at"] = float(kwargs["published_at"])
 
         if self._filter_returns_false(kwargs):
             return
@@ -47,36 +48,37 @@ class Subscription:
         return self._func(data, **kwargs)
 
     def __str__(self):
-        return f'{self.name} - {self._func.__name__}'
+        return f"{self.name} - {self._func.__name__}"
 
     def _filter_returns_false(self, kwargs):
         return self._filter_by and not self._filter_by(kwargs)
 
 
 class Callback:
-
     def __init__(self, subscription, suffix=None):
         self._subscription = subscription
         self._suffix = suffix
 
     def __call__(self, message):
-        run_middleware_hook('pre_process_message', self._subscription)
+        run_middleware_hook("pre_process_message", self._subscription)
         start_time = time.time()
 
-        data = json.loads(message.data.decode('utf-8'))
+        data = json.loads(message.data.decode("utf-8"))
 
         try:
             res = self._subscription(data, **dict(message.attributes))
         except Exception as e:
-            run_middleware_hook('post_process_message_failure',
-                                self._subscription, e, start_time)
+            run_middleware_hook(
+                "post_process_message_failure", self._subscription, e, start_time
+            )
         else:
             message.ack()
-            run_middleware_hook('post_process_message_success',
-                                self._subscription, start_time)
+            run_middleware_hook(
+                "post_process_message_success", self._subscription, start_time
+            )
             return res
         finally:
-            run_middleware_hook('post_process_message')
+            run_middleware_hook("post_process_message")
 
 
 def sub(topic, prefix=None, suffix=None, filter_by=None):
@@ -128,10 +130,8 @@ def sub(topic, prefix=None, suffix=None, filter_by=None):
     """
 
     def decorator(func):
-        return Subscription(func=func,
-                            topic=topic,
-                            prefix=prefix,
-                            suffix=suffix,
-                            filter_by=filter_by)
+        return Subscription(
+            func=func, topic=topic, prefix=prefix, suffix=suffix, filter_by=filter_by
+        )
 
     return decorator
