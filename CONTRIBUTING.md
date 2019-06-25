@@ -26,6 +26,7 @@ It is always best to have community input before proposing changes that may late
 [rebase](https://github.com/edx/edx-platform/wiki/How-to-Rebase-a-Pull-Request) on top of it.
 * Include the related issue's number so that Github closes _automagically_ 
 when the PR is merged. Example: `Fix #12`
+* Add yourself to the [AUTHORS](./AUTHORS.md) file
 
 ## Issues
 
