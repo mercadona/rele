@@ -34,5 +34,5 @@ def publish(topic, data, **kwargs):
     :return: None
     """
     if not _publisher:
-        raise ValueError('init_global_publisher must be called first.')
+        raise ValueError("init_global_publisher must be called first.")
     _publisher.publish(topic, data, **kwargs)

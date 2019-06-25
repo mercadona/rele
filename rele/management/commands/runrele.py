@@ -14,17 +14,16 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    help = 'Start subscriber threads to consume Relé topics.'
+    help = "Start subscriber threads to consume Relé topics."
 
     def handle(self, *args, **options):
         subs = self._autodiscover_subs()
-        self.stdout.write(f'Configuring worker with {len(subs)} '
-                          f'subscription(s)...')
+        self.stdout.write(f"Configuring worker with {len(subs)} " f"subscription(s)...")
         for sub in subs:
-            self.stdout.write(f'  {sub}')
-        worker = Worker(subs,
-                        settings.RELE['GC_PROJECT_ID'],
-                        settings.RELE['GC_CREDENTIALS'])
+            self.stdout.write(f"  {sub}")
+        worker = Worker(
+            subs, settings.RELE["GC_PROJECT_ID"], settings.RELE["GC_CREDENTIALS"]
+        )
         worker.setup()
         worker.start()
 
@@ -37,10 +36,11 @@ class Command(BaseCommand):
     def _autodiscover_subs(self):
         return rele.config.load_subscriptions_from_paths(
             discover_subs_modules(),
-            settings.RELE['SUB_PREFIX'],
-            settings.RELE.get('FILTER_SUBS_BY'))
+            settings.RELE["SUB_PREFIX"],
+            settings.RELE.get("FILTER_SUBS_BY"),
+        )
 
     def _wait_forever(self):
-        self.stdout.write('Consuming subscriptions...')
+        self.stdout.write("Consuming subscriptions...")
         while True:
             time.sleep(1)
