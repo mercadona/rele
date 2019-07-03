@@ -33,27 +33,27 @@ classes with the following features:
     * A **python manage.py runrele** management command
     * DB connection handling middleware
 
-The Basics
-__________
+Guides
+______
 
 .. toctree::
     :maxdepth: 2
 
-    modules/configuration
-    quickstart/rele_and_emulator
-    quickstart/filters
+    guides/rele_and_emulator
+    guides/filters
 
 
-Modules
-_______
+API Docs
+________
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
-    modules/subscription
-    modules/client
-    modules/publish
-    modules/worker
+    api/settings
+    api/subscription
+    api/client
+    api/publish
+    api/worker
 
 Indices and tables
 ==================
