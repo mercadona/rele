@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Rele's documentation!
+Welcome to Relé's documentation!
 ================================
 
 Release v\ |version|. (`Installation <https://github.com/mercadona/rele>`_)
@@ -16,38 +16,44 @@ Release v\ |version|. (`Installation <https://github.com/mercadona/rele>`_)
 
 -------------------
 
-**Relé** makes integration with Google PubSub easier and is ready to integrate seamlessly into any Django project.
+**Relé** makes integration with Google PubSub easier and is ready to
+integrate seamlessly into any Django project.
 
 Motivation and Features
 _______________________
-The Publish-Subscribe pattern and specifically the Google Cloud PubSub library are very powerful tools but you can easily cut your fingers on it. Relé makes integration seamless by providing Publisher, Subscriber and Worker classes with the following features:
+The Publish-Subscribe pattern and specifically the Google Cloud PubSub library are
+very powerful tools but you can easily cut your fingers on it. Relé
+makes integration seamless by providing Publisher, Subscriber and Worker
+classes with the following features:
 
     * A **publish** function
     * A sub decorator to declare subscribers
     * **Publisher** and **Subscription** classes
     * A **Worker** class
     * A **python manage.py runrele** management command
+    * DB connection handling middleware
 
-Quickstart
-__________
-
-.. toctree::
-    :maxdepth: 2
-
-    quickstart/rele_and_emulator
-    quickstart/filters
-
-
-Modules
-_______
+Guides
+______
 
 .. toctree::
     :maxdepth: 2
 
-    modules/subscription
-    modules/client
-    modules/publish
-    modules/worker
+    guides/rele_and_emulator
+    guides/filters
+
+
+API Docs
+________
+
+.. toctree::
+    :maxdepth: 1
+
+    api/settings
+    api/subscription
+    api/client
+    api/publish
+    api/worker
 
 Indices and tables
 ==================
