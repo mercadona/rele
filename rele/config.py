@@ -11,8 +11,11 @@ class Config:
     The settings.RELE dictionary will be parsed into an easily
     accessible object containing all the necessary constants.
 
-    :param setting: dict setting
+    If no middleware is set, the *default_middleware* will be added.
+
+    :param setting: dict :ref:`settings <_settings>`
     """
+
     def __init__(self, setting):
         self.gc_project_id = setting.get("GC_PROJECT_ID")
         self.credentials = setting.get("GC_CREDENTIALS")
