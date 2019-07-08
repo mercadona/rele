@@ -1,3 +1,4 @@
+import json
 import os
 import concurrent
 from unittest.mock import ANY, patch
@@ -43,6 +44,19 @@ class TestPublisher:
         publisher._client.publish.assert_called_with(
             ANY, b'{"foo": "bar"}', published_at=str(published_at)
         )
+
+    def test_publishes_data_with_custom_encoder(self, publisher):
+        import decimal
+
+        class DecimalEncoder(json.JSONEncoder):
+            def default(self, obj):
+                if isinstance(obj, decimal.Decimal):
+                    return float(obj)
+
+        publisher._encoder = DecimalEncoder
+        publisher.publish(topic="order-cancelled", data=decimal.Decimal("1.20"))
+
+        publisher._client.publish.assert_called_with(ANY, b"1.2", published_at=ANY)
 
 
 class TestSubscriber:
