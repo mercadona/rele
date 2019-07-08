@@ -53,7 +53,7 @@ class Subscriber:
 class Publisher:
     """The Publisher Class
 
-    Wraps the Google Cloud Publisher Client and handles.
+    Wraps the Google Cloud Publisher Client and handles encoding of the data.
 
     It is important that this class remains a Singleton class in the process.
     Otherwise, a memory leak will occur. To avoid this, it is strongly
@@ -64,12 +64,16 @@ class Publisher:
 
     :param gc_project_id: string Google Cloud Project ID.
     :param credentials: string Google Cloud Credentials.
+    :param encoder: A valid `json.encoder.JSONEncoder subclass <https://docs.python.org/3/library/json.html#json.JSONEncoder>`_  # noqa
     :param timeout: integer, default 3.0 seconds.
     """
 
-    def __init__(self, gc_project_id, credentials, timeout=3.0):
+    def __init__(
+        self, gc_project_id, credentials, encoder=encoders.JSONEncoder, timeout=3.0
+    ):
         self._gc_project_id = gc_project_id
         self._timeout = timeout
+        self._encoder = encoder
         if USE_EMULATOR:
             self._client = pubsub_v1.PublisherClient()
         else:
@@ -110,7 +114,7 @@ class Publisher:
 
         attrs["published_at"] = str(time.time())
         run_middleware_hook("pre_publish", topic, data, attrs)
-        payload = json.dumps(data, cls=encoders.JSONEncoder).encode("utf-8")
+        payload = json.dumps(data, cls=self._encoder).encode("utf-8")
         topic_path = self._client.topic_path(self._gc_project_id, topic)
         future = self._client.publish(topic_path, payload, **attrs)
         if not blocking:
