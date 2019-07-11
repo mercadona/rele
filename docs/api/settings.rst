@@ -27,6 +27,7 @@ Example::
         ],
         'SUB_PREFIX': 'mysubprefix',
         'APP_NAME': 'myappname',
+        'ENCODER': encoders.CustomEncoderClass,
     }
 
 
@@ -99,4 +100,4 @@ Default: `rest_framework.utils.encoders.JSONEncoder <https://github.com/encode/d
 serializing your Python data structure to a json object when publishing.
 
 NOTE: The default encoder class is subject to change in an upcoming release. It is
-strongly advised that you use this setting explicitly. 
+strongly advised that you use this setting explicitly.
