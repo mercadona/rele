@@ -1,8 +1,9 @@
 import importlib
 
-from rele.subscription import Subscription
+from .client import DEFAULT_ENCODER
 from .middleware import register_middleware, default_middleware
 from .publishing import init_global_publisher
+from .subscription import Subscription
 
 
 class Config:
@@ -22,6 +23,7 @@ class Config:
         self.app_name = setting.get("APP_NAME")
         self.sub_prefix = setting.get("SUB_PREFIX")
         self.middleware = setting.get("MIDDLEWARE", default_middleware)
+        self.encoder = setting.get("ENCODER", DEFAULT_ENCODER)
 
 
 def setup(setting):

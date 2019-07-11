@@ -13,6 +13,7 @@ from rele.middleware import run_middleware_hook
 logger = logging.getLogger(__name__)
 
 USE_EMULATOR = True if os.environ.get("PUBSUB_EMULATOR_HOST") else False
+DEFAULT_ENCODER = encoders.JSONEncoder
 
 
 class Subscriber:
@@ -69,7 +70,7 @@ class Publisher:
     """
 
     def __init__(
-        self, gc_project_id, credentials, encoder=encoders.JSONEncoder, timeout=3.0
+        self, gc_project_id, credentials, encoder=DEFAULT_ENCODER, timeout=3.0
     ):
         self._gc_project_id = gc_project_id
         self._timeout = timeout
