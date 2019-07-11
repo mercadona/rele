@@ -86,3 +86,17 @@ The application name.
 
 This should be unique to all the services running in the application ecosystem. It is used by
 the LoggingMiddleware and Prometheus integration.
+
+
+``ENCODER``
+------------------
+
+**Optional**
+
+Default: `rest_framework.utils.encoders.JSONEncoder <https://github.com/encode/django-rest-framework/blob/master/rest_framework/utils/encoders.py#L17>`_
+
+`Encoder class <https://docs.python.org/3/library/json.html#json.JSONEncoder>`_ to use for
+serializing your Python data structure to a json object when publishing.
+
+NOTE: The default encoder class is subject to change in an upcoming release. It is
+strongly advised that you use this setting explicitly. 
