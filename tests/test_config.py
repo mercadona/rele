@@ -39,13 +39,13 @@ class TestConfig:
             "GC_PROJECT_ID": project_id,
             "GC_CREDENTIALS": credentials,
             "MIDDLEWARE": ["rele.contrib.DjangoDBMiddleware"],
-            "ENCODER": custom_encoder
+            "ENCODER": custom_encoder,
         }
 
         config = Config(settings)
 
-        assert config.app_name == 'rele'
-        assert config.sub_prefix == 'rele'
+        assert config.app_name == "rele"
+        assert config.sub_prefix == "rele"
         assert config.gc_project_id == project_id
         assert config.credentials == credentials
         assert config.middleware == ["rele.contrib.DjangoDBMiddleware"]

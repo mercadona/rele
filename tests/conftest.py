@@ -71,4 +71,5 @@ def custom_encoder():
         def default(self, obj):
             if isinstance(obj, decimal.Decimal):
                 return float(obj)
+
     return DecimalEncoder

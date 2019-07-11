@@ -6,9 +6,11 @@ _publisher = None
 def init_global_publisher(config):
     global _publisher
     if not _publisher:
-        _publisher = Publisher(gc_project_id=config.gc_project_id,
-                               credentials=config.credentials,
-                               encoder=config.encoder)
+        _publisher = Publisher(
+            gc_project_id=config.gc_project_id,
+            credentials=config.credentials,
+            encoder=config.encoder,
+        )
     return _publisher
 
 
