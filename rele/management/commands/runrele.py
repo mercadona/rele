@@ -1,4 +1,5 @@
 import logging
+import os
 import signal
 import time
 
@@ -22,7 +23,12 @@ class Command(BaseCommand):
         for sub in subs:
             self.stdout.write(f"  {sub}")
         worker = Worker(
-            subs, settings.RELE["GC_PROJECT_ID"], settings.RELE["GC_CREDENTIALS"]
+            subs,
+            settings.RELE["GC_PROJECT_ID"],
+            settings.RELE["GC_CREDENTIALS"],
+            settings.RELE.get(
+                "DEFAULT_ACK_DEADLINE", os.environ.get("DEFAULT_ACK_DEADLINE", 60)
+            ),
         )
         worker.setup()
         worker.start()

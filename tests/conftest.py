@@ -36,7 +36,7 @@ def config(credentials, project_id):
 
 @pytest.fixture
 def subscriber(project_id, credentials):
-    return Subscriber(project_id, credentials)
+    return Subscriber(project_id, credentials, 60)
 
 
 @pytest.fixture
