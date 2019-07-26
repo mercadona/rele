@@ -68,9 +68,7 @@ class Publisher:
     :param timeout: integer, default 3.0 seconds.
     """
 
-    def __init__(
-        self, gc_project_id, credentials, encoder, timeout=3.0
-    ):
+    def __init__(self, gc_project_id, credentials, encoder, timeout=3.0):
         self._gc_project_id = gc_project_id
         self._timeout = timeout
         self._encoder = encoder
