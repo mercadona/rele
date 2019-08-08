@@ -1,3 +1,5 @@
+import decimal
+import json
 import pytest
 import concurrent
 from unittest.mock import MagicMock, patch
@@ -39,7 +41,7 @@ def subscriber(project_id, credentials):
 
 @pytest.fixture
 def publisher(config):
-    publisher = Publisher(config.gc_project_id, config.credentials)
+    publisher = Publisher(config.gc_project_id, config.credentials, config.encoder)
     publisher._client = MagicMock(spec=PublisherClient)
     publisher._client.publish.return_value = concurrent.futures.Future()
 
@@ -61,3 +63,13 @@ def time_mock(published_at):
 @pytest.fixture(autouse=True)
 def default_middleware(config):
     register_middleware(config=config)
+
+
+@pytest.fixture
+def custom_encoder():
+    class DecimalEncoder(json.JSONEncoder):
+        def default(self, obj):
+            if isinstance(obj, decimal.Decimal):
+                return float(obj)
+
+    return DecimalEncoder

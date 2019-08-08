@@ -75,6 +75,7 @@ RELE = {
     ],
     'SUB_PREFIX': 'mysubprefix',
     'APP_NAME': 'myappname',
+    'ENCODER_PATH': 'rest_framework.utils.encoders.JSONEncoder',
 }
 ```
 

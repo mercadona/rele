@@ -6,13 +6,13 @@ from contextlib import suppress
 
 from google.api_core import exceptions
 from google.cloud import pubsub_v1
-from rest_framework.utils import encoders
 
 from rele.middleware import run_middleware_hook
 
 logger = logging.getLogger(__name__)
 
 USE_EMULATOR = True if os.environ.get("PUBSUB_EMULATOR_HOST") else False
+DEFAULT_ENCODER_PATH = "rest_framework.utils.encoders.JSONEncoder"
 
 
 class Subscriber:
@@ -68,9 +68,7 @@ class Publisher:
     :param timeout: integer, default 3.0 seconds.
     """
 
-    def __init__(
-        self, gc_project_id, credentials, encoder=encoders.JSONEncoder, timeout=3.0
-    ):
+    def __init__(self, gc_project_id, credentials, encoder, timeout=3.0):
         self._gc_project_id = gc_project_id
         self._timeout = timeout
         self._encoder = encoder
