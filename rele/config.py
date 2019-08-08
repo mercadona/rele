@@ -24,8 +24,9 @@ class Config:
         self.app_name = setting.get("APP_NAME")
         self.sub_prefix = setting.get("SUB_PREFIX")
         self.middleware = setting.get("MIDDLEWARE", default_middleware)
-        self.ack_deadline = setting.get("DEFAULT_ACK_DEADLINE",
-                                        os.environ.get("DEFAULT_ACK_DEADLINE", 60))
+        self.ack_deadline = setting.get(
+            "DEFAULT_ACK_DEADLINE", os.environ.get("DEFAULT_ACK_DEADLINE", 60)
+        )
         self._encoder_path = setting.get("ENCODER_PATH", DEFAULT_ENCODER_PATH)
 
     @property

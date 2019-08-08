@@ -5,8 +5,8 @@ import time
 from django.conf import settings
 from django.core.management import BaseCommand
 
-from rele import Worker
 import rele
+from rele import Worker
 from rele.config import Config
 
 from rele.management.discover import discover_subs_modules
