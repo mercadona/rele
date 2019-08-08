@@ -1,5 +1,4 @@
 import logging
-import os
 import signal
 import time
 
@@ -8,6 +7,7 @@ from django.core.management import BaseCommand
 
 from rele import Worker
 import rele
+from rele.config import Config
 
 from rele.management.discover import discover_subs_modules
 
@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     help = "Start subscriber threads to consume Relé topics."
+    config = Config(settings.RELE)
 
     def handle(self, *args, **options):
         subs = self._autodiscover_subs()
@@ -24,11 +25,9 @@ class Command(BaseCommand):
             self.stdout.write(f"  {sub}")
         worker = Worker(
             subs,
-            settings.RELE["GC_PROJECT_ID"],
-            settings.RELE["GC_CREDENTIALS"],
-            settings.RELE.get(
-                "DEFAULT_ACK_DEADLINE", os.environ.get("DEFAULT_ACK_DEADLINE", 60)
-            ),
+            self.config.gc_project_id,
+            self.config.credentials,
+            self.config.ack_deadline,
         )
         worker.setup()
         worker.start()
@@ -42,7 +41,7 @@ class Command(BaseCommand):
     def _autodiscover_subs(self):
         return rele.config.load_subscriptions_from_paths(
             discover_subs_modules(),
-            settings.RELE["SUB_PREFIX"],
+            self.config.sub_prefix,
             settings.RELE.get("FILTER_SUBS_BY"),
         )
 
