@@ -28,6 +28,7 @@ Example::
         'SUB_PREFIX': 'mysubprefix',
         'APP_NAME': 'myappname',
         'ENCODER': 'rest_framework.utils.encoders.JSONEncoder',
+        'ACK_DEADLINE': 120,
     }
 
 
@@ -99,5 +100,20 @@ Default: `rest_framework.utils.encoders.JSONEncoder <https://github.com/encode/d
 `Encoder class path <https://docs.python.org/3/library/json.html#json.JSONEncoder>`_ to use for
 serializing your Python data structure to a json object when publishing.
 
-NOTE: The default encoder class is subject to change in an upcoming release. It is
-advised that you use this setting explicitly.
+.. note:: The default encoder class is subject to change in an upcoming release.
+    It is advised that you use this setting explicitly.
+
+``ACK_DEADLINE``
+------------------
+
+**Optional**
+
+Ack deadline for all subscribers in seconds.
+
+
+
+.. seealso:: The `Google Pub/Sub documentation <https://cloud.google.com/pubsub/docs/subscriber>`_
+    which states that *The subscriber has a configurable, limited amount of time --
+    known as the ackDeadline -- to acknowledge the outstanding message. Once the deadline
+    passes, the message is no longer considered outstanding, and Cloud Pub/Sub will attempt
+    to redeliver the message.*
