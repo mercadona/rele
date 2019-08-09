@@ -16,21 +16,15 @@ DEFAULT_ENCODER_PATH = "rest_framework.utils.encoders.JSONEncoder"
 
 
 class Subscriber:
-    DEFAULT_ACK_DEADLINE = 60
-
-    def __init__(self, gc_project_id, credentials):
+    def __init__(self, gc_project_id, credentials, default_ack_deadline):
         self._gc_project_id = gc_project_id
+        self._ack_deadline = default_ack_deadline
         if USE_EMULATOR:
             self._client = pubsub_v1.SubscriberClient()
         else:
             self._client = pubsub_v1.SubscriberClient(credentials=credentials)
 
-    def get_default_ack_deadline(self):
-        return int(os.environ.get("DEFAULT_ACK_DEADLINE", self.DEFAULT_ACK_DEADLINE))
-
-    def create_subscription(self, subscription, topic, ack_deadline_seconds=None):
-        ack_deadline_seconds = ack_deadline_seconds or self.get_default_ack_deadline()
-
+    def create_subscription(self, subscription, topic):
         subscription_path = self._client.subscription_path(
             self._gc_project_id, subscription
         )
@@ -40,7 +34,7 @@ class Subscriber:
             self._client.create_subscription(
                 name=subscription_path,
                 topic=topic_path,
-                ack_deadline_seconds=ack_deadline_seconds,
+                ack_deadline_seconds=self._ack_deadline,
             )
 
     def consume(self, subscription_name, callback):

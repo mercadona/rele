@@ -1,3 +1,4 @@
+import os
 from unittest.mock import ANY, patch
 
 import pytest
@@ -11,13 +12,17 @@ def sub_stub(data, **kwargs):
     print(f"I am a task doing stuff.")
 
 
+@pytest.fixture
+def worker(project_id, credentials):
+    subscriptions = (sub_stub,)
+    return Worker(subscriptions, project_id, credentials, 60)
+
+
 class TestWorker:
     @patch.object(Subscriber, "consume")
     def test_start_subscribes_and_saves_futures_when_subscriptions_given(
-        self, mock_consume, project_id, credentials
+        self, mock_consume, worker
     ):
-        subscriptions = (sub_stub,)
-        worker = Worker(subscriptions, project_id, credentials)
         worker.start()
 
         mock_consume.assert_called_once_with(
@@ -26,10 +31,8 @@ class TestWorker:
 
     @patch.object(Subscriber, "create_subscription")
     def test_setup_creates_subscription_when_topic_given(
-        self, mock_create_subscription, project_id, credentials
+        self, mock_create_subscription, worker
     ):
-        subscriptions = (sub_stub,)
-        worker = Worker(subscriptions, project_id, credentials)
         worker.setup()
 
         topic = "some-cool-topic"
@@ -37,15 +40,22 @@ class TestWorker:
         mock_create_subscription.assert_called_once_with(subscription, topic)
 
     @patch("rele.contrib.django_db_middleware.db.connections.close_all")
-    def test_stop_closes_db_connections(
-        self, mock_db_close_all, config, project_id, credentials
-    ):
+    def test_stop_closes_db_connections(self, mock_db_close_all, config, worker):
         config.middleware = ["rele.contrib.DjangoDBMiddleware"]
         register_middleware(config=config)
-        subscriptions = (sub_stub,)
-        worker = Worker(subscriptions, project_id, credentials)
 
         with pytest.raises(SystemExit):
             worker.stop()
 
         mock_db_close_all.assert_called_once()
+
+    @patch.object(Subscriber, "create_subscription")
+    def test_creates_subscription_with_custom_ack_deadline_from_environment(
+        self, mock_create_subscription, project_id, credentials
+    ):
+        subscriptions = (sub_stub,)
+        custom_ack_deadline = 234
+        worker = Worker(subscriptions, project_id, credentials, custom_ack_deadline)
+        worker.setup()
+
+        assert worker._subscriber._ack_deadline == custom_ack_deadline
