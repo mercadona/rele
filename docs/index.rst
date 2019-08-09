@@ -39,8 +39,9 @@ ______
 .. toctree::
     :maxdepth: 2
 
-    guides/rele_and_emulator
+    guides/basics
     guides/filters
+    guides/rele_and_emulator
 
 
 API Docs

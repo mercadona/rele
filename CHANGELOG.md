@@ -1,7 +1,7 @@
 Changelog
 =========
 
-`0.5.0` (TBD)
+`0.5.0` (2019-08-08)
 * `python manage.py showsubscriptions` command
 * Configurable ENCODER setting
 * Move DEFAULT_ACK_DEADLINE to the RELE config
