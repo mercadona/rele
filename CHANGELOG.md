@@ -1,5 +1,12 @@
 Changelog
 =========
+
+`0.5.0` (TBD)
+* `python manage.py showsubscriptions` command
+* Configurable ENCODER setting
+* Move DEFAULT_ACK_DEADLINE to the RELE config
+* More documentation
+
 `0.4.1` (2019-06-18)
 * Ability to install app only with rele
 * Define default filter_by in settings.RELE
