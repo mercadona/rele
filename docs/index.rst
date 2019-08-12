@@ -30,14 +30,15 @@ classes with the following features:
     * A sub decorator to declare subscribers
     * **Publisher** and **Subscription** classes
     * A **Worker** class
-    * A **python manage.py runrele** management command
+    * ``python manage.py runrele`` management command
+    * ``python manage.py showsubscriptions`` management command
     * DB connection handling middleware
 
 Guides
 ______
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
     guides/basics
     guides/filters
