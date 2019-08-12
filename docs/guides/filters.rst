@@ -1,13 +1,13 @@
-Filters
-=======
+Filtering Messages by Attributes
+================================
 
 Filter can be used to execute a subscription with specific parameters.
 There's two types of filters, global or passing a filter_by parameter in the
 subscription.
 
 
-Filters by `filter_by` parameter
-________________________________
+`filter_by` parameter
+_____________________
 
 This filter is a function that is supposed to return a boolean and this function
 is passed as parameter `filter_by` in the subscription.
