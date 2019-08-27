@@ -1,5 +1,6 @@
+import json
+
 import pytest
-from rest_framework.utils.encoders import JSONEncoder
 
 from rele.config import load_subscriptions_from_paths, Config
 from rele import sub
@@ -60,4 +61,4 @@ class TestConfig:
         assert config.gc_project_id is None
         assert config.credentials is None
         assert config.middleware == ["rele.contrib.LoggingMiddleware"]
-        assert config.encoder == JSONEncoder
+        assert config.encoder == json.JSONEncoder
