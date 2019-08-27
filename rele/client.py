@@ -16,6 +16,15 @@ DEFAULT_ENCODER_PATH = "rest_framework.utils.encoders.JSONEncoder"
 
 
 class Subscriber:
+    """The Subscriber Class.
+
+    For convenience, this class wraps the creation and consumption of a topic
+    subscription.
+
+    :param gc_project_id: string Google Cloud Project ID.
+    :param credentials: string Google Cloud Credentials.
+    :param default_ack_deadline: int Ack Deadline defined in settings
+    """
     def __init__(self, gc_project_id, credentials, default_ack_deadline):
         self._gc_project_id = gc_project_id
         self._ack_deadline = default_ack_deadline
@@ -25,6 +34,16 @@ class Subscriber:
             self._client = pubsub_v1.SubscriberClient(credentials=credentials)
 
     def create_subscription(self, subscription, topic):
+        """Handles creating the subscription when it does not exists.
+
+        This makes it easier to deploy a worker and forget about the
+        subscription side of things. The subscription must
+        have a topic to subscribe to. Which means that the topic must be
+        created manually before the worker is started.
+
+        :param subscription: str Subscription name
+        :param topic: str Topic name to subscribe
+        """
         subscription_path = self._client.subscription_path(
             self._gc_project_id, subscription
         )
@@ -38,6 +57,12 @@ class Subscriber:
             )
 
     def consume(self, subscription_name, callback):
+        """Begin listening to topic from the SubscriberClient.
+        
+        :param subscription_name: str Subscription name
+        :param callback: Function which act on a topic message
+        :return: `Future <https://googleapis.github.io/google-cloud-python/latest/pubsub/subscriber/api/futures.html>`_  # noqa
+        """
         subscription_path = self._client.subscription_path(
             self._gc_project_id, subscription_name
         )
