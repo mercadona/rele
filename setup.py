@@ -39,12 +39,7 @@ setup(
     url="https://github.com/mercadona/rele",
     packages=find_packages(exclude=("tests",)),
     include_package_data=True,
-    install_requires=[
-        "django",
-        "djangorestframework",
-        "google-cloud-pubsub",
-        "tabulate",
-    ],
+    install_requires=["django", "google-cloud-pubsub", "tabulate"],
     license="Apache Software License 2.0",
     zip_safe=False,
     keywords="rele",
