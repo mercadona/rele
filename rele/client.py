@@ -12,7 +12,7 @@ from rele.middleware import run_middleware_hook
 logger = logging.getLogger(__name__)
 
 USE_EMULATOR = True if os.environ.get("PUBSUB_EMULATOR_HOST") else False
-DEFAULT_ENCODER_PATH = "rest_framework.utils.encoders.JSONEncoder"
+DEFAULT_ENCODER_PATH = "json.JSONEncoder"
 
 
 class Subscriber:
