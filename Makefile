@@ -5,7 +5,7 @@
 help:
 	@grep '^[a-zA-Z]' $(MAKEFILE_LIST) | sort | awk -F ':.*?## ' 'NF==2 {printf "\033[36m  %-25s\033[0m %s\n", $$1, $$2}'
 
-clean: clean-build clean-pyc
+clean: clean-build clean-pyc clean-tests
 
 clean-build: ## remove build artifacts
 	rm -fr build/
@@ -16,6 +16,10 @@ clean-pyc: ## remove Python file artifacts
 	find . -name '*.pyc' -exec rm -f {} +
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f {} +
+
+clean-tests: ## remove pytest artifacts
+	rm -fr .pytest_cache/
+	rm -fr htmlcov/
 
 lint: ## check style with flake8
 	black . --check --diff
