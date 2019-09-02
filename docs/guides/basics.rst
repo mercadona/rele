@@ -93,6 +93,22 @@ Additionally, if you added message attributes to your Message, you can access th
                 It is a {kwargs['type']} picture with the
                 rotation {kwargs['rotation']}")
 
+
+Message attributes
+------------------
+
+It might be helpful to access to particular message attributes in your
+subscriber. One attribute that _rele_ adds by default is `published_at`.
+To access this attribute you can use `kwargs` keyword.
+
+.. code:: python
+
+    @sub(topic='photo-uploaded')
+    def photo_uploaded(data, **kwargs):
+        print(f"Someone has uploaded an image to our service,
+                and it was published at {kwargs['published_at'}.")
+
+
 Consuming
 _________
 
