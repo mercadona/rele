@@ -15,6 +15,7 @@ python:
 
 install:
   - make install-requirements
+  - make install-django-requirements
   - make install-test-requirements
 
 before_script:
