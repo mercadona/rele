@@ -24,11 +24,7 @@ SITE_ID = 1
 
 MIDDLEWARE_CLASSES = ()
 
-DATABASES = {
-    'default': {
-        'CONN_MAX_AGE': 0,
-    }
-}
+DATABASES = {"default": {"CONN_MAX_AGE": 0}}
 
 RELE = {
     "APP_NAME": "test-rele",
