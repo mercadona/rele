@@ -67,6 +67,10 @@ The DjangoDBMiddleware will take care of opening and closing connections to the 
 and after your callbacks are executed. If this is left out, it is highly probable that
 your database will run out of connections in your connection pool.
 
+The LoggingMiddleware will take care of logging subscription information before and after the callback is executed.
+The subscription message is only logged when an exception was raised while processing it.
+If you would like to log this message in every case, you should create a middleware of your own.
+
 
 ``SUB_PREFIX``
 ------------------

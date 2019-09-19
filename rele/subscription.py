@@ -60,7 +60,7 @@ class Callback:
         self._suffix = suffix
 
     def __call__(self, message):
-        run_middleware_hook("pre_process_message", self._subscription)
+        run_middleware_hook("pre_process_message", self._subscription, message)
         start_time = time.time()
 
         data = json.loads(message.data.decode("utf-8"))
@@ -69,12 +69,16 @@ class Callback:
             res = self._subscription(data, **dict(message.attributes))
         except Exception as e:
             run_middleware_hook(
-                "post_process_message_failure", self._subscription, e, start_time
+                "post_process_message_failure",
+                self._subscription,
+                e,
+                start_time,
+                message,
             )
         else:
             message.ack()
             run_middleware_hook(
-                "post_process_message_success", self._subscription, start_time
+                "post_process_message_success", self._subscription, start_time, message
             )
             return res
         finally:

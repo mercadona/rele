@@ -40,7 +40,7 @@ class LoggingMiddleware(BaseMiddleware):
             },
         )
 
-    def pre_process_message(self, subscription):
+    def pre_process_message(self, subscription, message):
         self._logger.debug(
             f"Start processing message for {subscription}",
             extra={
@@ -51,7 +51,7 @@ class LoggingMiddleware(BaseMiddleware):
             },
         )
 
-    def post_process_message_success(self, subscription, start_time):
+    def post_process_message_success(self, subscription, start_time, message):
         self._logger.info(
             f"Successfully processed message for {subscription}",
             extra={
@@ -64,7 +64,9 @@ class LoggingMiddleware(BaseMiddleware):
             },
         )
 
-    def post_process_message_failure(self, subscription, exception, start_time):
+    def post_process_message_failure(
+        self, subscription, exception, start_time, message
+    ):
         self._logger.error(
             f"Exception raised while processing message "
             f"for {subscription}: {str(exception.__class__.__name__)}",
@@ -75,7 +77,8 @@ class LoggingMiddleware(BaseMiddleware):
                     "data": self._build_data_metrics(
                         subscription, "failed", start_time
                     ),
-                }
+                },
+                "subscription_message": message,
             },
         )
 
