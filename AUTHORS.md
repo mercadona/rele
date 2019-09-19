@@ -10,3 +10,4 @@ Thank you to all the contributors to Relé!
 * Jose Antonio Navarro (@jonasae)
 * Antonio Bustos Rodriguez (@antoniobusrod)
 * David de la Iglesia (@ddelaiglesia) for the Logo!
+* Santiago Lanús (@sanntt)

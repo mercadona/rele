@@ -34,16 +34,18 @@ class BaseMiddleware:
     def post_publish(self, topic):
         pass
 
-    def pre_process_message(self, subscription):
+    def pre_process_message(self, subscription, message):
         pass
 
     def post_process_message(self):
         pass
 
-    def post_process_message_success(self, subscription, start_time):
+    def post_process_message_success(self, subscription, start_time, message):
         pass
 
-    def post_process_message_failure(self, subscription, exception, start_time):
+    def post_process_message_failure(
+        self, subscription, exception, start_time, message
+    ):
         pass
 
     def pre_worker_start(self):

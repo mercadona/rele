@@ -174,6 +174,7 @@ class TestCallback:
                 "duration_seconds": pytest.approx(0.5, abs=0.5),
             },
         }
+        assert failed_log.subscription_message == message_wrapper
 
     def test_published_time_as_message_attribute(self, message_wrapper, caplog):
         callback = Callback(sub_published_time_type)
