@@ -5,6 +5,11 @@ from rele.middleware import BaseMiddleware
 
 
 class LoggingMiddleware(BaseMiddleware):
+    """Default logging middleware.
+
+    Logging format has been configured for Prometheus.
+    """
+
     def __init__(self):
         self._logger = None
 
