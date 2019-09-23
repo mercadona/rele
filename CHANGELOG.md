@@ -1,6 +1,12 @@
 Changelog
 =========
 
+`0.6.0` (2019-09-21)
+* BREAKING: Remove drf as a dependency (#91)
+* Add message as a parameter for middleware hooks (#99)
+* Check setting.CONN_MAX_AGE and warn when not 0 (#97)
+* More documentation
+
 `0.5.0` (2019-08-08)
 * `python manage.py showsubscriptions` command
 * Configurable ENCODER setting
