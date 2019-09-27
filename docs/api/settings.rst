@@ -27,7 +27,7 @@ Example::
         ],
         'SUB_PREFIX': 'mysubprefix',
         'APP_NAME': 'myappname',
-        'ENCODER': 'rest_framework.utils.encoders.JSONEncoder',
+        'ENCODER_PATH': 'rest_framework.utils.encoders.JSONEncoder',
         'ACK_DEADLINE': 120,
     }
 
