@@ -1,6 +1,10 @@
 Changelog
 =========
 
+`0.7.0` (2019-09-28)
+* BREAKING: Remove Django as a dependency (#95)
+* More documentation
+
 `0.6.0` (2019-09-21)
 * BREAKING: Remove drf as a dependency (#91)
 * Add message as a parameter for middleware hooks (#99)
