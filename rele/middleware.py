@@ -25,37 +25,67 @@ def run_middleware_hook(hook_name, *args, **kwargs):
 
 
 class BaseMiddleware:
+    """Base class for middleware.  The default implementations
+    for all hooks are no-ops and subclasses may implement whatever
+    subset of hooks they like.
+    """
+
     def setup(self, config):
-        pass
+        """Called when middleware is registered.
+        :param config: Relé Config object
+        """
 
     def pre_publish(self, topic, data, attrs):
-        pass
+        """Called before Publisher sends message.
+        :param topic:
+        :param data:
+        :param attrs:
+        """
 
     def post_publish(self, topic):
-        pass
+        """Called after Publisher sends message.
+        :param topic:
+        """
 
     def pre_process_message(self, subscription, message):
-        pass
+        """Called when the Worker receives a message.
+        :param subscription:
+        :param message:
+        """
 
     def post_process_message(self):
-        pass
+        """Called after the Worker processes the message.
+        """
 
     def post_process_message_success(self, subscription, start_time, message):
-        pass
+        """Called after the message has been successfully processed.
+        :param subscription:
+        :param start_time:
+        :param message:
+        """
 
     def post_process_message_failure(
         self, subscription, exception, start_time, message
     ):
-        pass
+        """Called after the message has been unsuccessfully processed.
+        :param subscription:
+        :param exception:
+        :param start_time:
+        :param message:
+        """
 
     def pre_worker_start(self):
-        pass
+        """Called before the Worker process starts up.
+        """
 
     def post_worker_start(self):
-        pass
+        """Called after the Worker process starts up.
+        """
 
     def pre_worker_stop(self, subscriptions):
-        pass
+        """Called before the Worker process shuts down.
+        """
 
     def post_worker_stop(self):
-        pass
+        """Called after the Worker process shuts down.
+        """
