@@ -50,7 +50,10 @@ install-deploy-requirements:  ## install requirements for deployment
 install-docs-requirements:  ## install requirements for documentation
 	pip install -r requirements/docs.txt
 
-install-dev-requirements: install-requirements install-test-requirements install-docs-requirements
+install-django-requirements: ## install django requirements
+	pip install -r requirements/django.txt
+
+install-dev-requirements: install-requirements install-test-requirements install-docs-requirements install-django-requirements
 
 build-html-doc: ## builds the project documentation in HTML format
 	DJANGO_SETTINGS_MODULE=tests.settings make html -C docs
