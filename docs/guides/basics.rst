@@ -33,8 +33,7 @@ To configure Relé, our settings may look something like:
         'APP_NAME': 'photo-imaging',
     }
 
-.. important:: If you plan on having your subscriber connect to the database, it is vital
-that the Djagno settings.CONN_MAX_AGE is set to 0.
+.. important:: If you plan on having your subscriber connect to the database, it is vital that the Django settings.CONN_MAX_AGE is set to 0.
 
 
 Once the topic is created and our Django application has the proper configuration defined
