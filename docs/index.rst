@@ -56,6 +56,7 @@ ________
     api/client
     api/publish
     api/worker
+    api/middleware
 
 Indices and tables
 ==================
