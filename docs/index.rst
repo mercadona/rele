@@ -24,15 +24,15 @@ _______________________
 The Publish-Subscribe pattern and specifically the Google Cloud PubSub library are
 very powerful tools but you can easily cut your fingers on it. Relé
 makes integration seamless by providing Publisher, Subscriber and Worker
-classes with the following features:
+classes.
 
-    * A **publish** function
-    * A sub decorator to declare subscribers
-    * **Publisher** and **Subscription** classes
-    * A **Worker** class
-    * ``python manage.py runrele`` management command
-    * ``python manage.py showsubscriptions`` management command
-    * DB connection handling middleware
+Out of the box, Relé includes the following features:
+
+    * Simple publishing API
+    * Declarative subscribers
+    * Scalable Worker
+    * Ready to install Django integration
+    * And much more...
 
 Guides
 ______
