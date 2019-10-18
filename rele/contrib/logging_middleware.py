@@ -46,7 +46,7 @@ class LoggingMiddleware(BaseMiddleware):
         )
 
     def pre_process_message(self, subscription, message):
-        self._logger.debug(
+        self._logger.info(
             f"Start processing message for {subscription}",
             extra={
                 "metrics": {
