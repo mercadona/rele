@@ -1,3 +1,5 @@
+.. _basics:
+
 Basic Usage
 ===========
 
@@ -9,7 +11,7 @@ In order to get started using Relé, we must have a PubSub topic in which to pub
 Via the `Google Cloud Console <https://cloud.google.com/pubsub/docs/quickstart-console>`_
 we create one, named ``photo-upload``.
 
-To authenticate our pubslisher and subscriber, follow the
+To authenticate our publisher and subscriber, follow the
 `Google guide <https://cloud.google.com/pubsub/docs/authentication>`_ on
 how to obtain your authentication account.
 
@@ -20,31 +22,27 @@ To configure Relé, our settings may look something like:
 
 .. code:: python
 
+    # settings.py
+    import rele
     from google.oauth2 import service_account
+
     RELE = {
         'GC_CREDENTIALS': service_account.Credentials.from_service_account_file(
-            'photo_project/settings/dummy-credentials.json'
+            'credentials.json'
         ),
-        'GC_PROJECT_ID': 'photo-imaging',
-        'MIDDLEWARE': [
-            'rele.contrib.LoggingMiddleware',
-            'rele.contrib.DjangoDBMiddleware',
-        ],
-        'APP_NAME': 'photo-imaging',
+        'GC_PROJECT_ID': 'photo-uploading-app',
     }
-
-.. important:: If you plan on having your subscriber connect to the database, it is vital that the Django settings.CONN_MAX_AGE is set to 0.
-
-
-Once the topic is created and our Django application has the proper configuration defined
-in :doc:`settings.RELE <../api/settings>`, we can start publishing to that topic.
-
+    config = rele.config.setup(RELE)
 
 .. code:: python
 
     import rele
+    from settings import config
 
-    data = {'google_bucket_location': '/google-bucket/photos/123.jpg'}
+    data = {
+        'customer_id': 123,
+        'location': '/google-bucket/photos/123.jpg'
+    }
 
     rele.publish(topic='photo-uploaded', data=data)
 
@@ -62,6 +60,7 @@ If you need to pass in additional attributes to the Message object, you can simp
                  type='profile',
                  rotation='landscape')
 
+.. _subscribing:
 
 Subscribing
 ___________
@@ -71,12 +70,13 @@ In an app directory, we create our sub function within our subs.py file.
 
 .. code:: python
 
+    # subs.py
     from rele import sub
 
     @sub(topic='photo-uploaded')
     def photo_uploaded(data, **kwargs):
-        print(f"Someone has uploaded an image to our service,
-                and we stored it at {data['google_bucket_location'}.")
+        print(f"Customer {data['customer_id']} has uploaded an image to our service,
+                and we stored it at {data['location'}.")
 
 Once the sub is created, we can start our worker by running ``python manage.py runrele``.
 
@@ -87,8 +87,8 @@ Additionally, if you added message attributes to your Message, you can access th
 
     @sub(topic='photo-uploaded')
     def photo_uploaded(data, **kwargs):
-        print(f"Someone has uploaded an image to our service,
-                and we stored it at {data['google_bucket_location'}.
+        print(f"Customer {data['customer_id']} has uploaded an image to our service,
+                and we stored it at {data['location'}.
                 It is a {kwargs['type']} picture with the
                 rotation {kwargs['rotation']}")
 
@@ -96,7 +96,7 @@ Additionally, if you added message attributes to your Message, you can access th
 Message attributes
 ------------------
 
-It might be helpful to access to particular message attributes in your
+It might be helpful to access particular message attributes in your
 subscriber. One attribute that _rele_ adds by default is `published_at`.
 To access this attribute you can use `kwargs` keyword.
 
@@ -104,13 +104,33 @@ To access this attribute you can use `kwargs` keyword.
 
     @sub(topic='photo-uploaded')
     def photo_uploaded(data, **kwargs):
-        print(f"Someone has uploaded an image to our service,
+        print(f"Customer {data['customer_id']} has uploaded an image to our service,
                 and it was published at {kwargs['published_at'}.")
 
+
+.. _consuming:
 
 Consuming
 _________
 
-The Relé worker process will autodiscover any properly decorated sub
-function in the subs.py filed and create the subscription for us.
-Once the process is up and running, we can publish and consume.
+Once the sub is implemented, we can start our worker which will register the subscriber with Google Cloud
+and will begin to pull the messages from the topic.
+
+.. code:: python
+
+    from time import sleep
+    from rele import Worker
+
+    from settings import config
+    from subs import photo_uploaded
+
+    if __name__ == '__main__':
+        worker = Worker(
+            [photo_uploaded],
+            config.gc_project_id,
+            config.credentials,
+            config.ack_deadline,
+        )
+        worker.setup()
+        worker.start()
+        sleep(120)
