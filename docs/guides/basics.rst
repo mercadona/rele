@@ -39,7 +39,11 @@ To configure Relé, our settings may look something like:
     import rele
     from settings import config
 
-    data = {'customer_id': 123}
+    data = {
+        'customer_id': 123,
+        'location': '/google-bucket/photos/123.jpg'
+    }
+
     rele.publish(topic='photo-uploaded', data=data)
 
 To publish we simple pass in the topic to which we want our data to publish too, followed by
@@ -71,8 +75,10 @@ In an app directory, we create our sub function within our subs.py file.
 
     @sub(topic='photo-uploaded')
     def photo_uploaded(data, **kwargs):
-        print(f"Someone has uploaded an image to our service, "
-              f"and we stored it at { data['location'] }.")
+        print(f"Customer {data['customer_id']} has uploaded an image to our service,
+                and we stored it at {data['location'}.")
+
+Once the sub is created, we can start our worker by running ``python manage.py runrele``.
 
 Additionally, if you added message attributes to your Message, you can access them via the
 `kwargs` argument:
@@ -81,8 +87,8 @@ Additionally, if you added message attributes to your Message, you can access th
 
     @sub(topic='photo-uploaded')
     def photo_uploaded(data, **kwargs):
-        print(f"Someone has uploaded an image to our service,
-                and we stored it at {data['google_bucket_location'}.
+        print(f"Customer {data['customer_id']} has uploaded an image to our service,
+                and we stored it at {data['location'}.
                 It is a {kwargs['type']} picture with the
                 rotation {kwargs['rotation']}")
 
@@ -98,7 +104,7 @@ To access this attribute you can use `kwargs` keyword.
 
     @sub(topic='photo-uploaded')
     def photo_uploaded(data, **kwargs):
-        print(f"Someone has uploaded an image to our service,
+        print(f"Customer {data['customer_id']} has uploaded an image to our service,
                 and it was published at {kwargs['published_at'}.")
 
 
