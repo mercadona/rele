@@ -42,11 +42,7 @@ In case a subscription has a filter already it's going to use it's own filter.
         return kwargs.get('type') == 'landscape'
 
     settings = {
-        'APP_NAME': 'test-rele',
-        'GC_PROJECT_ID': os.environ.get('GC_PROJECT_ID')   ,
-        'GC_CREDENTIALS': os.environ.get('GC_CREDENTIALS'),
-        'SUB_PREFIX': 'rele',
-        'MIDDLEWARE': [],
+        ...
         'FILTER_SUBS_BY': landscape_filter,
     }
 

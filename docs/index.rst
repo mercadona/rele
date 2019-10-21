@@ -41,6 +41,7 @@ ______
     :maxdepth: 1
 
     guides/basics
+    guides/django
     guides/filters
     guides/rele_and_emulator
 

@@ -1,5 +1,5 @@
 Using the Google Cloud Pub/Sub emulator
-===========================================================
+=======================================
 
 It can be helpful to be able run the emulator in our development environment.
 To be able to do that we can follow the steps below:
