@@ -1,7 +1,7 @@
 Changelog
 =========
 
-`0.7.0` (2019-09-28)
+`0.7.0` (2019-10-21)
 * BREAKING: Remove Django as a dependency (#95)
 * More documentation
 
