@@ -47,7 +47,19 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # a list of builtin themes.
 #
 html_theme = "alabaster"
-html_theme_options = {"font_family": "Heebo"}
+html_theme_options = {
+    "font_family": "Heebo",
+    "logo_name": False,
+    "code_font_family": '"SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace',
+    "code_font_size": "0.8em",
+    "show_related": False,
+    "fixed_sidebar": False,
+    "github_banner": False,
+    "github_button": True,
+    "github_type": "star",
+    "github_user": "Mercadona",
+    "github_repo": "rele",
+}
 master_doc = "index"
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -55,7 +67,7 @@ master_doc = "index"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 
-html_sidebars = {"**": ["sidebar.html"]}
+html_sidebars = {"**": ["sidebar.html", "navigation.html", "searchbox.html"]}
 
 # Setup function
 def setup(app):
