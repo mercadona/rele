@@ -53,6 +53,10 @@ telephone, electricity transmission, and transistors.
 
 ## Install
 
+`pip install rele`
+
+or with Django
+
 `pip install rele[django]`
 
 ## Quickstart
