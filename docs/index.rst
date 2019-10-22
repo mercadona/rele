@@ -34,8 +34,8 @@ Out of the box, Relé includes the following features:
     * Ready to install Django integration
     * And much more...
 
-Guides
-______
+User Guides
+___________
 
 .. toctree::
     :maxdepth: 1
@@ -46,18 +46,36 @@ ______
     guides/rele_and_emulator
 
 
+Configuration
+_____________
+
+.. toctree::
+    :maxdepth: 2
+
+    api/settings
+
+
 API Docs
 ________
 
-.. toctree::
-    :maxdepth: 1
+This is the part of documentation that details the inner workings of Relé.
 
-    api/settings
-    api/subscription
+
+.. toctree::
+    :maxdepth: 2
+
     api/client
-    api/publish
-    api/worker
-    api/middleware
+
+Project Info
+____________
+
+.. toctree::
+   :maxdepth: 1
+
+    Source Code <https://github.com/mercadona/rele>
+    Contributing <https://github.com/mercadona/rele/blob/master/CONTRIBUTING.md>
+    Code of Conduct <https://github.com/mercadona/rele/blob/master/CODE_OF_CONDUCT.md>
+    License <https://github.com/mercadona/rele/blob/master/LICENSE>
 
 Indices and tables
 ==================
