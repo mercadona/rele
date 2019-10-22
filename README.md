@@ -4,8 +4,7 @@
 
 <p align="center">
     <strong>
-        Relé makes integration with Google PubSub easier and is ready to 
-        integrate seamlessly into any Django project.
+        Relé makes integration with Google PubSub straightforward and easy.
     </strong>
 </p>
 
