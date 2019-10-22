@@ -10,7 +10,7 @@ subscription.
 _____________________
 
 This filter is a function that is supposed to return a boolean and this function
-is passed as parameter `filter_by` in the subscription.
+is passed as parameter ``filter_by`` in the subscription.
 
 .. code:: python
 
@@ -18,7 +18,7 @@ is passed as parameter `filter_by` in the subscription.
         return kwargs.get('type') == 'landscape'
 
 
-    # This subscription is going to be called if in the `kwargs`
+    # This subscription is going to be called if in the kwargs
     # has a key type with value landscape
 
     @sub(topic='photo-updated', filter_by=landscape_filter)
@@ -30,7 +30,7 @@ is passed as parameter `filter_by` in the subscription.
 Global Filter
 _____________
 
-This filter is specified in the settings with the key `FILTER_SUBS_BY`
+This filter is specified in the settings with the key ``FILTER_SUBS_BY``
 that has a function as value.
 In case a subscription has a filter already it's going to use it's own filter.
 

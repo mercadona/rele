@@ -8,17 +8,17 @@ To be able to do that we can follow the steps below:
 
 .. code:: bash
 
-    docker pull google/cloud-sdk # Pull container
-    docker run -it --rm -p "8085:8085" google/cloud-sdk gcloud beta emulators pubsub start --host-port=0.0.0.0:8085
+    $ docker pull google/cloud-sdk # Pull container
+    $ docker run -it --rm -p "8085:8085" google/cloud-sdk gcloud beta emulators pubsub start --host-port=0.0.0.0:8085
 
 
 2) Export PUBSUB_EMULATOR_HOST environment variable to specify the emulator host.
 
-    In case you don't want to set this variable, it will be necessary to have pub/sub crendentials.
+    In case you don't want to set this variable, it will be necessary to have pub/sub credentials.
 
 .. code:: bash
 
-    export PUBSUB_EMULATOR_HOST=localhost:8085
+    $ export PUBSUB_EMULATOR_HOST=localhost:8085
 
 
 3) Set rele settings in the Django project.

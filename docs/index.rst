@@ -99,7 +99,7 @@ This is the part of documentation that details the inner workings of Relé.
 .. toctree::
     :maxdepth: 2
 
-    api/client
+    api/reference
 
 Project Info
 ____________
