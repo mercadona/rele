@@ -1,5 +1,5 @@
-Filtering Messages by Attributes
-================================
+Filtering Messages
+==================
 
 Filter can be used to execute a subscription with specific parameters.
 There's two types of filters, global or passing a filter_by parameter in the
