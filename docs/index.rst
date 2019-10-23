@@ -19,9 +19,10 @@ Release v\ |version|. (`Installation <https://github.com/mercadona/rele>`_)
 **Relé** makes integration with Google PubSub easier and is ready to
 integrate seamlessly into any Django project.
 
+
 Motivation and Features
 _______________________
-The Publish-Subscribe pattern and specifically the Google Cloud PubSub library are
+The Publish-Subscribe pattern and specifically the Google Cloud Pub/Sub library are
 very powerful tools but you can easily cut your fingers on it. Relé
 makes integration seamless by providing Publisher, Subscriber and Worker
 classes.
@@ -33,6 +34,40 @@ Out of the box, Relé includes the following features:
     * Scalable Worker
     * Ready to install Django integration
     * And much more...
+
+What It Looks Like
+__________________
+
+.. code:: python
+
+    import rele
+    from rele import sub
+
+    # Subscribe to the Pub/Sub topic
+
+    @sub(topic='photo-uploaded')
+    def photo_uploaded(data, **kwargs):
+        print(f"Customer {data['customer_id']} has uploaded an image")
+
+
+    # Publish to the topic
+
+    rele.publish(topic='photo-uploaded', data={'customer_id': 123})
+
+Install
+_______
+
+Relé supports Python 3.6+ and installing via ``pip``
+
+.. code::
+
+    $ pip install rele
+
+or with Django integration
+
+.. code::
+
+    $ pip install rele[django]
 
 User Guides
 ___________
@@ -64,7 +99,7 @@ This is the part of documentation that details the inner workings of Relé.
 .. toctree::
     :maxdepth: 2
 
-    api/client
+    api/reference
 
 Project Info
 ____________

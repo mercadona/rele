@@ -1,6 +1,6 @@
 .. _basics:
 
-Basic Usage
+First Steps
 ===========
 
 

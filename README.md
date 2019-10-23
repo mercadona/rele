@@ -33,7 +33,7 @@
 ## Motivation and Features
 
 The [Publish-Subscribe pattern](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) 
-and specifically the Google Cloud [PubSub library](https://pypi.org/project/google-cloud-pubsub/) 
+and specifically the Google Cloud [Pub/Sub library](https://pypi.org/project/google-cloud-pubsub/) 
 are very powerful tools but you can easily cut your fingers on it. Relé makes integration 
 seamless by providing Publisher, Subscriber and Worker classes with the following features:
 
@@ -53,9 +53,11 @@ telephone, electricity transmission, and transistors.
 
 ## Install
 
+Relé supports Python 3.6+ and installing via ``pip``
+
 `pip install rele`
 
-or with Django
+or with Django integration
 
 `pip install rele[django]`
 
