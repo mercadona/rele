@@ -36,8 +36,10 @@ To configure Relé, our settings may look something like:
 
 .. code:: python
 
+    # publisher.py
+
     import rele
-    from settings import config
+    from settings import config  # we need this for initializing the global Publisher singleton
 
     data = {
         'customer_id': 123,
@@ -46,7 +48,7 @@ To configure Relé, our settings may look something like:
 
     rele.publish(topic='photo-uploaded', data=data)
 
-To publish we simple pass in the topic to which we want our data to publish too, followed by
+To publish data, we simply pass in the topic to which we want our data to be published to, followed by
 a valid json serializable Python object.
 
 .. note:: If you want to publish other types of objects, you may configure the encoder class.
@@ -71,14 +73,13 @@ In an app directory, we create our sub function within our subs.py file.
 .. code:: python
 
     # subs.py
+
     from rele import sub
 
     @sub(topic='photo-uploaded')
     def photo_uploaded(data, **kwargs):
         print(f"Customer {data['customer_id']} has uploaded an image to our service,
                 and we stored it at {data['location'}.")
-
-Once the sub is created, we can start our worker by running ``python manage.py runrele``.
 
 Additionally, if you added message attributes to your Message, you can access them via the
 `kwargs` argument:
@@ -118,6 +119,8 @@ and will begin to pull the messages from the topic.
 
 .. code:: python
 
+    # worker.py
+
     from time import sleep
     from rele import Worker
 
@@ -134,3 +137,7 @@ and will begin to pull the messages from the topic.
         worker.setup()
         worker.start()
         sleep(120)
+
+Once the sub and worker are created, we can start our worker by running ``python worker.py``.
+
+In another, terminal session when we run ``python publisher.py`` we should see the print readout in our subscriber.
