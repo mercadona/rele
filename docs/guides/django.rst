@@ -43,6 +43,10 @@ in :ref:`settings`, we can start publishing to that topic.
 Subscribing
 ___________
 
+Since the Django integration comes with ``python manage.py runrele`` command, we must name the file
+where we define our subscribers ``subs.py``. ``runrele`` will auto-discover all decorated
+subscriber methods in a defined Django app and register/create the subscriptions for us.
+
 :ref:`subscribing` follows the same method as before.
 
 
@@ -52,7 +56,7 @@ _________
 Unlike what is described in :ref:`consuming`, the Django integration provides a very convenient
 command.
 
-By running ``python manage.py runrele``, worker process will autodiscover any properly decorated sub
-function in the subs.py filed and create the subscription for us.
+By running ``python manage.py runrele``, worker process will autodiscover any properly decorated ``@sub``
+function in the ``subs.py`` file and create the subscription for us.
 
 Once the process is up and running, we can publish and consume.

@@ -78,7 +78,7 @@ ___________
     guides/basics
     guides/django
     guides/filters
-    guides/rele_and_emulator
+    guides/emulator
 
 
 Configuration
