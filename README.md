@@ -65,6 +65,8 @@ or with Django integration
 
 [Please see our documentation to get started.](https://mercadonarele.readthedocs.io/en/latest/guides/basics.html) 
 
+You can also read more about it [here](https://medium.com/mercadona-tech/announcing-rel%C3%A9-c2d0540af3b9)
+
 ----
 
 ## Running Tests
