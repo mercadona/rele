@@ -6,7 +6,6 @@ Thank you to all the contributors to Relé!
 * Lluis Guirado (@LluisGuiVi) 
 * Daniel Ruiz (@dani-ruiz) 
 * Juanjo Ponz (@jjponz)
-* Aristo Menecio (@menecio)
 * Jose Antonio Navarro (@jonasae)
 * Antonio Bustos Rodriguez (@antoniobusrod)
 * David de la Iglesia (@ddelaiglesia) for the Logo!
