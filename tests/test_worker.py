@@ -17,8 +17,19 @@ def worker(project_id, credentials):
     return Worker(subscriptions, project_id, credentials, 60)
 
 
+@pytest.fixture
+def mock_consume():
+    with patch.object(Subscriber, "consume") as m:
+        yield m
+
+
+@pytest.fixture
+def mock_create_subscription():
+    with patch.object(Subscriber, "create_subscription") as m:
+        yield m
+
+
 class TestWorker:
-    @patch.object(Subscriber, "consume")
     def test_start_subscribes_and_saves_futures_when_subscriptions_given(
         self, mock_consume, worker
     ):
@@ -28,7 +39,6 @@ class TestWorker:
             subscription_name="rele-some-cool-topic", callback=ANY
         )
 
-    @patch.object(Subscriber, "create_subscription")
     def test_setup_creates_subscription_when_topic_given(
         self, mock_create_subscription, worker
     ):
@@ -39,10 +49,8 @@ class TestWorker:
         mock_create_subscription.assert_called_once_with(subscription, topic)
 
     @patch("rele.worker.sleep")
-    @patch.object(Subscriber, "create_subscription")
-    @patch.object(Subscriber, "consume")
     def test_run_sets_up_and_creates_subscriptions_when_called(
-        self, mock_consume, mock_create_subscription, mock_time, worker
+        self, mock_time, mock_consume, mock_create_subscription, worker
     ):
         worker.run()
 
@@ -55,10 +63,9 @@ class TestWorker:
         mock_time.assert_called_once_with(60)
 
     @patch("rele.worker.sleep")
-    @patch.object(Subscriber, "create_subscription")
-    @patch.object(Subscriber, "consume")
+    @pytest.mark.usefixtures("mock_consume", "mock_create_subscription")
     def test_waits_for_custom_time_period_when_called_with_argument(
-        self, mock_consume, mock_create_subscription, mock_time, worker
+        self, mock_time, worker
     ):
         worker.run(wait=127)
 
@@ -74,9 +81,9 @@ class TestWorker:
 
         mock_db_close_all.assert_called_once()
 
-    @patch.object(Subscriber, "create_subscription")
+    @pytest.mark.usefixtures("mock_create_subscription")
     def test_creates_subscription_with_custom_ack_deadline_from_environment(
-        self, mock_create_subscription, project_id, credentials
+        self, project_id, credentials
     ):
         subscriptions = (sub_stub,)
         custom_ack_deadline = 234
