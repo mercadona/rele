@@ -50,6 +50,10 @@ class Worker:
             )
         run_middleware_hook("post_worker_start")
 
+    def run(self):
+        self.setup()
+        self.start()
+
     def stop(self, signal=None, frame=None):
         """Manage the shutdown process of the worker.
 

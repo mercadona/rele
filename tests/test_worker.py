@@ -39,6 +39,20 @@ class TestWorker:
         subscription = "rele-some-cool-topic"
         mock_create_subscription.assert_called_once_with(subscription, topic)
 
+    @patch.object(Subscriber, "create_subscription")
+    @patch.object(Subscriber, "consume")
+    def test_run_sets_up_and_creates_subscriptions_when_called(
+        self, mock_consume, mock_create_subscription, worker
+    ):
+        worker.run()
+
+        topic = "some-cool-topic"
+        subscription = "rele-some-cool-topic"
+        mock_create_subscription.assert_called_once_with(subscription, topic)
+        mock_consume.assert_called_once_with(
+            subscription_name="rele-some-cool-topic", callback=ANY
+        )
+
     @patch("rele.contrib.django_db_middleware.db.connections.close_all")
     def test_stop_closes_db_connections(self, mock_db_close_all, config, worker):
         config.middleware = ["rele.contrib.DjangoDBMiddleware"]
