@@ -1,5 +1,6 @@
 import logging
 import sys
+from time import sleep
 
 from .client import Subscriber
 from .middleware import run_middleware_hook
@@ -50,9 +51,10 @@ class Worker:
             )
         run_middleware_hook("post_worker_start")
 
-    def run(self):
+    def run(self, wait=60):
         self.setup()
         self.start()
+        sleep(wait)
 
     def stop(self, signal=None, frame=None):
         """Manage the shutdown process of the worker.
