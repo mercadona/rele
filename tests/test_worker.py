@@ -2,7 +2,7 @@ from unittest.mock import ANY, patch
 
 import pytest
 
-from rele import Subscriber, Worker, sub
+from rele import Subscriber, Worker, sub, config
 from rele.middleware import register_middleware
 
 
@@ -14,7 +14,12 @@ def sub_stub(data, **kwargs):
 @pytest.fixture
 def worker(project_id, credentials):
     subscriptions = (sub_stub,)
-    return Worker(subscriptions, project_id, credentials, 60)
+    config.gc_project_id, config.credentials, config.ack_deadline = (
+        project_id,
+        credentials,
+        60,
+    )
+    return Worker(subscriptions, config)
 
 
 @pytest.fixture
@@ -87,7 +92,22 @@ class TestWorker:
     ):
         subscriptions = (sub_stub,)
         custom_ack_deadline = 234
-        worker = Worker(subscriptions, project_id, credentials, custom_ack_deadline)
+        config.gc_project_id, config.credentials, config.ack_deadline = (
+            project_id,
+            credentials,
+            custom_ack_deadline,
+        )
+        worker = Worker(subscriptions, config)
         worker.setup()
 
+        assert worker._subscriber._ack_deadline == custom_ack_deadline
+
+    @patch.object(Subscriber, "create_subscription")
+    def test_creates_subscription_with_custom_ack_deadline_using_old_api(
+        self, mock_create_subscription, project_id, credentials
+    ):
+        subscriptions = (sub_stub,)
+        custom_ack_deadline = 234
+        worker = Worker(subscriptions, project_id, credentials, custom_ack_deadline)
+        worker.setup()
         assert worker._subscriber._ack_deadline == custom_ack_deadline

@@ -2,6 +2,7 @@ import logging
 import sys
 import time
 
+import rele
 from .client import Subscriber
 from .middleware import run_middleware_hook
 from .subscription import Callback
@@ -18,7 +19,18 @@ class Worker:
     :param subscriptions: list :class:`~rele.subscription.Subscription`
     """
 
-    def __init__(self, subscriptions, gc_project_id, credentials, default_ack_deadline):
+    def __init__(self, subscriptions, *args):
+        if args[0] == rele.config:
+            config = args[0]
+            gc_project_id, credentials, default_ack_deadline = (
+                config.gc_project_id,
+                config.credentials,
+                config.ack_deadline,
+            )
+        else:
+            # Keep compatibility
+            gc_project_id, credentials, default_ack_deadline = args
+
         self._subscriber = Subscriber(gc_project_id, credentials, default_ack_deadline)
         self._futures = []
         self._subscriptions = subscriptions
