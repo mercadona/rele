@@ -41,12 +41,14 @@ class Worker:
         The futures are stored so that they can be cancelled later on
         for a graceful shutdown of the worker.
         """
+        run_middleware_hook("pre_worker_start")
         for subscription in self._subscriptions:
             self._futures.append(
                 self._subscriber.consume(
                     subscription_name=subscription.name, callback=Callback(subscription)
                 )
             )
+        run_middleware_hook("post_worker_start")
 
     def stop(self, signal=None, frame=None):
         """Manage the shutdown process of the worker.
