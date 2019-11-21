@@ -36,10 +36,10 @@ class Config:
         return getattr(module, class_name)
 
 
-def setup(setting):
+def setup(setting, **kwargs):
     config = Config(setting)
     init_global_publisher(config)
-    register_middleware(config)
+    register_middleware(config, **kwargs)
     return config
 
 
