@@ -3,13 +3,13 @@ from unittest.mock import patch, ANY
 import pytest
 from django.core.management import call_command
 
-from rele.management.commands.runrele import Command
+from rele import Worker
 
 
 class TestRunReleCommand:
     @pytest.fixture(autouse=True)
-    def wait_forever(self):
-        with patch.object(Command, "_wait_forever", return_value=None) as p:
+    def worker_wait_forever(self):
+        with patch.object(Worker, "_wait_forever", return_value=None) as p:
             yield p
 
     @pytest.fixture
@@ -21,8 +21,7 @@ class TestRunReleCommand:
         call_command("runrele")
 
         mock_worker.assert_called_with([], "SOME-PROJECT-ID", ANY, 60)
-        mock_worker.return_value.setup.assert_called()
-        mock_worker.return_value.start.assert_called()
+        mock_worker.return_value.run_forever.assert_called()
 
     def test_prints_warning_when_conn_max_age_not_set_to_zero(
         self, mock_worker, capsys, settings
@@ -37,5 +36,4 @@ class TestRunReleCommand:
             "be exhausted." in err
         )
         mock_worker.assert_called_with([], "SOME-PROJECT-ID", ANY, 60)
-        mock_worker.return_value.setup.assert_called()
-        mock_worker.return_value.start.assert_called()
+        mock_worker.return_value.run_forever.assert_called()

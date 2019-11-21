@@ -48,11 +48,11 @@ class TestWorker:
         subscription = "rele-some-cool-topic"
         mock_create_subscription.assert_called_once_with(subscription, topic)
 
-    @patch("rele.worker.sleep")
+    @patch.object(Worker, "_wait_forever")
     def test_run_sets_up_and_creates_subscriptions_when_called(
-        self, mock_time, mock_consume, mock_create_subscription, worker
+        self, mock_wait_forever, mock_consume, mock_create_subscription, worker
     ):
-        worker.run()
+        worker.run_forever()
 
         topic = "some-cool-topic"
         subscription = "rele-some-cool-topic"
@@ -60,16 +60,16 @@ class TestWorker:
         mock_consume.assert_called_once_with(
             subscription_name="rele-some-cool-topic", callback=ANY
         )
-        mock_time.assert_called_once_with(60)
+        mock_wait_forever.assert_called_once()
 
-    @patch("rele.worker.sleep")
+    @patch.object(Worker, "_wait_forever")
     @pytest.mark.usefixtures("mock_consume", "mock_create_subscription")
-    def test_waits_for_custom_time_period_when_called_with_argument(
-        self, mock_time, worker
+    def test_wait_forevers_for_custom_time_period_when_called_with_argument(
+        self, mock_wait_forever, worker
     ):
-        worker.run(wait=127)
+        worker.run_forever(sleep_interval=127)
 
-        mock_time.assert_called_once_with(127)
+        mock_wait_forever.assert_called_once()
 
     @patch("rele.contrib.django_db_middleware.db.connections.close_all")
     def test_stop_closes_db_connections(self, mock_db_close_all, config, worker):

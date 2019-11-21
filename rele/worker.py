@@ -1,6 +1,6 @@
 import logging
 import sys
-from time import sleep
+import time
 
 from .client import Subscriber
 from .middleware import run_middleware_hook
@@ -35,7 +35,7 @@ class Worker:
     def start(self):
         """Begin consuming all subscriptions.
 
-        When consuming a subscription, a `StreamingPullFuture` is returned from
+        When consuming a subscription, a ``StreamingPullFuture`` is returned from
         the Google PubSub client library. This future can be used to
         manage the background stream.
 
@@ -51,14 +51,14 @@ class Worker:
             )
         run_middleware_hook("post_worker_start")
 
-    def run(self, wait=60):
-        """Shortcut for calling setup, start and sleep.
+    def run_forever(self, sleep_interval=1):
+        """Shortcut for calling setup, start, and _wait_forever.
 
-        :param wait: Number of seconds to sleep after starting
+        :param sleep_interval: Number of seconds to sleep in the ``while True`` loop
         """
         self.setup()
         self.start()
-        sleep(wait)
+        self._wait_forever(sleep_interval=sleep_interval)
 
     def stop(self, signal=None, frame=None):
         """Manage the shutdown process of the worker.
@@ -83,3 +83,8 @@ class Worker:
 
         run_middleware_hook("post_worker_stop")
         sys.exit(0)
+
+    def _wait_forever(self, sleep_interval):
+        logger.info("Consuming subscriptions...")
+        while True:
+            time.sleep(sleep_interval)

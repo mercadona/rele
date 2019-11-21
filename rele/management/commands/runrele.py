@@ -1,6 +1,5 @@
 import logging
 import signal
-import time
 
 from django.conf import settings
 from django.core.management import BaseCommand
@@ -37,14 +36,12 @@ class Command(BaseCommand):
             self.config.credentials,
             self.config.ack_deadline,
         )
-        worker.setup()
-        worker.start()
 
         signal.signal(signal.SIGINT, signal.SIG_IGN)
         signal.signal(signal.SIGTERM, worker.stop)
         signal.signal(signal.SIGTSTP, worker.stop)
 
-        self._wait_forever()
+        worker.run_forever(sleep_interval=None)
 
     def _autodiscover_subs(self):
         return rele.config.load_subscriptions_from_paths(
@@ -52,8 +49,3 @@ class Command(BaseCommand):
             self.config.sub_prefix,
             settings.RELE.get("FILTER_SUBS_BY"),
         )
-
-    def _wait_forever(self):
-        self.stdout.write("Consuming subscriptions...")
-        while True:
-            time.sleep(1)
