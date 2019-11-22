@@ -6,7 +6,7 @@ _middlewares = []
 default_middleware = ["rele.contrib.LoggingMiddleware"]
 
 
-def register_middleware(config):
+def register_middleware(config, **kwargs):
     paths = config.middleware
     global _middlewares
     _middlewares = []
@@ -15,7 +15,7 @@ def register_middleware(config):
         module_path = ".".join(module_parts)
         module = importlib.import_module(module_path)
         middleware = getattr(module, middleware_class)()
-        middleware.setup(config)
+        middleware.setup(config, **kwargs)
         _middlewares.append(middleware)
 
 
@@ -30,7 +30,7 @@ class BaseMiddleware:
     subset of hooks they like.
     """
 
-    def setup(self, config):
+    def setup(self, config, **kwargs):
         """Called when middleware is registered.
         :param config: Relé Config object
         """
