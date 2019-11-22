@@ -1,6 +1,13 @@
 Changelog
 =========
 
+`0.8.0` (2019-11-22)
+* Worker run method (#118)
+* Add kwargs to setup method passed through to middleware (#123)
+* Add missing worker middleware hooks (#121)
+* Add 3.8 support
+* More Documentation
+
 `0.7.0` (2019-10-21)
 * BREAKING: Remove Django as a dependency (#95)
 * More documentation
