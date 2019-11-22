@@ -134,9 +134,7 @@ and will begin to pull the messages from the topic.
             config.credentials,
             config.ack_deadline,
         )
-        worker.setup()
-        worker.start()
-        sleep(120)
+        worker.run_forever()
 
 Once the sub and worker are created, we can start our worker by running ``python worker.py``.
 
