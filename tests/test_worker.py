@@ -1,4 +1,3 @@
-import os
 from unittest.mock import ANY, patch
 
 import pytest
@@ -18,8 +17,19 @@ def worker(project_id, credentials):
     return Worker(subscriptions, project_id, credentials, 60)
 
 
+@pytest.fixture
+def mock_consume():
+    with patch.object(Subscriber, "consume") as m:
+        yield m
+
+
+@pytest.fixture
+def mock_create_subscription():
+    with patch.object(Subscriber, "create_subscription") as m:
+        yield m
+
+
 class TestWorker:
-    @patch.object(Subscriber, "consume")
     def test_start_subscribes_and_saves_futures_when_subscriptions_given(
         self, mock_consume, worker
     ):
@@ -29,7 +39,6 @@ class TestWorker:
             subscription_name="rele-some-cool-topic", callback=ANY
         )
 
-    @patch.object(Subscriber, "create_subscription")
     def test_setup_creates_subscription_when_topic_given(
         self, mock_create_subscription, worker
     ):
@@ -38,6 +47,29 @@ class TestWorker:
         topic = "some-cool-topic"
         subscription = "rele-some-cool-topic"
         mock_create_subscription.assert_called_once_with(subscription, topic)
+
+    @patch.object(Worker, "_wait_forever")
+    def test_run_sets_up_and_creates_subscriptions_when_called(
+        self, mock_wait_forever, mock_consume, mock_create_subscription, worker
+    ):
+        worker.run_forever()
+
+        topic = "some-cool-topic"
+        subscription = "rele-some-cool-topic"
+        mock_create_subscription.assert_called_once_with(subscription, topic)
+        mock_consume.assert_called_once_with(
+            subscription_name="rele-some-cool-topic", callback=ANY
+        )
+        mock_wait_forever.assert_called_once()
+
+    @patch.object(Worker, "_wait_forever")
+    @pytest.mark.usefixtures("mock_consume", "mock_create_subscription")
+    def test_wait_forevers_for_custom_time_period_when_called_with_argument(
+        self, mock_wait_forever, worker
+    ):
+        worker.run_forever(sleep_interval=127)
+
+        mock_wait_forever.assert_called_once()
 
     @patch("rele.contrib.django_db_middleware.db.connections.close_all")
     def test_stop_closes_db_connections(self, mock_db_close_all, config, worker):
@@ -49,9 +81,9 @@ class TestWorker:
 
         mock_db_close_all.assert_called_once()
 
-    @patch.object(Subscriber, "create_subscription")
+    @pytest.mark.usefixtures("mock_create_subscription")
     def test_creates_subscription_with_custom_ack_deadline_from_environment(
-        self, mock_create_subscription, project_id, credentials
+        self, project_id, credentials
     ):
         subscriptions = (sub_stub,)
         custom_ack_deadline = 234
