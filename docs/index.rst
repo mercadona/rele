@@ -40,18 +40,14 @@ __________________
 
 .. code:: python
 
-    import rele
-    from rele import sub
-
     # Subscribe to the Pub/Sub topic
-
+    from rele import sub
     @sub(topic='photo-uploaded')
     def photo_uploaded(data, **kwargs):
         print(f"Customer {data['customer_id']} has uploaded an image")
 
-
     # Publish to the topic
-
+    import rele
     rele.publish(topic='photo-uploaded', data={'customer_id': 123})
 
 Install
