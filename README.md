@@ -44,6 +44,22 @@ seamless by providing Publisher, Subscriber and Worker classes with the followin
 * Optional Django Integration
 * And much more!
 
+## What it looks like
+
+```python
+# Publish to the topic
+import rele
+
+rele.publish(topic='photo-uploaded', data={'customer_id': 123})
+
+# Subscribe to the Pub/Sub topic
+from rele import sub
+
+@sub(topic='photo-uploaded')
+def photo_uploaded(data, **kwargs):
+    print(f"Customer {data['customer_id']} has uploaded an image")
+```
+
 ## What's in the name
 
 "Relé" is Spanish for *relay*, a technology that 
