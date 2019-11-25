@@ -1,6 +1,9 @@
 Changelog
 =========
 
+`0.8.1` (2019-11-25)
+* Fix runrele command
+
 `0.8.0` (2019-11-22)
 * Worker run method (#118)
 * Add kwargs to setup method passed through to middleware (#123)

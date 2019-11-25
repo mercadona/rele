@@ -41,7 +41,7 @@ class Command(BaseCommand):
         signal.signal(signal.SIGTERM, worker.stop)
         signal.signal(signal.SIGTSTP, worker.stop)
 
-        worker.run_forever(sleep_interval=None)
+        worker.run_forever()
 
     def _autodiscover_subs(self):
         return rele.config.load_subscriptions_from_paths(

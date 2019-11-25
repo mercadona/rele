@@ -21,7 +21,7 @@ class TestRunReleCommand:
         call_command("runrele")
 
         mock_worker.assert_called_with([], "SOME-PROJECT-ID", ANY, 60)
-        mock_worker.return_value.run_forever.assert_called()
+        mock_worker.return_value.run_forever.assert_called_once_with()
 
     def test_prints_warning_when_conn_max_age_not_set_to_zero(
         self, mock_worker, capsys, settings
@@ -36,4 +36,4 @@ class TestRunReleCommand:
             "be exhausted." in err
         )
         mock_worker.assert_called_with([], "SOME-PROJECT-ID", ANY, 60)
-        mock_worker.return_value.run_forever.assert_called()
+        mock_worker.return_value.run_forever.assert_called_once_with()
