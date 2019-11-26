@@ -25,6 +25,7 @@ class LoggingMiddleware(BaseMiddleware):
             "topic": subscription.topic,
             "status": status,
             "subscription": subscription.name,
+            "attributes": dict(message.attributes),
         }
 
         if start_processing_time is not None:
