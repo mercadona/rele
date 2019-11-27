@@ -80,10 +80,14 @@ class TestCallback:
             yield mock_old_connections
 
     @pytest.fixture
-    def message_wrapper(self):
+    def published_at(self):
+        return time.time()
+
+    @pytest.fixture
+    def message_wrapper(self, published_at):
         rele_message = pubsub_v1.types.PubsubMessage(
             data=b'{"id": 123}',
-            attributes={"lang": "es", "published_at": str(time.time())},
+            attributes={"lang": "es", "published_at": str(published_at)},
             message_id="1",
         )
 
@@ -96,7 +100,9 @@ class TestCallback:
         )
         return pubsub_v1.subscriber.message.Message(rele_message, "ack-id", MagicMock())
 
-    def test_log_start_processing_when_callback_called(self, caplog, message_wrapper):
+    def test_log_start_processing_when_callback_called(
+        self, caplog, message_wrapper, published_at
+    ):
         with caplog.at_level(logging.DEBUG):
             callback = Callback(sub_stub)
             res = callback(message_wrapper)
@@ -113,6 +119,7 @@ class TestCallback:
                 "topic": "some-cool-topic",
                 "status": "received",
                 "subscription": "rele-some-cool-topic",
+                "attributes": {"lang": "es", "published_at": str(published_at),},
             },
         }
 
@@ -128,7 +135,9 @@ class TestCallback:
             "I am a task doing " "stuff with ID 123 (es)"
         )
 
-    def test_log_when_execution_is_succesful(self, message_wrapper, caplog):
+    def test_log_when_execution_is_succesful(
+        self, message_wrapper, caplog, published_at
+    ):
         callback = Callback(sub_stub)
         callback(message_wrapper)
 
@@ -144,11 +153,12 @@ class TestCallback:
                 "status": "succeeded",
                 "subscription": "rele-some-cool-topic",
                 "duration_seconds": pytest.approx(0.5, abs=0.5),
+                "attributes": {"lang": "es", "published_at": str(published_at),},
             },
         }
 
     def test_log_does_not_ack_called_message_when_execution_fails(
-        self, caplog, message_wrapper
+        self, caplog, message_wrapper, published_at
     ):
         @sub(topic="some-cool-topic", prefix="rele")
         def crashy_sub_stub(data, **kwargs):
@@ -172,6 +182,7 @@ class TestCallback:
                 "status": "failed",
                 "subscription": "rele-some-cool-topic",
                 "duration_seconds": pytest.approx(0.5, abs=0.5),
+                "attributes": {"lang": "es", "published_at": str(published_at),},
             },
         }
         assert failed_log.subscription_message == message_wrapper
