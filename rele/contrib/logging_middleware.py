@@ -17,12 +17,15 @@ class LoggingMiddleware(BaseMiddleware):
         self._logger = logging.getLogger(__name__)
         self._app_name = config.app_name
 
-    def _build_data_metrics(self, subscription, status, start_processing_time=None):
+    def _build_data_metrics(
+        self, subscription, message, status, start_processing_time=None
+    ):
         result = {
             "agent": self._app_name,
             "topic": subscription.topic,
             "status": status,
             "subscription": subscription.name,
+            "attributes": dict(message.attributes),
         }
 
         if start_processing_time is not None:
@@ -51,7 +54,7 @@ class LoggingMiddleware(BaseMiddleware):
             extra={
                 "metrics": {
                     "name": "subscriptions",
-                    "data": self._build_data_metrics(subscription, "received"),
+                    "data": self._build_data_metrics(subscription, message, "received"),
                 }
             },
         )
@@ -63,7 +66,7 @@ class LoggingMiddleware(BaseMiddleware):
                 "metrics": {
                     "name": "subscriptions",
                     "data": self._build_data_metrics(
-                        subscription, "succeeded", start_time
+                        subscription, message, "succeeded", start_time
                     ),
                 }
             },
@@ -80,7 +83,7 @@ class LoggingMiddleware(BaseMiddleware):
                 "metrics": {
                     "name": "subscriptions",
                     "data": self._build_data_metrics(
-                        subscription, "failed", start_time
+                        subscription, message, "failed", start_time
                     ),
                 },
                 "subscription_message": message,
