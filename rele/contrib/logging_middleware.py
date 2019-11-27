@@ -13,7 +13,7 @@ class LoggingMiddleware(BaseMiddleware):
     def __init__(self):
         self._logger = None
 
-    def setup(self, config):
+    def setup(self, config, **kwargs):
         self._logger = logging.getLogger(__name__)
         self._app_name = config.app_name
 
