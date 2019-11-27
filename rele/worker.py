@@ -22,10 +22,10 @@ class Worker:
     def __init__(
         self,
         subscriptions,
-        gc_project_id,
-        credentials,
-        default_ack_deadline,
-        threads_per_subscription,
+        gc_project_id=None,
+        credentials=None,
+        default_ack_deadline=None,
+        threads_per_subscription=None,
     ):
         self._subscriber = Subscriber(gc_project_id, credentials, default_ack_deadline)
         self._futures = []
