@@ -32,7 +32,7 @@ Out of the box, Relé includes the following features:
     * Simple publishing API
     * Declarative subscribers
     * Scalable Worker
-    * Ready to install Django integration
+    * Ready to install Django/Flask integration
     * And much more...
 
 What It Looks Like
@@ -73,6 +73,7 @@ ___________
 
     guides/basics
     guides/django
+    guides/flask
     guides/filters
     guides/emulator
 
