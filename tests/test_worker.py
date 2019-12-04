@@ -2,7 +2,7 @@ from unittest.mock import ANY, patch
 
 import pytest
 
-from rele import Subscriber, Worker, sub, config
+from rele import Subscriber, Worker, sub
 from rele.middleware import register_middleware
 
 
@@ -12,7 +12,7 @@ def sub_stub(data, **kwargs):
 
 
 @pytest.fixture
-def worker(project_id, credentials):
+def worker(project_id, credentials, config):
     subscriptions = (sub_stub,)
     config.gc_project_id, config.credentials, config.ack_deadline = (
         project_id,
@@ -88,7 +88,7 @@ class TestWorker:
 
     @pytest.mark.usefixtures("mock_create_subscription")
     def test_creates_subscription_with_custom_ack_deadline_from_environment(
-        self, project_id, credentials
+        self, mock_create_subscription, project_id, credentials, config
     ):
         subscriptions = (sub_stub,)
         custom_ack_deadline = 234

@@ -2,7 +2,7 @@ import logging
 import sys
 import time
 
-import rele
+from rele.config import Config
 from .client import Subscriber
 from .middleware import run_middleware_hook
 from .subscription import Callback
@@ -20,7 +20,7 @@ class Worker:
     """
 
     def __init__(self, subscriptions, *args):
-        if args[0] == rele.config:
+        if isinstance(args[0], Config):
             config = args[0]
             gc_project_id, credentials, default_ack_deadline = (
                 config.gc_project_id,
