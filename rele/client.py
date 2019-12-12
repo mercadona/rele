@@ -68,9 +68,9 @@ class Subscriber:
         subscription_path = self._client.subscription_path(
             self._gc_project_id, subscription_name
         )
-        return self._client.subscribe(subscription_path,
-                                      callback=callback,
-                                      scheduler=scheduler)
+        return self._client.subscribe(
+            subscription_path, callback=callback, scheduler=scheduler
+        )
 
 
 class Publisher:

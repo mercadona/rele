@@ -38,7 +38,7 @@ class TestWorker:
         mock_consume.assert_called_once_with(
             subscription_name="rele-some-cool-topic",
             callback=ANY,
-            scheduler=worker._subscriptions[0].scheduler
+            scheduler=worker._subscriptions[0].scheduler,
         )
 
     def test_setup_creates_subscription_when_topic_given(
@@ -62,7 +62,7 @@ class TestWorker:
         mock_consume.assert_called_once_with(
             subscription_name="rele-some-cool-topic",
             callback=ANY,
-            scheduler=worker._subscriptions[0].scheduler
+            scheduler=worker._subscriptions[0].scheduler,
         )
         mock_wait_forever.assert_called_once()
 

@@ -63,8 +63,7 @@ class Subscription:
                 "thread_name_prefix": "ThreadPoolExecutor-ThreadScheduler"
             }
             self._scheduler = futures.ThreadPoolExecutor(
-                max_workers=self._thread_count,
-                **executor_kwargs
+                max_workers=self._thread_count, **executor_kwargs
             )
         return self._scheduler
 
@@ -156,7 +155,7 @@ def sub(topic, prefix=None, suffix=None, filter_by=None, thread_count=10):
             prefix=prefix,
             suffix=suffix,
             filter_by=filter_by,
-            thread_count=thread_count
+            thread_count=thread_count,
         )
 
     return decorator
