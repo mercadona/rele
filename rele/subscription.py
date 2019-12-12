@@ -58,15 +58,14 @@ class Subscription:
 
     @property
     def scheduler(self):
-        if self._scheduler:
-            return self._scheduler
-        executor_kwargs = {
-            "thread_name_prefix": "ThreadPoolExecutor-ThreadScheduler"
-        }
-        self._scheduler = futures.ThreadPoolExecutor(
-            max_workers=self._thread_count,
-            **executor_kwargs
-        )
+        if not self._scheduler:
+            executor_kwargs = {
+                "thread_name_prefix": "ThreadPoolExecutor-ThreadScheduler"
+            }
+            self._scheduler = futures.ThreadPoolExecutor(
+                max_workers=self._thread_count,
+                **executor_kwargs
+            )
         return self._scheduler
 
 
