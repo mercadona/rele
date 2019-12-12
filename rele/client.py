@@ -97,7 +97,7 @@ class Publisher:
         else:
             self._client = pubsub_v1.PublisherClient(credentials=credentials)
 
-    def publish(self, topic, data, blocking=False, **attrs):
+    def publish(self, topic, data, blocking=False, timeout=None, **attrs):
         """Publishes message to Google PubSub topic.
 
         Usage::
@@ -114,7 +114,7 @@ class Publisher:
         Usage::
 
             publisher = Publisher()
-            future = publisher.publish('topic_name', {'foo': 'bar'}, blocking=True) # noqa
+            future = publisher.publish('topic_name', {'foo': 'bar'}, blocking=True, timeout=10.0) # noqa
 
         However, it should be noted that using `blocking=True` may incur a
         significant performance hit.
@@ -126,6 +126,7 @@ class Publisher:
         :param topic: string topic to publish the data.
         :param data: dict with the content of the message.
         :param blocking: boolean, default False.
+        :param timeout: float, default 3.0.
         :param attrs: Extra parameters to be published.
         :return: `Future <https://googleapis.github.io/google-cloud-python/latest/pubsub/subscriber/api/futures.html>`_  # noqa
         """
@@ -138,6 +139,6 @@ class Publisher:
         if not blocking:
             return future
 
-        future.result(timeout=self._timeout)
+        future.result(timeout=timeout or self._timeout)
         run_middleware_hook("post_publish", topic)
         return future

@@ -119,7 +119,7 @@ class TestCallback:
                 "topic": "some-cool-topic",
                 "status": "received",
                 "subscription": "rele-some-cool-topic",
-                "attributes": {"lang": "es", "published_at": str(published_at),},
+                "attributes": {"lang": "es", "published_at": str(published_at)},
             },
         }
 
@@ -153,7 +153,7 @@ class TestCallback:
                 "status": "succeeded",
                 "subscription": "rele-some-cool-topic",
                 "duration_seconds": pytest.approx(0.5, abs=0.5),
-                "attributes": {"lang": "es", "published_at": str(published_at),},
+                "attributes": {"lang": "es", "published_at": str(published_at)},
             },
         }
 
@@ -182,7 +182,7 @@ class TestCallback:
                 "status": "failed",
                 "subscription": "rele-some-cool-topic",
                 "duration_seconds": pytest.approx(0.5, abs=0.5),
-                "attributes": {"lang": "es", "published_at": str(published_at),},
+                "attributes": {"lang": "es", "published_at": str(published_at)},
             },
         }
         assert failed_log.subscription_message == message_wrapper

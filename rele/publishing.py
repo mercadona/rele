@@ -10,6 +10,7 @@ def init_global_publisher(config):
             gc_project_id=config.gc_project_id,
             credentials=config.credentials,
             encoder=config.encoder,
+            timeout=config.publisher_timeout,
         )
     return _publisher
 

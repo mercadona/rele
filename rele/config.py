@@ -28,6 +28,7 @@ class Config:
             "ACK_DEADLINE", os.environ.get("DEFAULT_ACK_DEADLINE", 60)
         )
         self._encoder_path = setting.get("ENCODER_PATH", DEFAULT_ENCODER_PATH)
+        self.publisher_timeout = setting.get("PUBLISHER_TIMEOUT", 3.0)
 
     @property
     def encoder(self):
