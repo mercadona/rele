@@ -46,7 +46,9 @@ class Worker:
         for subscription in self._subscriptions:
             self._futures.append(
                 self._subscriber.consume(
-                    subscription_name=subscription.name, callback=Callback(subscription)
+                    subscription_name=subscription.name,
+                    callback=Callback(subscription),
+                    scheduler=subscription.scheduler
                 )
             )
         run_middleware_hook("post_worker_start")
