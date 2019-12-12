@@ -1,7 +1,6 @@
 import decimal
-import os
 import concurrent
-from unittest.mock import ANY, patch, MagicMock
+from unittest.mock import ANY, patch
 
 import pytest
 from google.cloud.pubsub_v1 import SubscriberClient
