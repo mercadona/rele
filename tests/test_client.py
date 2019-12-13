@@ -63,21 +63,6 @@ class TestPublisher:
         )
         mock_future.assert_called_once_with(timeout=100)
 
-    @patch.object(concurrent.futures.Future, "result")
-    def test_publishes_data_with_method_timeout_when_blocking(
-        self, mock_future, publisher
-    ):
-        publisher._timeout = 100.0
-        publisher.publish(
-            topic="order-cancelled", data={"foo": "bar"}, blocking=True, timeout=50.0
-        )
-
-        publisher._client.publish.return_value = mock_future
-        publisher._client.publish.assert_called_with(
-            ANY, b'{"foo": "bar"}', published_at=ANY
-        )
-        mock_future.assert_called_once_with(timeout=50.0)
-
 
 class TestSubscriber:
     @patch.object(SubscriberClient, "create_subscription")

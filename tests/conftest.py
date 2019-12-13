@@ -41,7 +41,12 @@ def subscriber(project_id, credentials):
 
 @pytest.fixture
 def publisher(config):
-    publisher = Publisher(config.gc_project_id, config.credentials, config.encoder)
+    publisher = Publisher(
+        gc_project_id=config.gc_project_id,
+        credentials=config.credentials,
+        encoder=config.encoder,
+        timeout=config.publisher_timeout,
+    )
     publisher._client = MagicMock(spec=PublisherClient)
     publisher._client.publish.return_value = concurrent.futures.Future()
 
