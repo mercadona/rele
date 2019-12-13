@@ -1,3 +1,4 @@
+from concurrent import futures
 from unittest.mock import ANY, patch
 
 import pytest
@@ -12,9 +13,15 @@ def sub_stub(data, **kwargs):
 
 
 @pytest.fixture
-def worker(project_id, credentials):
+def worker(project_id, credentials, config):
     subscriptions = (sub_stub,)
-    return Worker(subscriptions, project_id, credentials, 60)
+    return Worker(
+        subscriptions,
+        project_id,
+        credentials,
+        default_ack_deadline=60,
+        threads_per_subscription=10,
+    )
 
 
 @pytest.fixture
@@ -36,10 +43,10 @@ class TestWorker:
         worker.start()
 
         mock_consume.assert_called_once_with(
-            subscription_name="rele-some-cool-topic",
-            callback=ANY,
-            scheduler=worker._subscriptions[0].scheduler,
+            subscription_name="rele-some-cool-topic", callback=ANY, scheduler=ANY
         )
+        scheduler = mock_consume.call_args_list[0][1]["scheduler"]
+        assert isinstance(scheduler, futures.ThreadPoolExecutor)
 
     def test_setup_creates_subscription_when_topic_given(
         self, mock_create_subscription, worker
@@ -60,10 +67,10 @@ class TestWorker:
         subscription = "rele-some-cool-topic"
         mock_create_subscription.assert_called_once_with(subscription, topic)
         mock_consume.assert_called_once_with(
-            subscription_name="rele-some-cool-topic",
-            callback=ANY,
-            scheduler=worker._subscriptions[0].scheduler,
+            subscription_name="rele-some-cool-topic", callback=ANY, scheduler=ANY
         )
+        scheduler = mock_consume.call_args_list[0][1]["scheduler"]
+        assert isinstance(scheduler, futures.ThreadPoolExecutor)
         mock_wait_forever.assert_called_once()
 
     @patch.object(Worker, "_wait_forever")
@@ -91,7 +98,13 @@ class TestWorker:
     ):
         subscriptions = (sub_stub,)
         custom_ack_deadline = 234
-        worker = Worker(subscriptions, project_id, credentials, custom_ack_deadline)
+        worker = Worker(
+            subscriptions,
+            project_id,
+            credentials,
+            custom_ack_deadline,
+            threads_per_subscription=10,
+        )
         worker.setup()
 
         assert worker._subscriber._ack_deadline == custom_ack_deadline

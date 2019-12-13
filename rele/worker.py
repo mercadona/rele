@@ -1,6 +1,7 @@
 import logging
 import sys
 import time
+from concurrent import futures
 
 from .client import Subscriber
 from .middleware import run_middleware_hook
@@ -18,10 +19,18 @@ class Worker:
     :param subscriptions: list :class:`~rele.subscription.Subscription`
     """
 
-    def __init__(self, subscriptions, gc_project_id, credentials, default_ack_deadline):
+    def __init__(
+        self,
+        subscriptions,
+        gc_project_id,
+        credentials,
+        default_ack_deadline,
+        threads_per_subscription,
+    ):
         self._subscriber = Subscriber(gc_project_id, credentials, default_ack_deadline)
         self._futures = []
         self._subscriptions = subscriptions
+        self.threads_per_subscription = threads_per_subscription
 
     def setup(self):
         """Create the subscriptions on a Google PubSub topic.
@@ -44,11 +53,17 @@ class Worker:
         """
         run_middleware_hook("pre_worker_start")
         for subscription in self._subscriptions:
+            executor_kwargs = {
+                "thread_name_prefix": "ThreadPoolExecutor-ThreadScheduler"
+            }
+            scheduler = futures.ThreadPoolExecutor(
+                max_workers=self.threads_per_subscription, **executor_kwargs
+            )
             self._futures.append(
                 self._subscriber.consume(
                     subscription_name=subscription.name,
                     callback=Callback(subscription),
-                    scheduler=subscription.scheduler,
+                    scheduler=scheduler,
                 )
             )
         run_middleware_hook("post_worker_start")

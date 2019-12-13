@@ -13,14 +13,12 @@ class Subscription:
 
     """
 
-    def __init__(self, func, topic, thread_count, prefix="", suffix="", filter_by=None):
+    def __init__(self, func, topic, prefix="", suffix="", filter_by=None):
         self._func = func
         self.topic = topic
         self._prefix = prefix
         self._suffix = suffix
         self._filter_by = filter_by
-        self._thread_count = thread_count
-        self._scheduler = None
 
     @property
     def name(self):
@@ -56,17 +54,6 @@ class Subscription:
     def _filter_returns_false(self, kwargs):
         return self._filter_by and not self._filter_by(kwargs)
 
-    @property
-    def scheduler(self):
-        if not self._scheduler:
-            executor_kwargs = {
-                "thread_name_prefix": "ThreadPoolExecutor-ThreadScheduler"
-            }
-            self._scheduler = futures.ThreadPoolExecutor(
-                max_workers=self._thread_count, **executor_kwargs
-            )
-        return self._scheduler
-
 
 class Callback:
     def __init__(self, subscription, suffix=None):
@@ -99,7 +86,7 @@ class Callback:
             run_middleware_hook("post_process_message")
 
 
-def sub(topic, prefix=None, suffix=None, filter_by=None, thread_count=10):
+def sub(topic, prefix=None, suffix=None, filter_by=None):
     """Decorator function that makes declaring a PubSub Subscription simple.
 
     The Subscriber returned will automatically create and name
@@ -126,7 +113,7 @@ def sub(topic, prefix=None, suffix=None, filter_by=None, thread_count=10):
         def purpose_1(data, **kwargs):
              pass
 
-        @sub(topic='lets-tell-everyone', suffix='sub2', thread_count=1)
+        @sub(topic='lets-tell-everyone', suffix='sub2')
         def purpose_2(data, **kwargs):
              pass
 
@@ -144,18 +131,12 @@ def sub(topic, prefix=None, suffix=None, filter_by=None, thread_count=10):
     :param filter_by: function An optional function that
                       filters the messages to be processed
                       by the sub regarding their attributes.
-    :param thread_count: Thread count of subscriber. Default 10.
     :return: :class:`~rele.subscription.Subscription`
     """
 
     def decorator(func):
         return Subscription(
-            func=func,
-            topic=topic,
-            prefix=prefix,
-            suffix=suffix,
-            filter_by=filter_by,
-            thread_count=thread_count,
+            func=func, topic=topic, prefix=prefix, suffix=suffix, filter_by=filter_by
         )
 
     return decorator
