@@ -10,6 +10,7 @@ def init_global_publisher(config):
             gc_project_id=config.gc_project_id,
             credentials=config.credentials,
             encoder=config.encoder,
+            timeout=config.publisher_timeout,
         )
     return _publisher
 
@@ -33,6 +34,8 @@ def publish(topic, data, **kwargs):
 
     :param topic: str PubSub topic name
     :param data: dict-like Data to be sent as the message.
+    :param timeout: float. Default None, falls back to RELE['PUBLISHER_TIMEOUT'] value
+    :param blocking: boolean. Default False
     :param kwargs: Any optional key-value pairs that are included as attributes
         in the message
     :return: None
