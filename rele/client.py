@@ -57,17 +57,20 @@ class Subscriber:
                 ack_deadline_seconds=self._ack_deadline,
             )
 
-    def consume(self, subscription_name, callback):
+    def consume(self, subscription_name, callback, scheduler):
         """Begin listening to topic from the SubscriberClient.
         
         :param subscription_name: str Subscription name
         :param callback: Function which act on a topic message
+        :param scheduler: `Thread pool-based scheduler.<https://googleapis.dev/python/pubsub/latest/subscriber/api/scheduler.html?highlight=threadscheduler#google.cloud.pubsub_v1.subscriber.scheduler.ThreadScheduler>`_  # noqa
         :return: `Future <https://googleapis.github.io/google-cloud-python/latest/pubsub/subscriber/api/futures.html>`_  # noqa
         """
         subscription_path = self._client.subscription_path(
             self._gc_project_id, subscription_name
         )
-        return self._client.subscribe(subscription_path, callback=callback)
+        return self._client.subscribe(
+            subscription_path, callback=callback, scheduler=scheduler
+        )
 
 
 class Publisher:

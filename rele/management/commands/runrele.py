@@ -35,6 +35,7 @@ class Command(BaseCommand):
             self.config.gc_project_id,
             self.config.credentials,
             self.config.ack_deadline,
+            self.config.threads_per_subscription,
         )
 
         signal.signal(signal.SIGINT, signal.SIG_IGN)

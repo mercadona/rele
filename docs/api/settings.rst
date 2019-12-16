@@ -134,3 +134,13 @@ Timeout that the publishing result will wait on the future to publish successful
 
 `See Google PubSub documentation for more info
 <https://googleapis.dev/python/pubsub/1.1.0/publisher/api/futures.html?highlight=result#google.cloud.pubsub_v1.publisher.futures.Future.result>`_
+
+``THREADS_PER_SUBSCRIPTION``
+------------------
+
+**Optional**
+
+Default: 10
+
+Number of threads that will be consumed for each subscription.
+10 is the default for the Google Cloud PubSub library.
