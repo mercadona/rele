@@ -31,6 +31,7 @@ Example::
         'APP_NAME': 'myappname',
         'ENCODER_PATH': 'rest_framework.utils.encoders.JSONEncoder',
         'ACK_DEADLINE': 120,
+        'PUBLISHER_TIMEOUT': 3.0
     }
 
 
@@ -116,10 +117,20 @@ serializing your Python data structure to a json object when publishing.
 
 Ack deadline for all subscribers in seconds.
 
-
-
 .. seealso:: The `Google Pub/Sub documentation <https://cloud.google.com/pubsub/docs/subscriber>`_
     which states that *The subscriber has a configurable, limited amount of time --
     known as the ackDeadline -- to acknowledge the outstanding message. Once the deadline
     passes, the message is no longer considered outstanding, and Cloud Pub/Sub will attempt
     to redeliver the message.*
+
+``PUBLISHER_TIMEOUT``
+---------------------
+
+**Optional**
+
+Default: 3.0 seconds
+
+Timeout that the publishing result will wait on the future to publish successfully while blocking.
+
+`See Google PubSub documentation for more info
+<https://googleapis.dev/python/pubsub/1.1.0/publisher/api/futures.html?highlight=result#google.cloud.pubsub_v1.publisher.futures.Future.result>`_

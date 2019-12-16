@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 from rele import Publisher, publishing
 
 
-class TestPublish:
+class TestInitGlobalPublisher:
     @patch("rele.publishing.Publisher", autospec=True)
     def test_creates_global_publisher_when_published_called(
         self, mock_publisher, config

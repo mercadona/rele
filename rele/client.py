@@ -85,10 +85,10 @@ class Publisher:
     :param gc_project_id: string Google Cloud Project ID.
     :param credentials: string Google Cloud Credentials.
     :param encoder: A valid `json.encoder.JSONEncoder subclass <https://docs.python.org/3/library/json.html#json.JSONEncoder>`_  # noqa
-    :param timeout: integer, default 3.0 seconds.
+    :param timeout: float
     """
 
-    def __init__(self, gc_project_id, credentials, encoder, timeout=3.0):
+    def __init__(self, gc_project_id, credentials, encoder, timeout):
         self._gc_project_id = gc_project_id
         self._timeout = timeout
         self._encoder = encoder
@@ -114,7 +114,7 @@ class Publisher:
         Usage::
 
             publisher = Publisher()
-            future = publisher.publish('topic_name', {'foo': 'bar'}, blocking=True) # noqa
+            future = publisher.publish('topic_name', {'foo': 'bar'}, blocking=True, timeout=10.0) # noqa
 
         However, it should be noted that using `blocking=True` may incur a
         significant performance hit.
@@ -125,7 +125,7 @@ class Publisher:
 
         :param topic: string topic to publish the data.
         :param data: dict with the content of the message.
-        :param blocking: boolean, default False.
+        :param blocking: boolean
         :param attrs: Extra parameters to be published.
         :return: `Future <https://googleapis.github.io/google-cloud-python/latest/pubsub/subscriber/api/futures.html>`_  # noqa
         """
