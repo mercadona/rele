@@ -1,6 +1,13 @@
 Changelog
 =========
 
+`0.9.0` (2019-12-20)
+* Flask support via middleware (#127)
+* Add message attributes to metrics log (#128)
+* Specify number of threads per subscriber with Subscription ThreadPoolExecutor (#139)
+* Publishing timeout while blocking (#137)
+* Clean up rele.config.setup + Worker() init (#132)
+
 `0.8.1` (2019-11-25)
 * Fix runrele command
 
