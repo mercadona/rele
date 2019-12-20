@@ -1,7 +1,6 @@
 import json
 import logging
 import time
-from concurrent import futures
 
 from .middleware import run_middleware_hook
 
@@ -64,7 +63,19 @@ class Callback:
         run_middleware_hook("pre_process_message", self._subscription, message)
         start_time = time.time()
 
-        data = json.loads(message.data.decode("utf-8"))
+        try:
+            data = json.loads(message.data.decode("utf-8"))
+        except json.JSONDecodeError as e:
+            message.ack()
+            run_middleware_hook(
+                "post_process_message_failure",
+                self._subscription,
+                e,
+                start_time,
+                message,
+            )
+            run_middleware_hook("post_process_message")
+            return
 
         try:
             res = self._subscription(data, **dict(message.attributes))
