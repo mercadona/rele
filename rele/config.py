@@ -1,7 +1,7 @@
 import importlib
 import os
 
-from .client import DEFAULT_ENCODER_PATH
+from .client import DEFAULT_ENCODER_PATH, get_google_defaults, DEFAULT_ACK_DEADLINE
 from .middleware import register_middleware, default_middleware
 from .publishing import init_global_publisher
 from .subscription import Subscription
@@ -19,13 +19,19 @@ class Config:
     """
 
     def __init__(self, setting):
-        self.gc_project_id = setting.get("GC_PROJECT_ID")
-        self.credentials = setting.get("GC_CREDENTIALS")
+        if (
+            setting.get("GC_PROJECT_ID") is None
+            or setting.get("GC_CREDENTIALS") is None
+        ):
+            credentials, project = get_google_defaults()
+
+        self.gc_project_id = setting.get("GC_PROJECT_ID") or project
+        self.credentials = setting.get("GC_CREDENTIALS") or credentials
         self.app_name = setting.get("APP_NAME")
         self.sub_prefix = setting.get("SUB_PREFIX")
         self.middleware = setting.get("MIDDLEWARE", default_middleware)
         self.ack_deadline = setting.get(
-            "ACK_DEADLINE", os.environ.get("DEFAULT_ACK_DEADLINE", 60)
+            "ACK_DEADLINE", os.environ.get("DEFAULT_ACK_DEADLINE", DEFAULT_ACK_DEADLINE)
         )
         self._encoder_path = setting.get("ENCODER_PATH", DEFAULT_ENCODER_PATH)
         self.publisher_timeout = setting.get("PUBLISHER_TIMEOUT", 3.0)
@@ -38,7 +44,10 @@ class Config:
         return getattr(module, class_name)
 
 
-def setup(setting, **kwargs):
+def setup(setting=None, **kwargs):
+    if setting is None:
+        setting = {}
+
     config = Config(setting)
     init_global_publisher(config)
     register_middleware(config, **kwargs)

@@ -6,6 +6,7 @@ from contextlib import suppress
 
 from google.api_core import exceptions
 from google.cloud import pubsub_v1
+import google.auth
 
 from rele.middleware import run_middleware_hook
 
@@ -13,6 +14,15 @@ logger = logging.getLogger(__name__)
 
 USE_EMULATOR = True if os.environ.get("PUBSUB_EMULATOR_HOST") else False
 DEFAULT_ENCODER_PATH = "json.JSONEncoder"
+DEFAULT_ACK_DEADLINE = 60
+
+
+def get_google_defaults():
+    try:
+        credentials, project = google.auth.default()
+        return credentials, project
+    except google.auth.exceptions.DefaultCredentialsError:
+        return None, None
 
 
 class Subscriber:
@@ -26,13 +36,19 @@ class Subscriber:
     :param default_ack_deadline: int Ack Deadline defined in settings
     """
 
-    def __init__(self, gc_project_id, credentials, default_ack_deadline):
-        self._gc_project_id = gc_project_id
-        self._ack_deadline = default_ack_deadline
+    def __init__(self, gc_project_id=None, credentials=None, default_ack_deadline=None):
+
+        if gc_project_id is None or credentials is None:
+            creds, project = get_google_defaults()
+
+        self._gc_project_id = gc_project_id or project
+        self._ack_deadline = default_ack_deadline or DEFAULT_ACK_DEADLINE
+        _credentials = credentials or creds
+
         if USE_EMULATOR:
             self._client = pubsub_v1.SubscriberClient()
         else:
-            self._client = pubsub_v1.SubscriberClient(credentials=credentials)
+            self._client = pubsub_v1.SubscriberClient(credentials=_credentials)
 
     def create_subscription(self, subscription, topic):
         """Handles creating the subscription when it does not exists.
@@ -59,7 +75,7 @@ class Subscriber:
 
     def consume(self, subscription_name, callback, scheduler):
         """Begin listening to topic from the SubscriberClient.
-        
+
         :param subscription_name: str Subscription name
         :param callback: Function which act on a topic message
         :param scheduler: `Thread pool-based scheduler.<https://googleapis.dev/python/pubsub/latest/subscriber/api/scheduler.html?highlight=threadscheduler#google.cloud.pubsub_v1.subscriber.scheduler.ThreadScheduler>`_  # noqa
