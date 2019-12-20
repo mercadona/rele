@@ -1,7 +1,8 @@
 import json
+import os
 
 import pytest
-
+from unittest.mock import patch
 from rele.config import load_subscriptions_from_paths, Config
 from rele import sub
 
@@ -51,6 +52,7 @@ class TestConfig:
         assert config.credentials == credentials
         assert config.middleware == ["rele.contrib.DjangoDBMiddleware"]
 
+    @patch.dict(os.environ, {"GOOGLE_APPLICATION_CREDENTIALS": ""})
     def test_sets_defaults(self):
         settings = {}
 
@@ -60,5 +62,26 @@ class TestConfig:
         assert config.sub_prefix is None
         assert config.gc_project_id is None
         assert config.credentials is None
+        assert config.middleware == ["rele.contrib.LoggingMiddleware"]
+        assert config.encoder == json.JSONEncoder
+
+    @patch.dict(
+        os.environ,
+        {
+            "GOOGLE_APPLICATION_CREDENTIALS": os.path.dirname(
+                os.path.realpath(__file__)
+            )
+            + "/dummy-pub-sub-credentials.json"
+        },
+    )
+    def test_sets_defaults_pulled_from_env(self, monkeypatch, project_id, credentials):
+        settings = {}
+
+        config = Config(settings)
+
+        assert config.app_name is None
+        assert config.sub_prefix is None
+        assert config.gc_project_id == "rele"
+        assert config.credentials is not None
         assert config.middleware == ["rele.contrib.LoggingMiddleware"]
         assert config.encoder == json.JSONEncoder
