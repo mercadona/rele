@@ -1,4 +1,4 @@
-__version__ = "0.8.1"
+__version__ = "0.9.0"
 default_app_config = "rele.apps.ReleConfig"
 
 from .client import Publisher, Subscriber  # noqa
