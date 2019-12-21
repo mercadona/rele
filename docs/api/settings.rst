@@ -123,6 +123,8 @@ Ack deadline for all subscribers in seconds.
     passes, the message is no longer considered outstanding, and Cloud Pub/Sub will attempt
     to redeliver the message.*
 
+.. _settings_publisher_timeout:
+
 ``PUBLISHER_TIMEOUT``
 ---------------------
 
@@ -136,7 +138,7 @@ Timeout that the publishing result will wait on the future to publish successful
 <https://googleapis.dev/python/pubsub/1.1.0/publisher/api/futures.html?highlight=result#google.cloud.pubsub_v1.publisher.futures.Future.result>`_
 
 ``THREADS_PER_SUBSCRIPTION``
-------------------
+----------------------------
 
 **Optional**
 
