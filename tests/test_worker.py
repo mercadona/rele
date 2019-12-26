@@ -3,6 +3,7 @@ from unittest.mock import ANY, patch
 import os
 
 import pytest
+from google.cloud.pubsub_v1.subscriber.scheduler import ThreadScheduler
 
 from rele import Subscriber, Worker, sub
 from rele.middleware import register_middleware
@@ -47,7 +48,8 @@ class TestWorker:
             subscription_name="rele-some-cool-topic", callback=ANY, scheduler=ANY
         )
         scheduler = mock_consume.call_args_list[0][1]["scheduler"]
-        assert isinstance(scheduler, futures.ThreadPoolExecutor)
+        assert isinstance(scheduler, ThreadScheduler)
+        assert isinstance(scheduler._executor, futures.ThreadPoolExecutor)
 
     def test_setup_creates_subscription_when_topic_given(
         self, mock_create_subscription, worker
@@ -71,7 +73,8 @@ class TestWorker:
             subscription_name="rele-some-cool-topic", callback=ANY, scheduler=ANY
         )
         scheduler = mock_consume.call_args_list[0][1]["scheduler"]
-        assert isinstance(scheduler, futures.ThreadPoolExecutor)
+        assert isinstance(scheduler, ThreadScheduler)
+        assert isinstance(scheduler._executor, futures.ThreadPoolExecutor)
         mock_wait_forever.assert_called_once()
 
     @patch.object(Worker, "_wait_forever")

@@ -3,6 +3,8 @@ import sys
 import time
 from concurrent import futures
 
+from google.cloud.pubsub_v1.subscriber.scheduler import ThreadScheduler
+
 from .client import Subscriber
 from .middleware import run_middleware_hook
 from .subscription import Callback
@@ -56,9 +58,10 @@ class Worker:
             executor_kwargs = {
                 "thread_name_prefix": "ThreadPoolExecutor-ThreadScheduler"
             }
-            scheduler = futures.ThreadPoolExecutor(
+            executor = futures.ThreadPoolExecutor(
                 max_workers=self.threads_per_subscription, **executor_kwargs
             )
+            scheduler = ThreadScheduler(executor=executor)
             self._futures.append(
                 self._subscriber.consume(
                     subscription_name=subscription.name,
