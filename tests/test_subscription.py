@@ -91,14 +91,33 @@ class TestCallback:
             message_id="1",
         )
 
-        return pubsub_v1.subscriber.message.Message(rele_message, "ack-id", MagicMock())
+        message = pubsub_v1.subscriber.message.Message(
+            rele_message, "ack-id", MagicMock()
+        )
+        message.ack = MagicMock(autospec=True)
+        return message
 
     @pytest.fixture
     def message_wrapper_empty(self):
         rele_message = pubsub_v1.types.PubsubMessage(
             data=b"", attributes={"lang": "es"}, message_id="1"
         )
-        return pubsub_v1.subscriber.message.Message(rele_message, "ack-id", MagicMock())
+        message = pubsub_v1.subscriber.message.Message(
+            rele_message, "ack-id", MagicMock()
+        )
+        message.ack = MagicMock(autospec=True)
+        return message
+
+    @pytest.fixture
+    def message_wrapper_invalid_json(self):
+        rele_message = pubsub_v1.types.PubsubMessage(
+            data=b"foobar", attributes={}, message_id="1"
+        )
+        message = pubsub_v1.subscriber.message.Message(
+            rele_message, "ack-id", MagicMock()
+        )
+        message.ack = MagicMock(autospec=True)
+        return message
 
     def test_log_start_processing_when_callback_called(
         self, caplog, message_wrapper, published_at
@@ -129,6 +148,7 @@ class TestCallback:
             res = callback(message_wrapper)
 
         assert res == 123
+        message_wrapper.ack.assert_called_once()
         assert len(caplog.records) == 3
         message_wrapper_log = caplog.records[1]
         assert message_wrapper_log.message == (
@@ -168,6 +188,7 @@ class TestCallback:
         res = callback(message_wrapper)
 
         assert res is None
+        message_wrapper.ack.assert_not_called()
         failed_log = caplog.records[-1]
         assert failed_log.message == (
             "Exception raised while processing "
@@ -186,6 +207,33 @@ class TestCallback:
             },
         }
         assert failed_log.subscription_message == message_wrapper
+
+    def test_log_acks_called_message_when_not_json_serializable(
+        self, caplog, message_wrapper_invalid_json, published_at
+    ):
+        callback = Callback(sub_stub)
+        res = callback(message_wrapper_invalid_json)
+
+        assert res is None
+        message_wrapper_invalid_json.ack.assert_called_once()
+        failed_log = caplog.records[-1]
+        assert failed_log.message == (
+            "Exception raised while processing "
+            "message for rele-some-cool-topic - "
+            "sub_stub: JSONDecodeError"
+        )
+        assert failed_log.metrics == {
+            "name": "subscriptions",
+            "data": {
+                "agent": "rele",
+                "topic": "some-cool-topic",
+                "status": "failed",
+                "subscription": "rele-some-cool-topic",
+                "duration_seconds": pytest.approx(0.5, abs=0.5),
+                "attributes": {},
+            },
+        }
+        assert failed_log.subscription_message == message_wrapper_invalid_json
 
     def test_published_time_as_message_attribute(self, message_wrapper, caplog):
         callback = Callback(sub_published_time_type)
