@@ -1,6 +1,10 @@
 Changelog
 =========
 
+`0.9.1` (2020-1-2)
+* Ack messages when data not json serializable (#141)
+* Use ThreadScheduler instead of ThreadPoolExecutor (#145)
+
 `0.9.0` (2019-12-20)
 * Flask support via middleware (#127)
 * Add message attributes to metrics log (#128)
