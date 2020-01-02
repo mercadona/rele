@@ -158,6 +158,6 @@ class Publisher:
         if not blocking:
             return future
 
-        future.result(timeout=timeout if timeout else self._timeout)
+        future.result(timeout=timeout or self._timeout)
         run_middleware_hook("post_publish", topic)
         return future
