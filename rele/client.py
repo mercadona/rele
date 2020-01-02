@@ -74,7 +74,7 @@ class Subscriber:
                     ack_deadline_seconds=self._ack_deadline,
                 )
             except exceptions.NotFound:
-                logger.exception("Cannot subscribe to a topic that does not exist.")
+                logger.error("Cannot subscribe to a topic that does not exist.")
 
     def consume(self, subscription_name, callback, scheduler):
         """Begin listening to topic from the SubscriberClient.

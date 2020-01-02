@@ -113,7 +113,7 @@ class TestSubscriber:
         "create_subscription",
         side_effect=exceptions.NotFound("Subscription topic does not exist"),
     )
-    def test_logs_when_subscription_topic_does_not_exist(
+    def test_logs_error_when_subscription_topic_does_not_exist(
         self, _mocked_client, project_id, subscriber, caplog
     ):
         subscriber.create_subscription(
