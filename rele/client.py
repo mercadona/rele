@@ -104,7 +104,7 @@ class Publisher:
     :param gc_project_id: string Google Cloud Project ID.
     :param credentials: string Google Cloud Credentials.
     :param encoder: A valid `json.encoder.JSONEncoder subclass <https://docs.python.org/3/library/json.html#json.JSONEncoder>`_  # noqa
-    :param timeout: float
+    :param timeout: float, default :ref:`settings_publisher_timeout`
     """
 
     def __init__(self, gc_project_id, credentials, encoder, timeout):
@@ -116,7 +116,7 @@ class Publisher:
         else:
             self._client = pubsub_v1.PublisherClient(credentials=credentials)
 
-    def publish(self, topic, data, blocking=False, **attrs):
+    def publish(self, topic, data, blocking=False, timeout=None, **attrs):
         """Publishes message to Google PubSub topic.
 
         Usage::
@@ -145,6 +145,7 @@ class Publisher:
         :param topic: string topic to publish the data.
         :param data: dict with the content of the message.
         :param blocking: boolean
+        :param timeout: float, default None fallsback to :ref:`settings_publisher_timeout`
         :param attrs: Extra parameters to be published.
         :return: `Future <https://googleapis.github.io/google-cloud-python/latest/pubsub/subscriber/api/futures.html>`_  # noqa
         """
@@ -157,6 +158,6 @@ class Publisher:
         if not blocking:
             return future
 
-        future.result(timeout=self._timeout)
+        future.result(timeout=timeout or self._timeout)
         run_middleware_hook("post_publish", topic)
         return future
