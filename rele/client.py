@@ -67,11 +67,14 @@ class Subscriber:
         topic_path = self._client.topic_path(self._gc_project_id, topic)
 
         with suppress(exceptions.AlreadyExists):
-            self._client.create_subscription(
-                name=subscription_path,
-                topic=topic_path,
-                ack_deadline_seconds=self._ack_deadline,
-            )
+            try:
+                self._client.create_subscription(
+                    name=subscription_path,
+                    topic=topic_path,
+                    ack_deadline_seconds=self._ack_deadline,
+                )
+            except exceptions.NotFound:
+                logger.error("Cannot subscribe to a topic that does not exist.")
 
     def consume(self, subscription_name, callback, scheduler):
         """Begin listening to topic from the SubscriberClient.

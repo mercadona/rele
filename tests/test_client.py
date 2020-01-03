@@ -3,6 +3,7 @@ import concurrent
 from unittest.mock import ANY, patch
 
 import pytest
+from google.api_core import exceptions
 from google.cloud.pubsub_v1 import SubscriberClient
 
 
@@ -107,3 +108,34 @@ class TestSubscriber:
         _mocked_client.assert_called_once_with(
             ack_deadline_seconds=100, name=expected_subscription, topic=expected_topic
         )
+
+    @patch.object(
+        SubscriberClient,
+        "create_subscription",
+        side_effect=exceptions.AlreadyExists("Subscription already exists"),
+    )
+    def test_does_not_raise_when_subscription_already_exists(
+        self, _mocked_client, project_id, subscriber
+    ):
+        subscriber.create_subscription(
+            subscription="test-topic", topic=f"{project_id}-test-topic"
+        )
+
+        _mocked_client.assert_called()
+
+    @patch.object(
+        SubscriberClient,
+        "create_subscription",
+        side_effect=exceptions.NotFound("Subscription topic does not exist"),
+    )
+    def test_logs_error_when_subscription_topic_does_not_exist(
+        self, _mocked_client, project_id, subscriber, caplog
+    ):
+        subscriber.create_subscription(
+            subscription="test-topic", topic=f"{project_id}-test-topic"
+        )
+
+        _mocked_client.assert_called()
+        log = caplog.records[0]
+        assert log.message == "Cannot subscribe to a topic that does not exist."
+        assert log.levelname == "ERROR"
