@@ -92,6 +92,26 @@ class TestSubscription:
 
         assert response == "Received a gif photo of type landscape"
 
+    @pytest.mark.parametrize('type, format', [
+        ("portrait", "gif"),
+        ("landscape", "jpg"),
+        ("portrait", "jpg"),
+        (None, "gif"),
+        ("portrait", None),
+        (None, None),
+    ])
+    def test_sub_is_not_executed_when_message_attribs_dont_match_all_criterias(
+        self, type, format
+    ):
+        data = {"name": "my_new_photo.jpeg"}
+        response = sub_process_landscape_gif_photos(
+            data,
+            type=type,
+            format=format
+        )
+
+        assert response is None
+
 
 class TestCallback:
     @pytest.fixture(autouse=True)
