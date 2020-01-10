@@ -43,7 +43,7 @@ class Subscription:
     def filter_by(self):
         return self._filters
 
-    def set_filter_by(self, filter_by):
+    def set_filters(self, filter_by):
         self._filters = filter_by
 
     def __call__(self, data, **kwargs):

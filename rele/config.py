@@ -66,7 +66,7 @@ def load_subscriptions_from_paths(sub_module_paths, sub_prefix=None, filter_by=N
                     attribute.set_prefix(sub_prefix)
 
                 if filter_by and not attribute.filter_by:
-                    attribute.set_filter_by(filter_by)
+                    attribute.set_filters(filter_by)
 
                 subscriptions.append(attribute)
     return subscriptions
