@@ -62,11 +62,7 @@ class Subscription:
         if not self._filters:
             return False
 
-        for filter in self._filters:
-            if not filter(kwargs):
-                return True
-
-        return False
+        return not all(filter(kwargs) for filter in self._filters)
 
 
 class Callback:
