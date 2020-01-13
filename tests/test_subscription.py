@@ -35,9 +35,18 @@ def landscape_filter(kwargs):
     return kwargs.get("type") == "landscape"
 
 
+def gif_filter(kwargs):
+    return kwargs.get("format") == "gif"
+
+
 @sub(topic="photo-updated", filter_by=landscape_filter)
 def sub_process_landscape_photos(data, **kwargs):
     return f'Received a photo of type {kwargs.get("type")}'
+
+
+@sub(topic="photo-updated", filter_by=[landscape_filter, gif_filter])
+def sub_process_landscape_gif_photos(data, **kwargs):
+    return f'Received a {kwargs.get("format")} photo of type {kwargs.get("type")}'
 
 
 class TestSubscription:
@@ -67,6 +76,33 @@ class TestSubscription:
     def test_sub_does_not_execute_when_message_attributes_dont_match_criteria(self):
         data = {"name": "my_new_photo.jpeg"}
         response = sub_process_landscape_photos(data, type="")
+
+        assert response is None
+
+    def test_sub_executes_when_message_attributes_matches_multiple_criterias(self):
+        data = {"name": "my_new_photo.jpeg"}
+        response = sub_process_landscape_gif_photos(
+            data, type="landscape", format="gif"
+        )
+
+        assert response == "Received a gif photo of type landscape"
+
+    @pytest.mark.parametrize(
+        "type, format",
+        [
+            ("portrait", "gif"),
+            ("landscape", "jpg"),
+            ("portrait", "jpg"),
+            (None, "gif"),
+            ("portrait", None),
+            (None, None),
+        ],
+    )
+    def test_sub_is_not_executed_when_message_attribs_dont_match_all_criterias(
+        self, type, format
+    ):
+        data = {"name": "my_new_photo.jpeg"}
+        response = sub_process_landscape_gif_photos(data, type=type, format=format)
 
         assert response is None
 
