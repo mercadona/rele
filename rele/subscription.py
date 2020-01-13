@@ -17,7 +17,15 @@ class Subscription:
         self.topic = topic
         self._prefix = prefix
         self._suffix = suffix
-        self._filter_by = filter_by
+        self._filters = self._init_filters(filter_by)
+
+    def _init_filters(self, filter_by):
+        if hasattr(filter_by, "__iter__"):
+            return filter_by
+        elif filter_by:
+            return [filter_by]
+
+        return None
 
     @property
     def name(self):
@@ -33,16 +41,16 @@ class Subscription:
 
     @property
     def filter_by(self):
-        return self._filter_by
+        return self._filters
 
-    def set_filter_by(self, filter_by):
-        self._filter_by = filter_by
+    def set_filters(self, filter_by):
+        self._filters = filter_by
 
     def __call__(self, data, **kwargs):
         if "published_at" in kwargs:
             kwargs["published_at"] = float(kwargs["published_at"])
 
-        if self._filter_returns_false(kwargs):
+        if self._any_filter_returns_false(kwargs):
             return
 
         return self._func(data, **kwargs)
@@ -50,8 +58,11 @@ class Subscription:
     def __str__(self):
         return f"{self.name} - {self._func.__name__}"
 
-    def _filter_returns_false(self, kwargs):
-        return self._filter_by and not self._filter_by(kwargs)
+    def _any_filter_returns_false(self, kwargs):
+        if not self._filters:
+            return False
+
+        return not all(filter(kwargs) for filter in self._filters)
 
 
 class Callback:
@@ -139,9 +150,9 @@ def sub(topic, prefix=None, suffix=None, filter_by=None):
     :param suffix: string An optional suffix to the subscription name.
                    Useful when you have two subscribers in the same project
                    that are subscribed to the same topic.
-    :param filter_by: function An optional function that
-                      filters the messages to be processed
-                      by the sub regarding their attributes.
+    :param filter_by: Union[function, list] An optional function or tuple of
+                      functions that filters the messages to be processed by
+                      the sub regarding their attributes.
     :return: :class:`~rele.subscription.Subscription`
     """
 
