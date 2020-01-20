@@ -76,6 +76,7 @@ ___________
     guides/flask
     guides/filters
     guides/emulator
+    guides/unrecoverable_middleware
 
 
 Configuration
