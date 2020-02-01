@@ -35,7 +35,7 @@ class Config:
         )
         self._encoder_path = setting.get("ENCODER_PATH", DEFAULT_ENCODER_PATH)
         self.publisher_timeout = setting.get("PUBLISHER_TIMEOUT", 3.0)
-        self.threads_per_subscription = setting.get("THREADS_PER_SUBSCRIPTION", 10)
+        self.threads_per_subscription = setting.get("THREADS_PER_SUBSCRIPTION", 3)
 
     @property
     def encoder(self):

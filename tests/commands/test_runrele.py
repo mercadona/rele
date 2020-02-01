@@ -20,7 +20,7 @@ class TestRunReleCommand:
     def test_calls_worker_start_and_setup_when_runrele(self, mock_worker):
         call_command("runrele")
 
-        mock_worker.assert_called_with([], "SOME-PROJECT-ID", ANY, 60, 10)
+        mock_worker.assert_called_with([], "SOME-PROJECT-ID", ANY, 60, 3)
         mock_worker.return_value.run_forever.assert_called_once_with()
 
     def test_prints_warning_when_conn_max_age_not_set_to_zero(
@@ -35,5 +35,5 @@ class TestRunReleCommand:
             "This may result in slots for database connections to "
             "be exhausted." in err
         )
-        mock_worker.assert_called_with([], "SOME-PROJECT-ID", ANY, 60, 10)
+        mock_worker.assert_called_with([], "SOME-PROJECT-ID", ANY, 60, 3)
         mock_worker.return_value.run_forever.assert_called_once_with()
