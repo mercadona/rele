@@ -1,6 +1,13 @@
 Changelog
 =========
 
+`0.10.0` (2020-2-4)
+* Adjust default THREADS_PER_SUBSCRIPTION (#152)
+* Add unrecoverable_middleware (#150)
+* Allow multiple filters (#148)
+* Configure timeout from .publish() (#143)
+* Dont crash when subscription topic does not exist (#142)
+
 `0.9.1` (2020-1-2)
 * Ack messages when data not json serializable (#141)
 * Use ThreadScheduler instead of ThreadPoolExecutor (#145)
