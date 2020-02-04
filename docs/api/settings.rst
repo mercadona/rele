@@ -142,7 +142,10 @@ Timeout that the publishing result will wait on the future to publish successful
 
 **Optional**
 
-Default: 10
+Default: 2
 
 Number of threads that will be consumed for each subscription.
-10 is the default for the Google Cloud PubSub library.
+Default behavior of the Google Cloud PubSub library is to use 10 threads per subscription.
+We thought this was too much for a default setting and have taken the liberty of
+reducing the thread count to 2. If you would like to maintain the default Google PubSub
+library behavior, please set this value to 10.
