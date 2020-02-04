@@ -1,7 +1,8 @@
 Changelog
 =========
 
-`0.10.0` (TBD)
+`0.10.0` (2020-2-4)
+* Adjust default THREADS_PER_SUBSCRIPTION (#152)
 * Add unrecoverable_middleware (#150)
 * Allow multiple filters (#148)
 * Configure timeout from .publish() (#143)
