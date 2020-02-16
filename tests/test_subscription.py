@@ -1,4 +1,5 @@
 import logging
+import queue
 import time
 from unittest.mock import MagicMock, patch
 
@@ -128,7 +129,7 @@ class TestCallback:
         )
 
         message = pubsub_v1.subscriber.message.Message(
-            rele_message, "ack-id", MagicMock()
+            rele_message, "ack-id", delivery_attempt=1, request_queue=queue.Queue()
         )
         message.ack = MagicMock(autospec=True)
         return message
@@ -150,7 +151,7 @@ class TestCallback:
             data=b"foobar", attributes={}, message_id="1"
         )
         message = pubsub_v1.subscriber.message.Message(
-            rele_message, "ack-id", MagicMock()
+            rele_message, "ack-id", delivery_attempt=1, request_queue=queue.Queue()
         )
         message.ack = MagicMock(autospec=True)
         return message
