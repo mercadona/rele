@@ -7,7 +7,6 @@ from logging import config as logging_config
 from google.oauth2 import service_account
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 SECRET_KEY = "Im-so-secret"
 
 DEBUG = True
