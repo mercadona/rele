@@ -54,7 +54,9 @@ class LoggingMiddleware(BaseMiddleware):
             extra={
                 "metrics": {
                     "name": "subscriptions",
-                    "data": self._build_data_metrics(subscription, message, "received"),
+                    "data": self._build_data_metrics(
+                        subscription, message, "received"
+                    ),
                 }
             },
         )
@@ -91,4 +93,6 @@ class LoggingMiddleware(BaseMiddleware):
         )
 
     def pre_worker_stop(self, subscriptions):
-        self._logger.info(f"Cleaning up {len(subscriptions)} subscription(s)...")
+        self._logger.info(
+            f"Cleaning up {len(subscriptions)} subscription(s)..."
+        )

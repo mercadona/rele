@@ -24,11 +24,15 @@ class TestLoadSubscriptions:
     def test_load_subscriptions_in_a_module(self, subscriptions):
         assert len(subscriptions) == 1
 
-    def test_filter_by_applied_to_subscription_returns_true(self, subscriptions):
+    def test_filter_by_applied_to_subscription_returns_true(
+        self, subscriptions
+    ):
 
         assert subscriptions[-1].filter_by({"lang": "en"}) is True
 
-    def test_filter_by_applied_to_subscription_returns_false(self, subscriptions):
+    def test_filter_by_applied_to_subscription_returns_false(
+        self, subscriptions
+    ):
 
         assert subscriptions[0].filter_by({"lang": "es"}) is False
 
@@ -74,7 +78,9 @@ class TestConfig:
             + "/dummy-pub-sub-credentials.json"
         },
     )
-    def test_sets_defaults_pulled_from_env(self, monkeypatch, project_id, credentials):
+    def test_sets_defaults_pulled_from_env(
+        self, monkeypatch, project_id, credentials
+    ):
         settings = {}
 
         config = Config(settings)

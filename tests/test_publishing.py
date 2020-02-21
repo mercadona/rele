@@ -11,7 +11,9 @@ class TestInitGlobalPublisher:
         mock_publisher.return_value = MagicMock(spec=Publisher)
         publishing.init_global_publisher(config)
         message = {"foo": "bar"}
-        publishing.publish(topic="order-cancelled", data=message, myattr="hello")
+        publishing.publish(
+            topic="order-cancelled", data=message, myattr="hello"
+        )
         assert isinstance(publishing._publisher, Publisher)
         publisher_id = id(publishing._publisher)
 
@@ -20,5 +22,7 @@ class TestInitGlobalPublisher:
         )
 
         mock_publisher.return_value = MagicMock(spec=Publisher)
-        publishing.publish(topic="order-cancelled", data=message, myattr="hello")
+        publishing.publish(
+            topic="order-cancelled", data=message, myattr="hello"
+        )
         assert id(publishing._publisher) == publisher_id

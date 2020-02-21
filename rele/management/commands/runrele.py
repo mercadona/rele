@@ -18,7 +18,9 @@ class Command(BaseCommand):
     config = Config(settings.RELE)
 
     def handle(self, *args, **options):
-        if all(map(lambda x: x.get("CONN_MAX_AGE"), settings.DATABASES.values())):
+        if all(
+            map(lambda x: x.get("CONN_MAX_AGE"), settings.DATABASES.values())
+        ):
             self.stderr.write(
                 self.style.WARNING(
                     "WARNING: settings.CONN_MAX_AGE is not set to 0. "
@@ -27,7 +29,9 @@ class Command(BaseCommand):
                 )
             )
         subs = self._autodiscover_subs()
-        self.stdout.write(f"Configuring worker with {len(subs)} " f"subscription(s)...")
+        self.stdout.write(
+            f"Configuring worker with {len(subs)} " f"subscription(s)..."
+        )
         for sub in subs:
             self.stdout.write(f"  {sub}")
         worker = Worker(
