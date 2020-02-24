@@ -14,7 +14,8 @@ class Command(BaseCommand):
 
         subscription_paths = discover_subs_modules()
         subs = sorted(
-            load_subscriptions_from_paths(subscription_paths), key=lambda sub: sub.topic
+            load_subscriptions_from_paths(subscription_paths),
+            key=lambda sub: sub.topic,
         )
         sub_data = [(sub.topic, sub.name, sub._func.__name__) for sub in subs]
 

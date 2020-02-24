@@ -11,3 +11,4 @@ Thank you to all the contributors to Relé!
 * David de la Iglesia (@ddelaiglesia) for the Logo!
 * Santiago Lanús (@sanntt)
 * Craig Mulligan (@hobochild)
+* Daniel Demmel (@daaain)
