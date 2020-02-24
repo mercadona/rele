@@ -58,3 +58,12 @@ install-dev-requirements: install-requirements install-test-requirements install
 build-html-doc: ## builds the project documentation in HTML format
 	DJANGO_SETTINGS_MODULE=tests.settings make html -C docs
 	open docs/_build/html/index.html
+
+docker-build:
+	docker build -t rele .
+
+docker-test: docker-build
+	docker run -it --rm --name rele rele
+
+docker-shell: docker-build
+	docker run -it --rm --name rele --volume ${PWD}:/rele rele /bin/bash
