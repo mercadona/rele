@@ -36,9 +36,7 @@ class Subscriber:
     :param default_ack_deadline: int Ack Deadline defined in settings
     """
 
-    def __init__(
-        self, gc_project_id=None, credentials=None, default_ack_deadline=None
-    ):
+    def __init__(self, gc_project_id=None, credentials=None, default_ack_deadline=None):
 
         if gc_project_id is None or credentials is None:
             creds, project = get_google_defaults()
@@ -76,9 +74,7 @@ class Subscriber:
                     ack_deadline_seconds=self._ack_deadline,
                 )
             except exceptions.NotFound:
-                logger.error(
-                    "Cannot subscribe to a topic that does not exist."
-                )
+                logger.error("Cannot subscribe to a topic that does not exist.")
 
     def consume(self, subscription_name, callback, scheduler):
         """Begin listening to topic from the SubscriberClient.

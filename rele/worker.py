@@ -29,9 +29,7 @@ class Worker:
         default_ack_deadline=None,
         threads_per_subscription=None,
     ):
-        self._subscriber = Subscriber(
-            gc_project_id, credentials, default_ack_deadline
-        )
+        self._subscriber = Subscriber(gc_project_id, credentials, default_ack_deadline)
         self._futures = []
         self._subscriptions = subscriptions
         self.threads_per_subscription = threads_per_subscription
@@ -43,9 +41,7 @@ class Worker:
         re-created. Therefore, it is idempotent.
         """
         for subscription in self._subscriptions:
-            self._subscriber.create_subscription(
-                subscription.name, subscription.topic
-            )
+            self._subscriber.create_subscription(subscription.name, subscription.topic)
 
     def start(self):
         """Begin consuming all subscriptions.

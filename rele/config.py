@@ -40,9 +40,7 @@ class Config:
         )
         self._encoder_path = setting.get("ENCODER_PATH", DEFAULT_ENCODER_PATH)
         self.publisher_timeout = setting.get("PUBLISHER_TIMEOUT", 3.0)
-        self.threads_per_subscription = setting.get(
-            "THREADS_PER_SUBSCRIPTION", 2
-        )
+        self.threads_per_subscription = setting.get("THREADS_PER_SUBSCRIPTION", 2)
 
     @property
     def encoder(self):
@@ -61,9 +59,7 @@ def setup(setting=None, **kwargs):
     return config
 
 
-def load_subscriptions_from_paths(
-    sub_module_paths, sub_prefix=None, filter_by=None
-):
+def load_subscriptions_from_paths(sub_module_paths, sub_prefix=None, filter_by=None):
 
     subscriptions = []
     for sub_module_path in sub_module_paths:

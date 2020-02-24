@@ -14,9 +14,7 @@ logger = logging.getLogger(__name__)
 
 @sub(topic="some-cool-topic", prefix="rele")
 def sub_stub(data, **kwargs):
-    logger.info(
-        f'I am a task doing stuff with ID {data["id"]} ' f'({kwargs["lang"]})'
-    )
+    logger.info(f'I am a task doing stuff with ID {data["id"]} ' f'({kwargs["lang"]})')
     return data["id"]
 
 
@@ -49,9 +47,7 @@ def sub_process_landscape_photos(data, **kwargs):
 
 @sub(topic="photo-updated", filter_by=[landscape_filter, gif_filter])
 def sub_process_landscape_gif_photos(data, **kwargs):
-    return (
-        f'Received a {kwargs.get("format")} photo of type {kwargs.get("type")}'
-    )
+    return f'Received a {kwargs.get("format")} photo of type {kwargs.get("type")}'
 
 
 class TestSubscription:
@@ -78,17 +74,13 @@ class TestSubscription:
 
         assert response == "Received a photo of type landscape"
 
-    def test_sub_does_not_execute_when_message_attributes_dont_match_criteria(
-        self,
-    ):
+    def test_sub_does_not_execute_when_message_attributes_dont_match_criteria(self,):
         data = {"name": "my_new_photo.jpeg"}
         response = sub_process_landscape_photos(data, type="")
 
         assert response is None
 
-    def test_sub_executes_when_message_attributes_matches_multiple_criterias(
-        self,
-    ):
+    def test_sub_executes_when_message_attributes_matches_multiple_criterias(self,):
         data = {"name": "my_new_photo.jpeg"}
         response = sub_process_landscape_gif_photos(
             data, type="landscape", format="gif"
@@ -111,9 +103,7 @@ class TestSubscription:
         self, type, format
     ):
         data = {"name": "my_new_photo.jpeg"}
-        response = sub_process_landscape_gif_photos(
-            data, type=type, format=format
-        )
+        response = sub_process_landscape_gif_photos(data, type=type, format=format)
 
         assert response is None
 
@@ -139,10 +129,7 @@ class TestCallback:
         )
 
         message = pubsub_v1.subscriber.message.Message(
-            rele_message,
-            "ack-id",
-            delivery_attempt=1,
-            request_queue=queue.Queue(),
+            rele_message, "ack-id", delivery_attempt=1, request_queue=queue.Queue(),
         )
         message.ack = MagicMock(autospec=True)
         return message
@@ -164,10 +151,7 @@ class TestCallback:
             data=b"foobar", attributes={}, message_id="1"
         )
         message = pubsub_v1.subscriber.message.Message(
-            rele_message,
-            "ack-id",
-            delivery_attempt=1,
-            request_queue=queue.Queue(),
+            rele_message, "ack-id", delivery_attempt=1, request_queue=queue.Queue(),
         )
         message.ack = MagicMock(autospec=True)
         return message
@@ -191,16 +175,11 @@ class TestCallback:
                 "topic": "some-cool-topic",
                 "status": "received",
                 "subscription": "rele-some-cool-topic",
-                "attributes": {
-                    "lang": "es",
-                    "published_at": str(published_at),
-                },
+                "attributes": {"lang": "es", "published_at": str(published_at),},
             },
         }
 
-    def test_acks_message_when_execution_successful(
-        self, caplog, message_wrapper
-    ):
+    def test_acks_message_when_execution_successful(self, caplog, message_wrapper):
         with caplog.at_level(logging.DEBUG):
             callback = Callback(sub_stub)
             res = callback(message_wrapper)
@@ -221,8 +200,7 @@ class TestCallback:
 
         success_log = caplog.records[-1]
         assert success_log.message == (
-            "Successfully processed message for "
-            "rele-some-cool-topic - sub_stub"
+            "Successfully processed message for " "rele-some-cool-topic - sub_stub"
         )
         assert success_log.metrics == {
             "name": "subscriptions",
@@ -232,10 +210,7 @@ class TestCallback:
                 "status": "succeeded",
                 "subscription": "rele-some-cool-topic",
                 "duration_seconds": pytest.approx(0.5, abs=0.5),
-                "attributes": {
-                    "lang": "es",
-                    "published_at": str(published_at),
-                },
+                "attributes": {"lang": "es", "published_at": str(published_at),},
             },
         }
 
@@ -265,10 +240,7 @@ class TestCallback:
                 "status": "failed",
                 "subscription": "rele-some-cool-topic",
                 "duration_seconds": pytest.approx(0.5, abs=0.5),
-                "attributes": {
-                    "lang": "es",
-                    "published_at": str(published_at),
-                },
+                "attributes": {"lang": "es", "published_at": str(published_at),},
             },
         }
         assert failed_log.subscription_message == message_wrapper
@@ -300,9 +272,7 @@ class TestCallback:
         }
         assert failed_log.subscription_message == message_wrapper_invalid_json
 
-    def test_published_time_as_message_attribute(
-        self, message_wrapper, caplog
-    ):
+    def test_published_time_as_message_attribute(self, message_wrapper, caplog):
         callback = Callback(sub_published_time_type)
         callback(message_wrapper)
 
