@@ -32,7 +32,10 @@ RELE = {
         f"{BASE_DIR}/tests/dummy-pub-sub-credentials.json"
     ),
     "SUB_PREFIX": "rele",
-    "MIDDLEWARE": ["rele.contrib.LoggingMiddleware", "rele.contrib.DjangoDBMiddleware"],
+    "MIDDLEWARE": [
+        "rele.contrib.LoggingMiddleware",
+        "rele.contrib.DjangoDBMiddleware",
+    ],
 }
 
 logging_config.dictConfig(

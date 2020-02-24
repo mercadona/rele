@@ -74,13 +74,13 @@ class TestSubscription:
 
         assert response == "Received a photo of type landscape"
 
-    def test_sub_does_not_execute_when_message_attributes_dont_match_criteria(self):
+    def test_sub_does_not_execute_when_message_attributes_dont_match_criteria(self,):
         data = {"name": "my_new_photo.jpeg"}
         response = sub_process_landscape_photos(data, type="")
 
         assert response is None
 
-    def test_sub_executes_when_message_attributes_matches_multiple_criterias(self):
+    def test_sub_executes_when_message_attributes_matches_multiple_criterias(self,):
         data = {"name": "my_new_photo.jpeg"}
         response = sub_process_landscape_gif_photos(
             data, type="landscape", format="gif"
@@ -129,7 +129,7 @@ class TestCallback:
         )
 
         message = pubsub_v1.subscriber.message.Message(
-            rele_message, "ack-id", delivery_attempt=1, request_queue=queue.Queue()
+            rele_message, "ack-id", delivery_attempt=1, request_queue=queue.Queue(),
         )
         message.ack = MagicMock(autospec=True)
         return message
@@ -151,7 +151,7 @@ class TestCallback:
             data=b"foobar", attributes={}, message_id="1"
         )
         message = pubsub_v1.subscriber.message.Message(
-            rele_message, "ack-id", delivery_attempt=1, request_queue=queue.Queue()
+            rele_message, "ack-id", delivery_attempt=1, request_queue=queue.Queue(),
         )
         message.ack = MagicMock(autospec=True)
         return message
@@ -175,7 +175,7 @@ class TestCallback:
                 "topic": "some-cool-topic",
                 "status": "received",
                 "subscription": "rele-some-cool-topic",
-                "attributes": {"lang": "es", "published_at": str(published_at)},
+                "attributes": {"lang": "es", "published_at": str(published_at),},
             },
         }
 
@@ -210,7 +210,7 @@ class TestCallback:
                 "status": "succeeded",
                 "subscription": "rele-some-cool-topic",
                 "duration_seconds": pytest.approx(0.5, abs=0.5),
-                "attributes": {"lang": "es", "published_at": str(published_at)},
+                "attributes": {"lang": "es", "published_at": str(published_at),},
             },
         }
 
@@ -240,7 +240,7 @@ class TestCallback:
                 "status": "failed",
                 "subscription": "rele-some-cool-topic",
                 "duration_seconds": pytest.approx(0.5, abs=0.5),
-                "attributes": {"lang": "es", "published_at": str(published_at)},
+                "attributes": {"lang": "es", "published_at": str(published_at),},
             },
         }
         assert failed_log.subscription_message == message_wrapper

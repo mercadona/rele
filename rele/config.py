@@ -31,7 +31,8 @@ class Config:
         self.sub_prefix = setting.get("SUB_PREFIX")
         self.middleware = setting.get("MIDDLEWARE", default_middleware)
         self.ack_deadline = setting.get(
-            "ACK_DEADLINE", os.environ.get("DEFAULT_ACK_DEADLINE", DEFAULT_ACK_DEADLINE)
+            "ACK_DEADLINE",
+            os.environ.get("DEFAULT_ACK_DEADLINE", DEFAULT_ACK_DEADLINE),
         )
         self._encoder_path = setting.get("ENCODER_PATH", DEFAULT_ENCODER_PATH)
         self.publisher_timeout = setting.get("PUBLISHER_TIMEOUT", 3.0)
