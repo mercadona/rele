@@ -1,11 +1,7 @@
 import importlib
 import os
 
-from .client import (
-    DEFAULT_ENCODER_PATH,
-    get_google_defaults,
-    DEFAULT_ACK_DEADLINE,
-)
+from .client import DEFAULT_ENCODER_PATH, get_google_defaults, DEFAULT_ACK_DEADLINE
 from .middleware import register_middleware, default_middleware
 from .publishing import init_global_publisher
 from .subscription import Subscription

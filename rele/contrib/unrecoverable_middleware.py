@@ -6,8 +6,6 @@ class UnrecoverableException(Exception):
 
 
 class UnrecoverableMiddleWare(BaseMiddleware):
-    def post_process_message_failure(
-        self, subscription, err, start_time, message
-    ):
+    def post_process_message_failure(self, subscription, err, start_time, message):
         if isinstance(err, UnrecoverableException):
             message.ack()
