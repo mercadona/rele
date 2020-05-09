@@ -53,7 +53,8 @@ a valid json serializable Python object.
 
 .. note:: If you want to publish other types of objects, you may configure the encoder class.
 
-If you need to pass in additional attributes to the Message object, you can simply add ``kwargs``:
+If you need to pass in additional attributes to the Message object, you can simply add ``kwargs``.
+These must all be strings:
 
 .. code:: python
 
@@ -61,6 +62,8 @@ If you need to pass in additional attributes to the Message object, you can simp
                  data=data,
                  type='profile',
                  rotation='landscape')
+
+.. note:: Anything other than a string attribute will result in a ``TypeError``.
 
 .. _subscribing:
 
