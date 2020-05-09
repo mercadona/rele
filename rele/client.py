@@ -149,7 +149,7 @@ class Publisher:
         :param data: dict with the content of the message.
         :param blocking: boolean
         :param timeout: float, default None fallsback to :ref:`settings_publisher_timeout`
-        :param attrs: Extra parameters to be published.
+        :param attrs: additional string parameters to be published.
         :return: `Future <https://googleapis.github.io/google-cloud-python/latest/pubsub/subscriber/api/futures.html>`_  # noqa
         """
 
