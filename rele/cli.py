@@ -19,11 +19,11 @@ def create_worker(subs, config):
     signal.signal(signal.SIGINT, signal.SIG_IGN)
     signal.signal(signal.SIGTERM, worker.stop)
     signal.signal(signal.SIGTSTP, worker.stop)
-
+    print('starting worker')
     worker.run_forever()
 
 
-def _autodiscover_subs(sub_modules, settings, config):
+def autodiscover_subs(sub_modules, settings, config):
     return rele.config.load_subscriptions_from_paths(
         sub_modules,
         config.sub_prefix,
