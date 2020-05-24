@@ -6,8 +6,9 @@ from rele import Worker
 
 
 def create_worker(subs, config):
+    print(f"Configuring worker with {len(subs)} " f"subscription(s)...")
     for sub in subs:
-        sys.stdout.write(f"  {sub}")
+        print(f"  {sub}")
     worker = Worker(
         subs,
         config.gc_project_id,
@@ -19,13 +20,12 @@ def create_worker(subs, config):
     signal.signal(signal.SIGINT, signal.SIG_IGN)
     signal.signal(signal.SIGTERM, worker.stop)
     signal.signal(signal.SIGTSTP, worker.stop)
-    print('starting worker')
     worker.run_forever()
 
 
-def autodiscover_subs(sub_modules, settings, config):
+def autodiscover_subs(sub_modules, config):
     return rele.config.load_subscriptions_from_paths(
         sub_modules,
         config.sub_prefix,
-        settings.RELE.get("FILTER_SUBS_BY"),
+        config.filter_by,
     )

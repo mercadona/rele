@@ -23,6 +23,6 @@ class Command(BaseCommand):
                     "be exhausted."
                 )
             )
-        subs = autodiscover_subs(discover_subs_modules(), settings, self.config)
+        subs = autodiscover_subs(discover_subs_modules(), self.config)
         self.stdout.write(f"Configuring worker with {len(subs)} " f"subscription(s)...")
         create_worker(subs, self.config)
