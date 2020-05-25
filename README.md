@@ -60,10 +60,6 @@ def photo_uploaded(data, **kwargs):
     print(f"Customer {data['customer_id']} has uploaded an image")
 ```
 
-```bash
-rele settings.py
-```
-
 ## What's in the name
 
 "Relé" is Spanish for *relay*, a technology that 
