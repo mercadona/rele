@@ -25,7 +25,5 @@ def create_and_run_worker(subs, config):
 
 def autodiscover_subs(sub_modules, config):
     return rele.config.load_subscriptions_from_paths(
-        sub_modules,
-        config.sub_prefix,
-        config.filter_by,
+        sub_modules, config.sub_prefix, config.filter_by,
     )

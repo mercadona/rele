@@ -15,23 +15,23 @@ def main():
     sys.path.insert(0, os.getcwd())
 
     parser = argparse.ArgumentParser(
-        prog='Relé',
-        description='Unharness the power of Relé from the command line')
+        prog="Relé", description="Unharness the power of Relé from the command line"
+    )
 
-    subparsers = parser.add_subparsers(help='Select a command', dest='command')
+    subparsers = parser.add_subparsers(help="Select a command", dest="command")
 
     run_parser = subparsers.add_parser(
-        'run',
-        help='Run a Relé worker with auto-discovery of subs modules in the '
-             'current path. Auto-discovery will include all subs '
-             'and settings modules. If no settings module is discovered, '
-             'defaults will be used.')
+        "run",
+        help="Run a Relé worker with auto-discovery of subs modules in the "
+        "current path. Auto-discovery will include all subs "
+        "and settings modules. If no settings module is discovered, "
+        "defaults will be used.",
+    )
 
     args = parser.parse_args()
 
-    if args.command == 'run':
+    if args.command == "run":
         settings, module_paths = discover.sub_modules()
         configuration = config.setup(settings.RELE if settings else None)
         subs = autodiscover_subs(module_paths, configuration)
         create_and_run_worker(subs, configuration)
-
