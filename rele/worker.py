@@ -1,4 +1,5 @@
 import logging
+import signal
 import sys
 import time
 from concurrent import futures
@@ -108,3 +109,32 @@ class Worker:
         logger.info("Consuming subscriptions...")
         while True:
             time.sleep(sleep_interval)
+
+
+def create_and_run(subs, config):
+    """
+    Create and run a worker from a list of Subscription objects and a config
+    while waiting forever, until the process is stopped.
+
+    We stop a worker process on:
+    - SIGINT
+    - SIGTSTP
+
+    :param subs: List :class:`~rele.subscription.Subscription`
+    :param config: :class:`~rele.config.Config`
+    """
+    print(f"Configuring worker with {len(subs)} subscription(s)...")
+    for sub in subs:
+        print(f"  {sub}")
+    worker = Worker(
+        subs,
+        config.gc_project_id,
+        config.credentials,
+        config.ack_deadline,
+        config.threads_per_subscription,
+    )
+
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+    signal.signal(signal.SIGTERM, worker.stop)
+    signal.signal(signal.SIGTSTP, worker.stop)
+    worker.run_forever()

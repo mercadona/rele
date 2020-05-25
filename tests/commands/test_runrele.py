@@ -14,7 +14,7 @@ class TestRunReleCommand:
 
     @pytest.fixture
     def mock_worker(self):
-        with patch("rele.cli.Worker", autospec=True) as p:
+        with patch("rele.worker.Worker", autospec=True) as p:
             yield p
 
     def test_calls_worker_start_and_setup_when_runrele(self, mock_worker):

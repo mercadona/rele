@@ -3,9 +3,9 @@ import logging
 import os
 import sys
 
-from rele import config, discover
+from rele import config, discover, subscription
 
-from rele.cli import autodiscover_subs, create_and_run_worker
+from rele.worker import create_and_run
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ def main():
     sys.path.insert(0, os.getcwd())
 
     parser = argparse.ArgumentParser(
-        prog="Relé", description="Unharness the power of Relé from the command line"
+        prog="Relé", description="Harness the power of Relé from the command line"
     )
 
     subparsers = parser.add_subparsers(help="Select a command", dest="command")
@@ -33,5 +33,7 @@ def main():
     if args.command == "run":
         settings, module_paths = discover.sub_modules()
         configuration = config.setup(settings.RELE if settings else None)
-        subs = autodiscover_subs(module_paths, configuration)
-        create_and_run_worker(subs, configuration)
+        subs = config.load_subscriptions_from_paths(
+            module_paths, configuration.sub_prefix, configuration.filter_by
+        )
+        create_and_run(subs, configuration)

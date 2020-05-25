@@ -6,7 +6,10 @@ logger = logging.getLogger(__name__)
 
 
 def module_has_submodule(package, module_name):
-    """See if 'module' is in 'package'."""
+    """
+    See if 'module' is in 'package'.
+    Taken from https://github.com/django/django/blob/master/django/utils/module_loading.py#L63
+    """
     package = __import__(package)
     package_name = package.__name__
     package_path = package.__path__
@@ -27,7 +30,9 @@ def sub_modules():
     those exists, we import it, and return the settings module, and
     paths to the subs file.
 
-    :return: settings module, array of subs module paths.
+    If a settings module is not found, we return None.
+
+    :return: (settings module, List[string: subs module paths])
     """
     settings = None
     module_paths = []
