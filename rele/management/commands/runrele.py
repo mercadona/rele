@@ -3,7 +3,7 @@ import logging
 from django.conf import settings
 from django.core.management import BaseCommand
 
-from rele.cli import create_worker, autodiscover_subs
+from rele.cli import create_and_run_worker, autodiscover_subs
 from rele.config import Config
 from rele.management.discover import discover_subs_modules
 
@@ -25,4 +25,4 @@ class Command(BaseCommand):
             )
         subs = autodiscover_subs(discover_subs_modules(), self.config)
         self.stdout.write(f"Configuring worker with {len(subs)} " f"subscription(s)...")
-        create_worker(subs, self.config)
+        create_and_run_worker(subs, self.config)

@@ -5,8 +5,8 @@ import rele
 from rele import Worker
 
 
-def create_worker(subs, config):
-    print(f"Configuring worker with {len(subs)} " f"subscription(s)...")
+def create_and_run_worker(subs, config):
+    print(f"Configuring worker with {len(subs)} subscription(s)...")
     for sub in subs:
         print(f"  {sub}")
     worker = Worker(
