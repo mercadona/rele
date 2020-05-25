@@ -1,7 +1,7 @@
 .. _unrecoverable_middleware:
 
 Unrecoverable Middleware
-===========
+========================
 
 To acknowledge and ignore incompatible messages that your subscription is unable to handle, you can use the `UnrecoverableMiddleware`.
 
