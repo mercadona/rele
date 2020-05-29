@@ -25,8 +25,8 @@ class Config:
         ):
             credentials, project = get_google_defaults()
 
-        self.gc_project_id = setting.get("GC_PROJECT_ID") or project
         self.credentials = setting.get("GC_CREDENTIALS") or credentials
+        self.gc_project_id = setting.get("GC_PROJECT_ID") or project
         self.app_name = setting.get("APP_NAME")
         self.sub_prefix = setting.get("SUB_PREFIX")
         self.middleware = setting.get("MIDDLEWARE", default_middleware)
