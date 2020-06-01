@@ -2,7 +2,6 @@ import json
 import logging
 import time
 
-import rele
 from .middleware import run_middleware_hook
 
 logger = logging.getLogger(__name__)

@@ -42,6 +42,7 @@ seamless by providing Publisher, Subscriber and Worker classes with the followin
 * Intuitive Subscription Management
 * Easily Extensible Middleware
 * Optional Django or Flask Integration
+* CLI
 * And much more!
 
 ## What it looks like

@@ -22,8 +22,7 @@ To configure Relé, our settings may look something like:
 
 .. code:: python
 
-    # settings.py
-    import rele
+    # /settings.py
     from google.oauth2 import service_account
 
     RELE = {
@@ -32,15 +31,15 @@ To configure Relé, our settings may look something like:
         ),
         'GC_PROJECT_ID': 'photo-uploading-app',
     }
-    config = rele.config.setup(RELE)
 
 .. code:: python
 
-    # publisher.py
+    # /publisher.py
 
     import rele
-    from settings import config  # we need this for initializing the global Publisher singleton
+    import settings # we need this for initializing the global Publisher singleton
 
+    config = rele.config.setup(settings.RELE)
     data = {
         'customer_id': 123,
         'location': '/google-bucket/photos/123.jpg'
@@ -51,7 +50,7 @@ To configure Relé, our settings may look something like:
 To publish data, we simply pass in the topic to which we want our data to be published to, followed by
 a valid json serializable Python object.
 
-.. note:: If you want to publish other types of objects, you may configure the encoder class.
+.. note:: If you want to publish other types of objects, you may configure a custom :ref:`settings_encoder_path`.
 
 If you need to pass in additional attributes to the Message object, you can simply add ``kwargs``.
 These must all be strings:
@@ -71,11 +70,11 @@ Subscribing
 ___________
 
 Once we can publish to a topic, we can subscribe to the topic from a worker instance.
-In an app directory, we create our sub function within our subs.py file.
+In an app directory, we create our sub function within our ``subs.py`` file.
 
 .. code:: python
 
-    # subs.py
+    # /app/subs.py
 
     from rele import sub
 
@@ -85,7 +84,7 @@ In an app directory, we create our sub function within our subs.py file.
                 and we stored it at {data['location'}.")
 
 Additionally, if you added message attributes to your Message, you can access them via the
-`kwargs` argument:
+``kwargs`` argument:
 
 .. code:: python
 
@@ -101,8 +100,8 @@ Message attributes
 ------------------
 
 It might be helpful to access particular message attributes in your
-subscriber. One attribute that _rele_ adds by default is `published_at`.
-To access this attribute you can use `kwargs` keyword.
+subscriber. One attribute that _rele_ adds by default is ``published_at``.
+To access this attribute you can use ``kwargs``.
 
 .. code:: python
 
@@ -117,28 +116,17 @@ To access this attribute you can use `kwargs` keyword.
 Consuming
 _________
 
-Once the sub is implemented, we can start our worker which will register the subscriber with Google Cloud
-and will begin to pull the messages from the topic.
+Once the sub is implemented, we can start our worker which will register the subscriber on the topic
+with Google Cloud and will begin to pull the messages from the topic.
 
-.. code:: python
+.. code:: bash
 
-    # worker.py
+    rele-cli run
 
-    from time import sleep
-    from rele import Worker
+.. note:: Autodiscovery of subscribers with ``rele-cli`` follows a strict directory structure.
 
-    from settings import config
-    from subs import photo_uploaded
+    | ├──settings.py
+    | ├──app # This can be called whatever you like
+    | ├────subs.py
 
-    if __name__ == '__main__':
-        worker = Worker(
-            [photo_uploaded],
-            config.gc_project_id,
-            config.credentials,
-            config.ack_deadline,
-        )
-        worker.run_forever()
-
-Once the sub and worker are created, we can start our worker by running ``python worker.py``.
-
-In another, terminal session when we run ``python publisher.py`` we should see the print readout in our subscriber.
+In another terminal session when we run ``python publisher.py``, we should see the print readout in our subscriber.
