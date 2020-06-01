@@ -96,6 +96,7 @@ The application name.
 This should be unique to all the services running in the application ecosystem. It is used by
 the LoggingMiddleware and Prometheus integration.
 
+.. _settings_encoder_path:
 
 ``ENCODER_PATH``
 ------------------

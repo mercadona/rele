@@ -1,6 +1,16 @@
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from rele import Publisher, publishing
+
+
+class TestPublish:
+    def test_raises_when_global_publisher_does_not_exist(self):
+        message = {"foo": "bar"}
+
+        with pytest.raises(ValueError):
+            publishing.publish(topic="order-cancelled", data=message, myattr="hello")
 
 
 class TestInitGlobalPublisher:

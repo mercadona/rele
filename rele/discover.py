@@ -42,5 +42,5 @@ def sub_modules():
         if is_package and module_has_submodule(package, "subs"):
             module = package + ".subs"
             module_paths.append(module)
-            logger.debug(" * Discovered subs module: %r" % module)
+            logger.info(" * Discovered subs module: %r" % module)
     return settings, module_paths
