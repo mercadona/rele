@@ -2,6 +2,11 @@ Changelog
 =========
 
 `0.10.0` (2020-2-4)
+* CLI feature (#160)
+* Documentation Enhancements (#158, #155, #162)
+* Testing Improvements (#154, #157)
+
+`0.10.0` (2020-2-4)
 * Adjust default THREADS_PER_SUBSCRIPTION (#152)
 * Add unrecoverable_middleware (#150)
 * Allow multiple filters (#148)
