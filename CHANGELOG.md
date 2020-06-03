@@ -1,7 +1,7 @@
 Changelog
 =========
 
-`0.10.0` (2020-2-4)
+`0.11.0` (2020-6-4)
 * CLI feature (#160)
 * Documentation Enhancements (#158, #155, #162)
 * Testing Improvements (#154, #157)
