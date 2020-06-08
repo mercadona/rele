@@ -3,9 +3,9 @@ import logging
 from django.conf import settings
 from django.core.management import BaseCommand
 
-from rele.worker import create_and_run
 from rele import config
 from rele.management.discover import discover_subs_modules
+from rele.worker import create_and_run
 
 logger = logging.getLogger(__name__)
 

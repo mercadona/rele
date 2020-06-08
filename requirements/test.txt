@@ -4,3 +4,4 @@ pytest-django>=3.5
 coverage>=4.4.0
 codecov>=2.0.0
 black
+isort~=4.3.0

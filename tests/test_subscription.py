@@ -6,8 +6,8 @@ from unittest.mock import MagicMock, patch
 import pytest
 from google.cloud import pubsub_v1
 
-from rele.middleware import register_middleware
 from rele import Callback, Subscription, sub
+from rele.middleware import register_middleware
 
 logger = logging.getLogger(__name__)
 
