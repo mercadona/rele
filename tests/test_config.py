@@ -1,10 +1,11 @@
 import json
 import os
+from unittest.mock import patch
 
 import pytest
-from unittest.mock import patch
-from rele.config import load_subscriptions_from_paths, Config
+
 from rele import sub
+from rele.config import Config, load_subscriptions_from_paths
 
 
 @sub(topic="test-topic", prefix="rele")

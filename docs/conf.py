@@ -13,9 +13,10 @@
 import os
 import sys
 
+import rele
+
 sys.path.insert(0, os.path.abspath(".."))
 
-import rele
 
 # -- Project information -----------------------------------------------------
 

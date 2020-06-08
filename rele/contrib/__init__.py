@@ -1,5 +1,5 @@
-from .logging_middleware import LoggingMiddleware  # noqa
 from .flask_middleware import FlaskMiddleware  # noqa
+from .logging_middleware import LoggingMiddleware  # noqa
 from .unrecoverable_middleware import UnrecoverableMiddleWare  # noqa
 
 try:

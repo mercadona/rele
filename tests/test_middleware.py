@@ -1,6 +1,8 @@
-import pytest
-import rele
 from unittest.mock import patch
+
+import pytest
+
+import rele
 
 
 class TestMiddleware:
