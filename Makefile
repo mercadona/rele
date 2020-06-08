@@ -23,6 +23,7 @@ clean-tests: ## remove pytest artifacts
 
 lint: ## check style with flake8
 	black . --check --diff
+	isort
 
 test: ## run tests quickly with the default Python
 	python runtests.py tests
