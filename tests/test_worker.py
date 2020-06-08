@@ -1,6 +1,6 @@
+import os
 from concurrent import futures
 from unittest.mock import ANY, patch
-import os
 
 import pytest
 from google.cloud.pubsub_v1.subscriber.scheduler import ThreadScheduler

@@ -1,5 +1,5 @@
-import decimal
 import concurrent
+import decimal
 from unittest.mock import ANY, patch
 
 import pytest

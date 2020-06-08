@@ -4,9 +4,9 @@ import os
 import time
 from contextlib import suppress
 
+import google.auth
 from google.api_core import exceptions
 from google.cloud import pubsub_v1
-import google.auth
 
 from rele.middleware import run_middleware_hook
 

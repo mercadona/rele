@@ -2,7 +2,6 @@ from django.core.management import BaseCommand
 from tabulate import tabulate
 
 from rele.config import load_subscriptions_from_paths
-
 from rele.management.discover import discover_subs_modules
 
 

@@ -4,7 +4,6 @@ import os
 import sys
 
 from rele import config, discover, subscription
-
 from rele.worker import create_and_run
 
 logger = logging.getLogger(__name__)

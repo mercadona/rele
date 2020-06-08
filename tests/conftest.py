@@ -1,13 +1,14 @@
+import concurrent
 import decimal
 import json
-import pytest
-import concurrent
 from unittest.mock import MagicMock, patch
+
+import pytest
 from google.cloud.pubsub_v1 import PublisherClient
 
-from rele.config import Config
 from rele import Publisher
 from rele.client import Subscriber
+from rele.config import Config
 from rele.middleware import register_middleware
 
 
