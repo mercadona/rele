@@ -26,11 +26,18 @@ def main():
         "and settings modules. If no settings module is discovered, "
         "defaults will be used.",
     )
-
+    run_parser.add_argument(
+        "--settings",
+        "-s",
+        default=None,
+        required=False,
+        help="Settings file dot path. Ex. project.settings. "
+        "If none is supplied, Relé will attempt to autodiscover in the root path.",
+    )
     args = parser.parse_args()
 
     if args.command == "run":
-        settings, module_paths = discover.sub_modules()
+        settings, module_paths = discover.sub_modules(args.settings)
         configuration = config.setup(settings.RELE if settings else None)
         subs = config.load_subscriptions_from_paths(
             module_paths, configuration.sub_prefix, configuration.filter_by
