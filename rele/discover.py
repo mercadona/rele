@@ -24,6 +24,17 @@ def module_has_submodule(package, module_name):
         return False
 
 
+def _get_subs(module_paths, package):
+    for f, package, is_package in pkgutil.iter_modules(path=__import__(package).__path__):
+        if is_package and module_has_submodule(package, "subs"):
+            module = package + ".subs"
+            module_paths.append(module)
+            print(" * Discovered subs module: %r" % module)
+        if is_package:
+            module_paths = _get_subs(module_paths, package)
+    return module_paths
+
+
 def _import_settings_from_path(path):
     if path is not None:
         print(" * Discovered settings: %r" % path)
@@ -43,11 +54,11 @@ def sub_modules(settings_path=None):
     """
     module_paths = []
     for f, package, is_package in pkgutil.iter_modules(path=["."]):
+        # breakpoint()
         if package == "settings":
             settings_path = package
-        if is_package and module_has_submodule(package, "subs"):
-            module = package + ".subs"
-            module_paths.append(module)
-            print(" * Discovered subs module: %r" % module)
+        if is_package:
+            module_paths = _get_subs(module_paths, package)
+
     settings = _import_settings_from_path(settings_path)
     return settings, module_paths
