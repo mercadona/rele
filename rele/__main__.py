@@ -27,12 +27,12 @@ def main():
         "defaults will be used.",
     )
     run_parser.add_argument(
-        '--settings',
-        '-s',
+        "--settings",
+        "-s",
         default=None,
         required=False,
-        help='Settings file dot path. Ex. project.settings. '
-             'If none is supplied, Relé will attempt to autodiscover in the root path.'
+        help="Settings file dot path. Ex. project.settings. "
+        "If none is supplied, Relé will attempt to autodiscover in the root path.",
     )
     args = parser.parse_args()
 
