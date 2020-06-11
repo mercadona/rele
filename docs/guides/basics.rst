@@ -123,6 +123,15 @@ with Google Cloud and will begin to pull the messages from the topic.
 
     rele-cli run
 
+
+In addition, if the ``settings.py`` module is not in the current directory, we can specify the
+path.
+
+.. code:: bash
+
+    rele-cli run --settings app.settings
+
+
 .. note:: Autodiscovery of subscribers with ``rele-cli`` follows a strict directory structure.
 
     | ├──settings.py
