@@ -1,6 +1,10 @@
 Changelog
 =========
 
+`0.12.0` (TBD)
+* `--settings` option in CLI (#166)
+* isort (#164)
+
 `0.11.0` (2020-6-4)
 * CLI feature (#160)
 * Documentation Enhancements (#158, #155, #162)
