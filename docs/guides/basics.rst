@@ -132,7 +132,8 @@ path.
     rele-cli run --settings app.settings
 
 
-.. note:: Autodiscovery of subscribers with ``rele-cli`` follows a strict directory structure.
+.. note:: Autodiscovery of subscribers with ``rele-cli`` is automatic.
+    Any ``subs.py`` module you have in your current path, will be imported, and all subsequent decorated objects will be registered.
 
     | ├──settings.py
     | ├──app # This can be called whatever you like
