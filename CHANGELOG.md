@@ -1,7 +1,7 @@
 Changelog
 =========
 
-`0.12.0` (TBD)
+`0.12.0` (2020-6-12)
 * Added `--settings` path option in CLI (#166)
 * Added isort linting (#164)
 
