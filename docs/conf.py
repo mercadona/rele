@@ -13,15 +13,15 @@
 import os
 import sys
 
-import rele
 
 sys.path.insert(0, os.path.abspath(".."))
 
+import rele
 
 # -- Project information -----------------------------------------------------
 
 project = "Relé"
-copyright = "2019, Mercadona S.A."
+copyright = "2019-2020, Mercadona S.A."
 author = "Mercadona"
 version = rele.__version__
 
