@@ -11,28 +11,16 @@ def module_has_submodule(package, module_name):
     See if 'module' is in 'package'.
     Taken from https://github.com/django/django/blob/master/django/utils/module_loading.py#L63
     """
-    package = __import__(package)
-    package_name = package.__name__
-    package_path = package.__path__
+    imported_package = importlib.import_module(package)
+    package_name = imported_package.__name__
+    package_path = imported_package.__path__
     full_module_name = package_name + "." + module_name
-
     try:
         return importlib_find(full_module_name, package_path) is not None
     except (ModuleNotFoundError, AttributeError):
         # When module_name is an invalid dotted path, Python raises
         # ModuleNotFoundError.
         return False
-
-
-def _get_subs(module_paths, package):
-    for f, package, is_package in pkgutil.iter_modules(path=__import__(package).__path__):
-        if is_package and module_has_submodule(package, "subs"):
-            module = package + ".subs"
-            module_paths.append(module)
-            print(" * Discovered subs module: %r" % module)
-        if is_package:
-            module_paths = _get_subs(module_paths, package)
-    return module_paths
 
 
 def _import_settings_from_path(path):
@@ -53,12 +41,13 @@ def sub_modules(settings_path=None):
     :return: (settings module, List[string: subs module paths])
     """
     module_paths = []
-    for f, package, is_package in pkgutil.iter_modules(path=["."]):
-        # breakpoint()
+    for f, package, is_package in pkgutil.walk_packages(path=["."]):
         if package == "settings":
             settings_path = package
-        if is_package:
-            module_paths = _get_subs(module_paths, package)
+        if is_package and module_has_submodule(package, "subs"):
+            module = package + ".subs"
+            module_paths.append(module)
+            print(" * Discovered subs module: %r" % module)
 
     settings = _import_settings_from_path(settings_path)
     return settings, module_paths
