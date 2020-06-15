@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 import pytest
 
-from rele import sub, Subscription
+from rele import Subscription, sub
 from rele.config import Config, load_subscriptions_from_paths
 
 
@@ -26,8 +26,8 @@ class TestLoadSubscriptions:
         assert len(subscriptions) == 1
         func_sub = subscriptions[0]
         assert isinstance(func_sub, Subscription)
-        assert func_sub.name == 'rele-test-topic'
-        assert func_sub({'id': 4}, lang='en') == 4
+        assert func_sub.name == "rele-test-topic"
+        assert func_sub({"id": 4}, lang="en") == 4
 
     def test_loads_subscriptions_when_they_are_class_based(self):
         subscriptions = load_subscriptions_from_paths(
@@ -39,16 +39,16 @@ class TestLoadSubscriptions:
         assert len(subscriptions) == 2
         klass_sub = subscriptions[0]
         assert isinstance(klass_sub, Subscription)
-        assert klass_sub.name == 'test-alternative-cool-topic'
-        assert klass_sub({'id': 4}, lang='en') == 4
+        assert klass_sub.name == "test-alternative-cool-topic"
+        assert klass_sub({"id": 4}, lang="en") == 4
 
     def test_filter_by_applied_to_subscription_returns_true(self, subscriptions):
 
-        assert subscriptions[-1]({'id': 4}, lang="en") == 4
+        assert subscriptions[-1]({"id": 4}, lang="en") == 4
 
     def test_filter_by_applied_to_subscription_returns_false(self, subscriptions):
-        # breakpoint()
-        assert subscriptions[0]({'id': 4}, lang="es") is None
+
+        assert subscriptions[0]({"id": 4}, lang="es") is None
 
 
 class TestConfig:

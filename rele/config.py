@@ -72,7 +72,6 @@ def load_subscriptions_from_paths(sub_module_paths, sub_prefix=None, filter_by=N
                     continue
             except TypeError:
                 continue
-            # breakpoint()
             if sub_prefix and not subscription.prefix:
                 subscription.set_prefix(sub_prefix)
 

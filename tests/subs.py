@@ -1,4 +1,4 @@
-from rele import sub, Subscription
+from rele import Subscription, sub
 
 
 @sub(topic="some-cool-topic", prefix="rele")
