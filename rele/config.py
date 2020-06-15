@@ -63,12 +63,21 @@ def load_subscriptions_from_paths(sub_module_paths, sub_prefix=None, filter_by=N
         sub_module = importlib.import_module(sub_module_path)
         for attr_name in dir(sub_module):
             attribute = getattr(sub_module, attr_name)
-            if isinstance(attribute, Subscription):
-                if sub_prefix and not attribute.prefix:
-                    attribute.set_prefix(sub_prefix)
+            try:
+                if isinstance(attribute, Subscription):
+                    subscription = attribute
+                elif issubclass(attribute, Subscription):
+                    subscription = attribute()
+                else:
+                    continue
+            except TypeError:
+                continue
+            # breakpoint()
+            if sub_prefix and not subscription.prefix:
+                subscription.set_prefix(sub_prefix)
 
-                if filter_by and not attribute.filter_by:
-                    attribute.set_filters(filter_by)
+            if filter_by and not subscription.filter_by:
+                subscription.set_filters(filter_by)
 
-                subscriptions.append(attribute)
+            subscriptions.append(subscription)
     return subscriptions

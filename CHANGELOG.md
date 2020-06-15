@@ -1,6 +1,9 @@
 Changelog
 =========
 
+`0.13.0` (2020-6-15)
+* Traverse all packages to autodiscover all subs.py modules (#167)
+
 `0.12.0` (2020-6-12)
 * Added `--settings` path option in CLI (#166)
 * Added isort linting (#164)

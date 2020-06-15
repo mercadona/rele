@@ -49,7 +49,7 @@ class Subscription:
     def __call__(self, data, **kwargs):
         if "published_at" in kwargs:
             kwargs["published_at"] = float(kwargs["published_at"])
-
+        # breakpoint()
         if self._any_filter_returns_false(kwargs):
             return
 
@@ -61,7 +61,6 @@ class Subscription:
     def _any_filter_returns_false(self, kwargs):
         if not self._filters:
             return False
-
         return not all(filter(kwargs) for filter in self._filters)
 
 
