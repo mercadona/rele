@@ -42,11 +42,11 @@ class TestLoadSubscriptions:
         assert klass_sub.name == "test-alternative-cool-topic"
         assert klass_sub({"id": 4}, lang="en") == 4
 
-    def test_filter_by_applied_to_subscription_returns_true(self, subscriptions):
+    def test_returns_sub_value_when_filtered_value_applied(self, subscriptions):
 
         assert subscriptions[-1]({"id": 4}, lang="en") == 4
 
-    def test_filter_by_applied_to_subscription_returns_false(self, subscriptions):
+    def test_returns_none_when_filtered_value_does_not_apply(self, subscriptions):
 
         assert subscriptions[0]({"id": 4}, lang="es") is None
 
