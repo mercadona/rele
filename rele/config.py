@@ -56,6 +56,20 @@ def setup(setting=None, **kwargs):
     return config
 
 
+def subscription_from_attribute(attribute):
+    try:
+        if isinstance(attribute, Subscription):
+            subscription = attribute
+        elif issubclass(attribute, Subscription):
+            subscription = attribute()
+        else:
+            return None
+    except TypeError:
+        # If attribute is not a class, TypeError is raised when testing issubclass
+        return None
+    return subscription
+
+
 def load_subscriptions_from_paths(sub_module_paths, sub_prefix=None, filter_by=None):
 
     subscriptions = []
@@ -63,14 +77,9 @@ def load_subscriptions_from_paths(sub_module_paths, sub_prefix=None, filter_by=N
         sub_module = importlib.import_module(sub_module_path)
         for attr_name in dir(sub_module):
             attribute = getattr(sub_module, attr_name)
-            try:
-                if isinstance(attribute, Subscription):
-                    subscription = attribute
-                elif issubclass(attribute, Subscription):
-                    subscription = attribute()
-                else:
-                    continue
-            except TypeError:
+
+            subscription = subscription_from_attribute(attribute)
+            if not subscription:
                 continue
             if sub_prefix and not subscription.prefix:
                 subscription.set_prefix(sub_prefix)

@@ -19,3 +19,7 @@ class KlassBasedSub(Subscription):
 
 class CustomException(Exception):
     pass
+
+
+def some_other_type():
+    print("Im a function")
