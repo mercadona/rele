@@ -4,13 +4,13 @@ from unittest.mock import patch
 
 import pytest
 
-from rele import sub
+from rele import Subscription, sub
 from rele.config import Config, load_subscriptions_from_paths
 
 
 @sub(topic="test-topic", prefix="rele")
-def sub_stub(data, **_kwargs):
-    return data
+def sub_stub(data, **kwargs):
+    return data["id"]
 
 
 class TestLoadSubscriptions:
@@ -19,19 +19,36 @@ class TestLoadSubscriptions:
         return load_subscriptions_from_paths(
             ["tests.test_config"],
             sub_prefix="test",
-            filter_by=lambda attrs: attrs.get("lang") == "en",
+            filter_by=[lambda args: args.get("lang") == "en"],
         )
 
     def test_load_subscriptions_in_a_module(self, subscriptions):
         assert len(subscriptions) == 1
+        func_sub = subscriptions[0]
+        assert isinstance(func_sub, Subscription)
+        assert func_sub.name == "rele-test-topic"
+        assert func_sub({"id": 4}, lang="en") == 4
 
-    def test_filter_by_applied_to_subscription_returns_true(self, subscriptions):
+    def test_loads_subscriptions_when_they_are_class_based(self):
+        subscriptions = load_subscriptions_from_paths(
+            ["tests.subs"],
+            sub_prefix="test",
+            filter_by=[lambda attrs: attrs.get("lang") == "en"],
+        )
 
-        assert subscriptions[-1].filter_by({"lang": "en"}) is True
+        assert len(subscriptions) == 2
+        klass_sub = subscriptions[0]
+        assert isinstance(klass_sub, Subscription)
+        assert klass_sub.name == "test-alternative-cool-topic"
+        assert klass_sub({"id": 4}, lang="en") == 4
 
-    def test_filter_by_applied_to_subscription_returns_false(self, subscriptions):
+    def test_returns_sub_value_when_filtered_value_applied(self, subscriptions):
 
-        assert subscriptions[0].filter_by({"lang": "es"}) is False
+        assert subscriptions[-1]({"id": 4}, lang="en") == 4
+
+    def test_returns_none_when_filtered_value_does_not_apply(self, subscriptions):
+
+        assert subscriptions[0]({"id": 4}, lang="es") is None
 
 
 class TestConfig:
