@@ -6,7 +6,7 @@ def sub_stub(data, **kwargs):
     return data["id"]
 
 
-class KlassBasedSub(Subscription):
+class ClassBasedSub(Subscription):
     topic = "alternative-cool-topic"
 
     def __init__(self):
