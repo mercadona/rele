@@ -10,6 +10,26 @@ logger = logging.getLogger(__name__)
 class Subscription:
     """The Subscription class
 
+    In addition to using the ``@sub`` decorator, it is possible to subclass
+    the Subscription.
+
+    For example::
+
+        from rele import Subscription
+
+        class DoSomethingSub(Subscription):
+            topic = 'photo-uploaded'
+
+            def __init__(self):
+                self._func = self.callback_func
+                super().__init__(self._func, self.topic)
+
+            def callback_func(self, data, **kwargs):
+                print(data["id"])
+
+    If ``rele-cli run`` is used, the ``DoSomethingSub`` will be a valid subscription
+    and registered on Google Cloud.
+
     """
 
     def __init__(self, func, topic, prefix="", suffix="", filter_by=None):
