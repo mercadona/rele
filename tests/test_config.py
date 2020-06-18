@@ -1,8 +1,8 @@
-import google
 import json
 import os
 from unittest.mock import patch
 
+import google
 import pytest
 from google.oauth2 import service_account
 
@@ -75,19 +75,20 @@ class TestConfig:
     def test_inits_service_account_creds_when_credential_path_given(self, project_id):
         settings = {
             "GC_PROJECT_ID": project_id,
-            "GC_CREDENTIALS_PATH": 'tests/dummy-pub-sub-credentials.json',
+            "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
         }
 
         config = Config(settings)
 
         assert config.gc_project_id == project_id
         assert isinstance(config.credentials, google.oauth2.service_account.Credentials)
-        assert config.credentials.project_id == 'rele-test'
+        assert config.credentials.project_id == "rele-test"
 
     def test_uses_path_instead_of_gc_credentials_when_both_are_provided(
-            self, credentials):
+        self, credentials
+    ):
         settings = {
-            "GC_CREDENTIALS_PATH": 'tests/dummy-pub-sub-credentials.json',
+            "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
             "GC_CREDENTIALS": credentials,
         }
 
@@ -95,7 +96,7 @@ class TestConfig:
 
         assert isinstance(config.credentials, google.oauth2.service_account.Credentials)
         assert config.credentials != credentials
-        assert config.credentials.project_id == 'rele-test'
+        assert config.credentials.project_id == "rele-test"
 
     @patch.dict(os.environ, {"GOOGLE_APPLICATION_CREDENTIALS": ""})
     def test_sets_defaults(self):

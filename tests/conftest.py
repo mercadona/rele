@@ -1,7 +1,6 @@
 import concurrent
 import decimal
 import json
-import os
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -22,7 +21,7 @@ def project_id():
 @pytest.fixture
 def credentials():
     return service_account.Credentials.from_service_account_file(
-        'tests/dummy-pub-sub-credentials.json'
+        "tests/dummy-pub-sub-credentials.json"
     )
 
 

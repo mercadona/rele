@@ -52,7 +52,8 @@ class Config:
     def credentials(self):
         if self.gc_credentials_path:
             return service_account.Credentials.from_service_account_file(
-                self.gc_credentials_path)
+                self.gc_credentials_path
+            )
         elif self._credentials:
             return self._credentials
 

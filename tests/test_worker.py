@@ -145,11 +145,10 @@ class TestCreateAndRun:
             yield p
 
     def test_waits_forever_when_called_with_config_and_subs(
-            self, config, mock_worker, credentials):
+        self, config, mock_worker, credentials
+    ):
         subscriptions = (sub_stub,)
         create_and_run(subscriptions, config)
 
-        mock_worker.assert_called_with(
-            subscriptions, "rele-test", credentials, 60, 2
-        )
+        mock_worker.assert_called_with(subscriptions, "rele-test", credentials, 60, 2)
         mock_worker.return_value.run_forever.assert_called_once_with()
