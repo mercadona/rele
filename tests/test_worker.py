@@ -130,7 +130,7 @@ class TestWorker:
         worker.setup()
 
         assert worker._subscriber._ack_deadline == 60
-        assert worker._subscriber._gc_project_id == "rele"
+        assert worker._subscriber._gc_project_id == "rele-test"
 
 
 class TestCreateAndRun:
@@ -144,11 +144,12 @@ class TestCreateAndRun:
         with patch("rele.worker.Worker", autospec=True) as p:
             yield p
 
-    def test_waits_forever_when_called_with_config_and_subs(self, config, mock_worker):
+    def test_waits_forever_when_called_with_config_and_subs(
+            self, config, mock_worker, credentials):
         subscriptions = (sub_stub,)
         create_and_run(subscriptions, config)
 
         mock_worker.assert_called_with(
-            subscriptions, "test-project-id", "my-credentials", 60, 2
+            subscriptions, "rele-test", credentials, 60, 2
         )
         mock_worker.return_value.run_forever.assert_called_once_with()

@@ -1,8 +1,10 @@
+import google
 import json
 import os
 from unittest.mock import patch
 
 import pytest
+from google.oauth2 import service_account
 
 from rele import Subscription, sub
 from rele.config import Config, load_subscriptions_from_paths
@@ -67,8 +69,33 @@ class TestConfig:
         assert config.app_name == "rele"
         assert config.sub_prefix == "rele"
         assert config.gc_project_id == project_id
-        assert config.credentials == credentials
+        assert isinstance(config.credentials, service_account.Credentials)
         assert config.middleware == ["rele.contrib.DjangoDBMiddleware"]
+
+    def test_inits_service_account_creds_when_credential_path_given(self, project_id):
+        settings = {
+            "GC_PROJECT_ID": project_id,
+            "GC_CREDENTIALS_PATH": 'tests/dummy-pub-sub-credentials.json',
+        }
+
+        config = Config(settings)
+
+        assert config.gc_project_id == project_id
+        assert isinstance(config.credentials, google.oauth2.service_account.Credentials)
+        assert config.credentials.project_id == 'rele-test'
+
+    def test_uses_path_instead_of_gc_credentials_when_both_are_provided(
+            self, credentials):
+        settings = {
+            "GC_CREDENTIALS_PATH": 'tests/dummy-pub-sub-credentials.json',
+            "GC_CREDENTIALS": credentials,
+        }
+
+        config = Config(settings)
+
+        assert isinstance(config.credentials, google.oauth2.service_account.Credentials)
+        assert config.credentials != credentials
+        assert config.credentials.project_id == 'rele-test'
 
     @patch.dict(os.environ, {"GOOGLE_APPLICATION_CREDENTIALS": ""})
     def test_sets_defaults(self):
@@ -99,7 +126,7 @@ class TestConfig:
 
         assert config.app_name is None
         assert config.sub_prefix is None
-        assert config.gc_project_id == "rele"
+        assert config.gc_project_id == "rele-test"
         assert config.credentials is not None
         assert config.middleware == ["rele.contrib.LoggingMiddleware"]
         assert config.encoder == json.JSONEncoder
