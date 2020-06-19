@@ -41,7 +41,7 @@ seamless by providing Publisher, Subscriber and Worker classes with the followin
 * Highly Scalable Worker
 * Intuitive Subscription Management
 * Easily Extensible Middleware
-* Optional Django or Flask Integration
+* Ready to go Django/Flask integration
 * CLI
 * And much more!
 

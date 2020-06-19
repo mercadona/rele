@@ -1,6 +1,8 @@
 import importlib
 import os
 
+from google.oauth2 import service_account
+
 from .client import DEFAULT_ACK_DEADLINE, DEFAULT_ENCODER_PATH, get_google_defaults
 from .middleware import default_middleware, register_middleware
 from .publishing import init_global_publisher
@@ -25,8 +27,9 @@ class Config:
         ):
             credentials, project = get_google_defaults()
 
-        self.credentials = setting.get("GC_CREDENTIALS") or credentials
+        self._credentials = setting.get("GC_CREDENTIALS") or credentials
         self.gc_project_id = setting.get("GC_PROJECT_ID") or project
+        self.gc_credentials_path = setting.get("GC_CREDENTIALS_PATH")
         self.app_name = setting.get("APP_NAME")
         self.sub_prefix = setting.get("SUB_PREFIX")
         self.middleware = setting.get("MIDDLEWARE", default_middleware)
@@ -44,6 +47,18 @@ class Config:
         module_name, class_name = self._encoder_path.rsplit(".", 1)
         module = importlib.import_module(module_name)
         return getattr(module, class_name)
+
+    @property
+    def credentials(self):
+        if self.gc_credentials_path:
+            return service_account.Credentials.from_service_account_file(
+                self.gc_credentials_path
+            )
+        elif self._credentials:
+            return self._credentials
+
+        else:
+            return None
 
 
 def setup(setting=None, **kwargs):

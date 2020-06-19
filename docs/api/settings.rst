@@ -22,6 +22,7 @@ Example::
         'GC_CREDENTIALS': service_account.Credentials.from_service_account_file(
             'rele/settings/dummy-credentials.json'
         ),
+        'GC_CREDENTIALS_PATH': 'rele/settings/dummy-credentials.json',
         'GC_PROJECT_ID': 'dummy-project-id',
         'MIDDLEWARE': [
             'rele.contrib.LoggingMiddleware',
@@ -38,9 +39,23 @@ Example::
 ``GC_CREDENTIALS``
 ------------------
 
-**Required**
+**Optional**
 
-Valid Google Service Account credentials.
+Valid Google Service Account credentials object.
+
+.. note:: This method of authentication will be deprecated in favour of
+    ``GC_CREDENTIALS_PATH`` in the future. Therefore it is recommended to use
+    ``GC_CREDENTIALS_PATH``
+
+``GC_CREDENTIALS_PATH``
+-----------------------
+
+**Optional**
+
+Path to service account json file with access to PubSub
+
+.. note:: ``GC_CREDENTIALS`` and ``GC_CREDENTIALS_PATH`` are mutually exclusive.
+    If both are provided, ``GC_CREDENTIALS_PATH`` will be used.
 
 ``GC_PROJECT_ID``
 ------------------
