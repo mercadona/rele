@@ -82,3 +82,16 @@ def custom_encoder():
                 return float(obj)
 
     return DecimalEncoder
+
+
+@pytest.fixture
+def mock_publish_timeout():
+    with patch("rele.client.Publisher.publish") as mock:
+        mock.side_effect = TimeoutError()
+        yield mock
+
+
+@pytest.fixture
+def mock_post_process_message_failure():
+    with patch("rele.middleware.BaseMiddleware.post_process_message_failure") as mock:
+        yield mock
