@@ -1,6 +1,7 @@
 import concurrent
 import decimal
 import json
+from concurrent.futures import TimeoutError
 from unittest.mock import MagicMock, patch
 
 import pytest

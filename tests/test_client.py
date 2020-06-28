@@ -1,5 +1,6 @@
 import concurrent
 import decimal
+from concurrent.futures import TimeoutError
 from unittest.mock import ANY, patch
 
 import pytest

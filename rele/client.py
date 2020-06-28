@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import time
+from concurrent.futures import TimeoutError
 from contextlib import suppress
 
 import google.auth
