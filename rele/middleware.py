@@ -47,6 +47,11 @@ class BaseMiddleware:
         :param topic:
         """
 
+    def post_publish_failure(self, topic):
+        """Called after Publisher fails.
+        :param topic:
+        """
+
     def pre_process_message(self, subscription, message):
         """Called when the Worker receives a message.
         :param subscription:
