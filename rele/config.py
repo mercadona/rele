@@ -1,6 +1,8 @@
 import importlib
 import os
 
+from google.oauth2 import service_account
+
 from .client import DEFAULT_ACK_DEADLINE, DEFAULT_ENCODER_PATH, get_google_defaults
 from .middleware import default_middleware, register_middleware
 from .publishing import init_global_publisher
@@ -25,8 +27,9 @@ class Config:
         ):
             credentials, project = get_google_defaults()
 
-        self.credentials = setting.get("GC_CREDENTIALS") or credentials
+        self._credentials = setting.get("GC_CREDENTIALS") or credentials
         self.gc_project_id = setting.get("GC_PROJECT_ID") or project
+        self.gc_credentials_path = setting.get("GC_CREDENTIALS_PATH")
         self.app_name = setting.get("APP_NAME")
         self.sub_prefix = setting.get("SUB_PREFIX")
         self.middleware = setting.get("MIDDLEWARE", default_middleware)
@@ -45,6 +48,18 @@ class Config:
         module = importlib.import_module(module_name)
         return getattr(module, class_name)
 
+    @property
+    def credentials(self):
+        if self.gc_credentials_path:
+            return service_account.Credentials.from_service_account_file(
+                self.gc_credentials_path
+            )
+        elif self._credentials:
+            return self._credentials
+
+        else:
+            return None
+
 
 def setup(setting=None, **kwargs):
     if setting is None:
@@ -56,6 +71,20 @@ def setup(setting=None, **kwargs):
     return config
 
 
+def subscription_from_attribute(attribute):
+    try:
+        if isinstance(attribute, Subscription):
+            subscription = attribute
+        elif issubclass(attribute, Subscription):
+            subscription = attribute()
+        else:
+            return None
+    except TypeError:
+        # If attribute is not a class, TypeError is raised when testing issubclass
+        return None
+    return subscription
+
+
 def load_subscriptions_from_paths(sub_module_paths, sub_prefix=None, filter_by=None):
 
     subscriptions = []
@@ -63,12 +92,15 @@ def load_subscriptions_from_paths(sub_module_paths, sub_prefix=None, filter_by=N
         sub_module = importlib.import_module(sub_module_path)
         for attr_name in dir(sub_module):
             attribute = getattr(sub_module, attr_name)
-            if isinstance(attribute, Subscription):
-                if sub_prefix and not attribute.prefix:
-                    attribute.set_prefix(sub_prefix)
 
-                if filter_by and not attribute.filter_by:
-                    attribute.set_filters(filter_by)
+            subscription = subscription_from_attribute(attribute)
+            if not subscription:
+                continue
+            if sub_prefix and not subscription.prefix:
+                subscription.set_prefix(sub_prefix)
 
-                subscriptions.append(attribute)
+            if filter_by and not subscription.filter_by:
+                subscription.set_filters(filter_by)
+
+            subscriptions.append(subscription)
     return subscriptions

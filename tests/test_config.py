@@ -2,15 +2,17 @@ import json
 import os
 from unittest.mock import patch
 
+import google
 import pytest
+from google.oauth2 import service_account
 
-from rele import sub
+from rele import Subscription, sub
 from rele.config import Config, load_subscriptions_from_paths
 
 
 @sub(topic="test-topic", prefix="rele")
-def sub_stub(data, **_kwargs):
-    return data
+def sub_stub(data, **kwargs):
+    return data["id"]
 
 
 class TestLoadSubscriptions:
@@ -19,19 +21,36 @@ class TestLoadSubscriptions:
         return load_subscriptions_from_paths(
             ["tests.test_config"],
             sub_prefix="test",
-            filter_by=lambda attrs: attrs.get("lang") == "en",
+            filter_by=[lambda args: args.get("lang") == "en"],
         )
 
     def test_load_subscriptions_in_a_module(self, subscriptions):
         assert len(subscriptions) == 1
+        func_sub = subscriptions[0]
+        assert isinstance(func_sub, Subscription)
+        assert func_sub.name == "rele-test-topic"
+        assert func_sub({"id": 4}, lang="en") == 4
 
-    def test_filter_by_applied_to_subscription_returns_true(self, subscriptions):
+    def test_loads_subscriptions_when_they_are_class_based(self):
+        subscriptions = load_subscriptions_from_paths(
+            ["tests.subs"],
+            sub_prefix="test",
+            filter_by=[lambda attrs: attrs.get("lang") == "en"],
+        )
 
-        assert subscriptions[-1].filter_by({"lang": "en"}) is True
+        assert len(subscriptions) == 2
+        klass_sub = subscriptions[0]
+        assert isinstance(klass_sub, Subscription)
+        assert klass_sub.name == "test-alternative-cool-topic"
+        assert klass_sub({"id": 4}, lang="en") == 4
 
-    def test_filter_by_applied_to_subscription_returns_false(self, subscriptions):
+    def test_returns_sub_value_when_filtered_value_applied(self, subscriptions):
 
-        assert subscriptions[0].filter_by({"lang": "es"}) is False
+        assert subscriptions[-1]({"id": 4}, lang="en") == 4
+
+    def test_returns_none_when_filtered_value_does_not_apply(self, subscriptions):
+
+        assert subscriptions[0]({"id": 4}, lang="es") is None
 
 
 class TestConfig:
@@ -50,8 +69,34 @@ class TestConfig:
         assert config.app_name == "rele"
         assert config.sub_prefix == "rele"
         assert config.gc_project_id == project_id
-        assert config.credentials == credentials
+        assert isinstance(config.credentials, service_account.Credentials)
         assert config.middleware == ["rele.contrib.DjangoDBMiddleware"]
+
+    def test_inits_service_account_creds_when_credential_path_given(self, project_id):
+        settings = {
+            "GC_PROJECT_ID": project_id,
+            "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
+        }
+
+        config = Config(settings)
+
+        assert config.gc_project_id == project_id
+        assert isinstance(config.credentials, google.oauth2.service_account.Credentials)
+        assert config.credentials.project_id == "rele-test"
+
+    def test_uses_path_instead_of_gc_credentials_when_both_are_provided(
+        self, credentials
+    ):
+        settings = {
+            "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
+            "GC_CREDENTIALS": credentials,
+        }
+
+        config = Config(settings)
+
+        assert isinstance(config.credentials, google.oauth2.service_account.Credentials)
+        assert config.credentials != credentials
+        assert config.credentials.project_id == "rele-test"
 
     @patch.dict(os.environ, {"GOOGLE_APPLICATION_CREDENTIALS": ""})
     def test_sets_defaults(self):
@@ -82,7 +127,7 @@ class TestConfig:
 
         assert config.app_name is None
         assert config.sub_prefix is None
-        assert config.gc_project_id == "rele"
+        assert config.gc_project_id == "rele-test"
         assert config.credentials is not None
         assert config.middleware == ["rele.contrib.LoggingMiddleware"]
         assert config.encoder == json.JSONEncoder

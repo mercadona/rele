@@ -29,10 +29,12 @@ classes.
 
 Out of the box, Relé includes the following features:
 
-    * Simple publishing API
-    * Declarative subscribers
-    * Scalable Worker
-    * Ready to install Django/Flask integration
+    * Powerful Publishing API
+    * Highly Scalable Worker
+    * Intuitive Subscription Management
+    * Easily Extensible Middleware
+    * Ready to go Django/Flask integration
+    * CLI
     * And much more...
 
 What It Looks Like
@@ -63,7 +65,7 @@ or with Django integration
 
 .. code::
 
-    $ pip install rele[django]
+    $ pip install rele[django,flask]
 
 User Guides
 ___________

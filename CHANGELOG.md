@@ -1,6 +1,17 @@
 Changelog
 =========
 
+`0.13.0` (TBD)
+* Add documentation for class based subscriptions (#169)
+
+`0.13.dev0` (2020-6-16)
+* Traverse all packages to autodiscover all subs.py modules (#167)
+* Auto-discovery of class based subscriptions (#168)
+
+`0.12.0` (2020-6-12)
+* Added `--settings` path option in CLI (#166)
+* Added isort linting (#164)
+
 `0.11.0` (2020-6-4)
 * CLI feature (#160)
 * Documentation Enhancements (#158, #155, #162)
