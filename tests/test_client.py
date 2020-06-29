@@ -82,13 +82,14 @@ class TestPublisher:
 
     @pytest.mark.usefixtures("mock_publish_timeout")
     def test_runs_post_publish_failure_hook_when_time_out_error(
-        self, publisher, mock_post_process_message_failure
+        self, publisher, mock_post_publish_failure
     ):
         message = {"foo": "bar"}
 
         with pytest.raises(TimeoutError):
             publisher.publish(topic="order-cancelled", data=message, myattr="hello")
-            mock_post_process_message_failure.assert_called_once()
+            mock_post_publish_failure.assert_called_once_with(
+                topic="order-cancelled", exception=TimeoutError, message={"foo": "bar"})
 
 
 class TestSubscriber:

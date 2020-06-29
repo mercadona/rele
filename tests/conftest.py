@@ -93,6 +93,6 @@ def mock_publish_timeout():
 
 
 @pytest.fixture
-def mock_post_process_message_failure():
-    with patch("rele.middleware.BaseMiddleware.post_process_message_failure") as mock:
+def mock_post_publish_failure():
+    with patch("rele.middleware.BaseMiddleware.post_publish_failure") as mock:
         yield mock
