@@ -165,7 +165,7 @@ class Publisher:
         try:
             future.result(timeout=timeout or self._timeout)
         except TimeoutError as e:
-            run_middleware_hook("post_publish_failure")
+            run_middleware_hook("post_publish_failure", topic, e, data)
 
         run_middleware_hook("post_publish", topic)
         return future
