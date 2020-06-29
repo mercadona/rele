@@ -89,7 +89,8 @@ class TestPublisher:
         with pytest.raises(TimeoutError):
             publisher.publish(topic="order-cancelled", data=message, myattr="hello")
             mock_post_publish_failure.assert_called_once_with(
-                topic="order-cancelled", exception=TimeoutError, message={"foo": "bar"})
+                topic="order-cancelled", exception=TimeoutError, message={"foo": "bar"}
+            )
 
 
 class TestSubscriber:
