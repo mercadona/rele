@@ -52,7 +52,6 @@ class TestPublisher:
 
         publisher._client.publish.assert_called_with(ANY, b"1.2", published_at=ANY)
 
-    @patch.object(concurrent.futures.Future, "result")
     def test_publishes_data_with_client_timeout_when_blocking(
         self, mock_future, publisher
     ):
@@ -63,9 +62,8 @@ class TestPublisher:
         publisher._client.publish.assert_called_with(
             ANY, b'{"foo": "bar"}', published_at=ANY
         )
-        mock_future.assert_called_once_with(timeout=100)
+        mock_future.result.assert_called_once_with(timeout=100)
 
-    @patch.object(concurrent.futures.Future, "result")
     def test_publishes_data_with_client_timeout_when_blocking_and_timeout_specified(
         self, mock_future, publisher
     ):
@@ -78,20 +76,21 @@ class TestPublisher:
         publisher._client.publish.assert_called_with(
             ANY, b'{"foo": "bar"}', published_at=ANY
         )
-        mock_future.assert_called_once_with(timeout=50)
+        mock_future.result.assert_called_once_with(timeout=50)
 
-    @pytest.mark.usefixtures("mock_publish_timeout")
     def test_runs_post_publish_failure_hook_when_time_out_error(
-        self, publisher, mock_post_publish_failure
+        self, mock_future, publisher, mock_post_publish_failure
     ):
         message = {"foo": "bar"}
+        e = TimeoutError()
+        mock_future.result.side_effect = e
 
         with pytest.raises(TimeoutError):
-            mock_post_publish_failure.assert_called_once_with(
-                topic="order-cancelled", exception=TimeoutError, message={"foo": "bar"}
-            )
             publisher.publish(topic="order-cancelled", data=message, myattr="hello",
                               blocking=True)
+        mock_post_publish_failure.assert_called_once_with(
+            "order-cancelled", e, {"foo": "bar"}
+        )
 
 
 class TestSubscriber:
