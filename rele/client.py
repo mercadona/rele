@@ -120,7 +120,8 @@ class Publisher:
         else:
             self._client = pubsub_v1.PublisherClient(credentials=credentials)
 
-    def publish(self, topic, data, blocking=False, timeout=None, **attrs):
+    def publish(self, topic, data, blocking=False, timeout=None, raise_exception=True,
+                **attrs):
         """Publishes message to Google PubSub topic.
 
         Usage::
@@ -146,6 +147,7 @@ class Publisher:
         message attrs using `epoch floating point number
         <https://docs.python.org/3/library/time.html#time.time>`_.
 
+        :param raise_exception: boolean. If True, exceptions coming from PubSub will be raised
         :param topic: string topic to publish the data.
         :param data: dict with the content of the message.
         :param blocking: boolean
@@ -166,7 +168,10 @@ class Publisher:
             future.result(timeout=timeout or self._timeout)
         except TimeoutError as e:
             run_middleware_hook("post_publish_failure", topic, e, data)
-            raise e
+            if raise_exception:
+                raise e
+            else:
+                return False
 
         run_middleware_hook("post_publish", topic)
         return future
