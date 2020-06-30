@@ -86,32 +86,42 @@ class TestPublisher:
         mock_future.result.side_effect = e
 
         with pytest.raises(TimeoutError):
-            publisher.publish(topic="order-cancelled", data=message, myattr="hello",
-                              blocking=True)
+            publisher.publish(
+                topic="order-cancelled", data=message, myattr="hello", blocking=True
+            )
         mock_post_publish_failure.assert_called_once_with(
             "order-cancelled", e, {"foo": "bar"}
         )
 
     def test_raises_when_time_out_error_and_raise_exception_is_true(
-            self, publisher, mock_future):
+        self, publisher, mock_future
+    ):
         message = {"foo": "bar"}
         e = TimeoutError()
         mock_future.result.side_effect = e
         with pytest.raises(TimeoutError):
-            publisher.publish(topic="order-cancelled", data=message, myattr="hello",
-                              blocking=True, raise_exception=True)
+            publisher.publish(
+                topic="order-cancelled",
+                data=message,
+                myattr="hello",
+                blocking=True,
+                raise_exception=True,
+            )
 
     def test_returns_false_when_time_out_error_and_raise_exception_is_false(
-            self, publisher, mock_future):
+        self, publisher, mock_future
+    ):
         message = {"foo": "bar"}
         e = TimeoutError()
         mock_future.result.side_effect = e
 
-        result = publisher.publish(topic="order-cancelled",
-                                   data=message,
-                                   myattr="hello",
-                                   blocking=True,
-                                   raise_exception=False)
+        result = publisher.publish(
+            topic="order-cancelled",
+            data=message,
+            myattr="hello",
+            blocking=True,
+            raise_exception=False,
+        )
         assert result is False
 
 

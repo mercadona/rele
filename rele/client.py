@@ -120,8 +120,9 @@ class Publisher:
         else:
             self._client = pubsub_v1.PublisherClient(credentials=credentials)
 
-    def publish(self, topic, data, blocking=False, timeout=None, raise_exception=True,
-                **attrs):
+    def publish(
+        self, topic, data, blocking=False, timeout=None, raise_exception=True, **attrs
+    ):
         """Publishes message to Google PubSub topic.
 
         Usage::
