@@ -171,8 +171,7 @@ class Publisher:
             run_middleware_hook("post_publish_failure", topic, e, data)
             if raise_exception:
                 raise e
-            else:
-                return False
+            return False
 
         run_middleware_hook("post_publish", topic)
         return future
