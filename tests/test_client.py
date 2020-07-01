@@ -78,7 +78,7 @@ class TestPublisher:
         )
         mock_future.result.assert_called_once_with(timeout=50)
 
-    def test_runs_post_publish_failure_hook_when_time_out_error(
+    def test_runs_post_publish_failure_hook_when_future_result_raises_timeout(
         self, mock_future, publisher, mock_post_publish_failure
     ):
         message = {"foo": "bar"}
@@ -93,7 +93,7 @@ class TestPublisher:
             "order-cancelled", e, {"foo": "bar"}
         )
 
-    def test_raises_when_time_out_error_and_raise_exception_is_true(
+    def test_raises_when_timeout_error_and_raise_exception_is_true(
         self, publisher, mock_future
     ):
         message = {"foo": "bar"}
@@ -108,7 +108,7 @@ class TestPublisher:
                 raise_exception=True,
             )
 
-    def test_returns_false_when_time_out_error_and_raise_exception_is_false(
+    def test_returns_false_when_timeout_error_and_raise_exception_is_false(
         self, publisher, mock_future
     ):
         message = {"foo": "bar"}
