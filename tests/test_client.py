@@ -99,6 +99,7 @@ class TestPublisher:
         message = {"foo": "bar"}
         e = TimeoutError()
         mock_future.result.side_effect = e
+
         with pytest.raises(TimeoutError):
             publisher.publish(
                 topic="order-cancelled",
@@ -108,7 +109,7 @@ class TestPublisher:
                 raise_exception=True,
             )
 
-    def test_returns_false_when_timeout_error_and_raise_exception_is_false(
+    def test_returns_future_when_timeout_error_and_raise_exception_is_false(
         self, publisher, mock_future
     ):
         message = {"foo": "bar"}
@@ -122,7 +123,8 @@ class TestPublisher:
             blocking=True,
             raise_exception=False,
         )
-        assert result is False
+
+        assert result is mock_future
 
 
 class TestSubscriber:
