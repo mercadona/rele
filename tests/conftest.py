@@ -99,5 +99,7 @@ def mock_publish_timeout():
 
 @pytest.fixture
 def mock_post_publish_failure():
-    with patch("rele.middleware.BaseMiddleware.post_publish_failure") as mock:
+    with patch(
+        "rele.contrib.logging_middleware.LoggingMiddleware.post_publish_failure"
+    ) as mock:
         yield mock

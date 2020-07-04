@@ -48,6 +48,20 @@ class LoggingMiddleware(BaseMiddleware):
             },
         )
 
+    def post_publish_failure(self, topic, exception, message):
+        self._logger.exception(
+            f"Exception raised while processing message "
+            f"for {topic}: {str(exception.__class__.__name__)}",
+            exc_info=True,
+            extra={
+                "metrics": {
+                    "name": "publications",
+                    "data": {"agent": self._app_name, "topic": topic},
+                },
+                "subscription_message": message,
+            },
+        )
+
     def pre_process_message(self, subscription, message):
         self._logger.debug(
             f"Start processing message for {subscription}",
