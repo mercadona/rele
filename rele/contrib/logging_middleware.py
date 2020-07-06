@@ -50,7 +50,7 @@ class LoggingMiddleware(BaseMiddleware):
 
     def post_publish_failure(self, topic, exception, message):
         self._logger.exception(
-            f"Exception raised while processing message "
+            f"Exception raised while publishing message "
             f"for {topic}: {str(exception.__class__.__name__)}",
             exc_info=True,
             extra={
