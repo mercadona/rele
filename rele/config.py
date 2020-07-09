@@ -1,5 +1,6 @@
 import importlib
 import os
+import warnings
 
 from google.oauth2 import service_account
 
@@ -55,6 +56,11 @@ class Config:
                 self.gc_credentials_path
             )
         elif self._credentials:
+            warnings.warn(
+                "Usage of GC_CREDENTIALS is deprecated and will be removed in an "
+                "upcoming release. Please use GC_CREDENTIALS_PATH.",
+                DeprecationWarning,
+            )
             return self._credentials
 
         else:
