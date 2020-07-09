@@ -72,6 +72,16 @@ class TestConfig:
         assert isinstance(config.credentials, service_account.Credentials)
         assert config.middleware == ["rele.contrib.DjangoDBMiddleware"]
 
+    def test_warns_when_gc_credentials_is_passed(self, project_id, credentials):
+        settings = {
+            "GC_PROJECT_ID": project_id,
+            "GC_CREDENTIALS": credentials,
+        }
+        config = Config(settings)
+
+        with pytest.warns(DeprecationWarning):
+            config.credentials
+
     def test_inits_service_account_creds_when_credential_path_given(self, project_id):
         settings = {
             "GC_PROJECT_ID": project_id,
