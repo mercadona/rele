@@ -22,9 +22,7 @@ class Config:
     """
 
     def __init__(self, setting):
-        if (
-            setting.get("GC_PROJECT_ID") is None
-        ):
+        if setting.get("GC_PROJECT_ID") is None:
             credentials, project = get_google_defaults()
 
         self.gc_project_id = setting.get("GC_PROJECT_ID") or project

@@ -144,9 +144,7 @@ class TestCreateAndRun:
         with patch("rele.worker.Worker", autospec=True) as p:
             yield p
 
-    def test_waits_forever_when_called_with_config_and_subs(
-        self, config, mock_worker
-    ):
+    def test_waits_forever_when_called_with_config_and_subs(self, config, mock_worker):
         subscriptions = (sub_stub,)
         create_and_run(subscriptions, config)
 
