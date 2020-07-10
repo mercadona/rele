@@ -15,7 +15,6 @@ To configure Relé, our settings may look something like:
 
 .. code:: python
 
-    from google.oauth2 import service_account
     RELE = {
         'GC_CREDENTIALS_PATH': 'photo_project/settings/dummy-credentials.json',
         'GC_PROJECT_ID': 'photo-imaging',
