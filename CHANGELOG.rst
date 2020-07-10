@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.0.0 (2020-9-25)
+-------------------
+* Remove GC_CREDENTIALS (#174)
+
+
 0.14.0 (2020-8-5)
 -------------------
 * BREAKING CHANGE: Remove GC_CREDENTIALS (#174)
