@@ -17,9 +17,7 @@ First make sure the middleware is included in your Relé config.
     from google.oauth2 import service_account
 
     RELE = {
-        'GC_CREDENTIALS': service_account.Credentials.from_service_account_file(
-            'credentials.json'
-        ),
+        'GC_CREDENTIALSGC_CREDENTIALS_PATH': 'credentials.json',
         'GC_PROJECT_ID': 'photo-uploading-app',
         'MIDDLEWARE': ['rele.contrib.UnrecoverableMiddleWare']
     }

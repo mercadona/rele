@@ -5,7 +5,6 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from google.cloud.pubsub_v1 import PublisherClient
-from google.oauth2 import service_account
 
 from rele import Publisher
 from rele.client import Subscriber
@@ -19,28 +18,21 @@ def project_id():
 
 
 @pytest.fixture
-def credentials():
-    return service_account.Credentials.from_service_account_file(
-        "tests/dummy-pub-sub-credentials.json"
-    )
-
-
-@pytest.fixture
-def config(credentials, project_id):
+def config(project_id):
     return Config(
         {
             "APP_NAME": "rele",
             "SUB_PREFIX": "rele",
             "GC_PROJECT_ID": project_id,
-            "GC_CREDENTIALS": credentials,
+            "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
             "MIDDLEWARE": ["rele.contrib.LoggingMiddleware"],
         }
     )
 
 
 @pytest.fixture
-def subscriber(project_id, credentials):
-    return Subscriber(project_id, credentials, 60)
+def subscriber(project_id, config):
+    return Subscriber(project_id, config.credentials, 60)
 
 
 @pytest.fixture

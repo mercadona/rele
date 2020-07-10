@@ -16,12 +16,12 @@ def sub_stub(data, **kwargs):
 
 
 @pytest.fixture
-def worker(project_id, credentials, config):
+def worker(config):
     subscriptions = (sub_stub,)
     return Worker(
         subscriptions,
-        project_id,
-        credentials,
+        config.gc_project_id,
+        config.credentials,
         default_ack_deadline=60,
         threads_per_subscription=10,
     )
@@ -99,14 +99,14 @@ class TestWorker:
 
     @pytest.mark.usefixtures("mock_create_subscription")
     def test_creates_subscription_with_custom_ack_deadline_from_environment(
-        self, project_id, credentials
+        self, config
     ):
         subscriptions = (sub_stub,)
         custom_ack_deadline = 234
         worker = Worker(
             subscriptions,
-            project_id,
-            credentials,
+            config.gc_project_id,
+            config.credentials,
             custom_ack_deadline,
             threads_per_subscription=10,
         )
@@ -145,10 +145,10 @@ class TestCreateAndRun:
             yield p
 
     def test_waits_forever_when_called_with_config_and_subs(
-        self, config, mock_worker, credentials
+        self, config, mock_worker
     ):
         subscriptions = (sub_stub,)
         create_and_run(subscriptions, config)
 
-        mock_worker.assert_called_with(subscriptions, "rele-test", credentials, 60, 2)
+        mock_worker.assert_called_with(subscriptions, "rele-test", ANY, 60, 2)
         mock_worker.return_value.run_forever.assert_called_once_with()

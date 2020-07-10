@@ -26,9 +26,7 @@ To configure Relé, our settings may look something like:
     from google.oauth2 import service_account
 
     RELE = {
-        'GC_CREDENTIALS': service_account.Credentials.from_service_account_file(
-            'credentials.json'
-        ),
+        'GC_CREDENTIALS_PATH': 'credentials.json',
         'GC_PROJECT_ID': 'photo-uploading-app',
     }
 
