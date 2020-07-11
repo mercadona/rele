@@ -54,12 +54,12 @@ class TestLoadSubscriptions:
 
 
 class TestConfig:
-    def test_parses_all_keys(self, project_id, credentials, custom_encoder):
+    def test_parses_all_keys(self, project_id, custom_encoder):
         settings = {
             "APP_NAME": "rele",
             "SUB_PREFIX": "rele",
             "GC_PROJECT_ID": project_id,
-            "GC_CREDENTIALS": credentials,
+            "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
             "MIDDLEWARE": ["rele.contrib.DjangoDBMiddleware"],
             "ENCODER": custom_encoder,
         }
@@ -84,20 +84,6 @@ class TestConfig:
         assert isinstance(config.credentials, google.oauth2.service_account.Credentials)
         assert config.credentials.project_id == "rele-test"
 
-    def test_uses_path_instead_of_gc_credentials_when_both_are_provided(
-        self, credentials
-    ):
-        settings = {
-            "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
-            "GC_CREDENTIALS": credentials,
-        }
-
-        config = Config(settings)
-
-        assert isinstance(config.credentials, google.oauth2.service_account.Credentials)
-        assert config.credentials != credentials
-        assert config.credentials.project_id == "rele-test"
-
     @patch.dict(os.environ, {"GOOGLE_APPLICATION_CREDENTIALS": ""})
     def test_sets_defaults(self):
         settings = {}
@@ -120,7 +106,7 @@ class TestConfig:
             + "/dummy-pub-sub-credentials.json"
         },
     )
-    def test_sets_defaults_pulled_from_env(self, monkeypatch, project_id, credentials):
+    def test_sets_defaults_pulled_from_env(self, monkeypatch, project_id):
         settings = {}
 
         config = Config(settings)
@@ -128,6 +114,6 @@ class TestConfig:
         assert config.app_name is None
         assert config.sub_prefix is None
         assert config.gc_project_id == "rele-test"
-        assert config.credentials is not None
+        assert isinstance(config.credentials, google.oauth2.service_account.Credentials)
         assert config.middleware == ["rele.contrib.LoggingMiddleware"]
         assert config.encoder == json.JSONEncoder

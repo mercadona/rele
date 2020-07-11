@@ -21,13 +21,9 @@ class Config:
     """
 
     def __init__(self, setting):
-        if (
-            setting.get("GC_PROJECT_ID") is None
-            or setting.get("GC_CREDENTIALS") is None
-        ):
+        if setting.get("GC_PROJECT_ID") is None:
             credentials, project = get_google_defaults()
 
-        self._credentials = setting.get("GC_CREDENTIALS") or credentials
         self.gc_project_id = setting.get("GC_PROJECT_ID") or project
         self.gc_credentials_path = setting.get("GC_CREDENTIALS_PATH")
         self.app_name = setting.get("APP_NAME")
@@ -54,11 +50,9 @@ class Config:
             return service_account.Credentials.from_service_account_file(
                 self.gc_credentials_path
             )
-        elif self._credentials:
-            return self._credentials
-
         else:
-            return None
+            credentials, project_id = get_google_defaults()
+            return credentials
 
 
 def setup(setting=None, **kwargs):
