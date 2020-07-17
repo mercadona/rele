@@ -19,6 +19,7 @@ def worker(config):
     subscriptions = (sub_stub,)
     return Worker(
         subscriptions,
+        config.gc_project_id,
         config.credentials,
         default_ack_deadline=60,
         threads_per_subscription=10,

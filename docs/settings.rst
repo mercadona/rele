@@ -40,12 +40,16 @@ Example::
 
 Path to service account json file with access to PubSub
 
+
+.. _settings_project_id:
+
 ``GC_PROJECT_ID``
 ------------------
 
-**Required**
+**Optional**
 
 Valid Google Project ID
+
 
 ``MIDDLEWARE``
 ------------------

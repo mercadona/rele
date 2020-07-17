@@ -32,6 +32,7 @@ class Subscriber:
     For convenience, this class wraps the creation and consumption of a topic
     subscription.
 
+    :param gc_project_id: string :ref:`_settings_project_id` .
     :param credentials: obj :meth:`~rele.config.Config.credentials`.
     :param default_ack_deadline: int Ack Deadline defined in settings
     """
