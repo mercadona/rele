@@ -25,7 +25,6 @@ class Worker:
     def __init__(
         self,
         subscriptions,
-        gc_project_id=None,
         credentials=None,
         default_ack_deadline=None,
         threads_per_subscription=None,
@@ -128,7 +127,6 @@ def create_and_run(subs, config):
         print(f"  {sub}")
     worker = Worker(
         subs,
-        config.gc_project_id,
         config.credentials,
         config.ack_deadline,
         config.threads_per_subscription,

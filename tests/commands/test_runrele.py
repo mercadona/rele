@@ -9,7 +9,7 @@ from rele import Worker
 class TestRunReleCommand:
     @pytest.fixture(autouse=True)
     def worker_wait_forever(self):
-        with patch.object(Worker, "_wait_forever", return_value=None) as p:
+        with patch.object(Worker, "_wait_forever", return_value=None, autospec=True) as p:
             yield p
 
     @pytest.fixture
@@ -20,7 +20,7 @@ class TestRunReleCommand:
     def test_calls_worker_start_and_setup_when_runrele(self, mock_worker):
         call_command("runrele")
 
-        mock_worker.assert_called_with([], "SOME-PROJECT-ID", ANY, 60, 2)
+        mock_worker.assert_called_with([], ANY, 60, 2)
         mock_worker.return_value.run_forever.assert_called_once_with()
 
     def test_prints_warning_when_conn_max_age_not_set_to_zero(
@@ -35,5 +35,5 @@ class TestRunReleCommand:
             "This may result in slots for database connections to "
             "be exhausted." in err
         )
-        mock_worker.assert_called_with([], "SOME-PROJECT-ID", ANY, 60, 2)
+        mock_worker.assert_called_with([], ANY, 60, 2)
         mock_worker.return_value.run_forever.assert_called_once_with()
