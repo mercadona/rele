@@ -22,4 +22,4 @@ class TestMiddleware:
 
         rele.setup(settings, foo="bar")
         assert mock_middleware_setup.called
-        mock_middleware_setup.call_args_list[0][-1] == {"foo": "bar"}
+        assert mock_middleware_setup.call_args_list[0][-1] == {"foo": "bar"}
