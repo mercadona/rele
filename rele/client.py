@@ -32,7 +32,7 @@ class Subscriber:
     For convenience, this class wraps the creation and consumption of a topic
     subscription.
 
-    :param credentials: string Google Cloud Credentials.
+    :param credentials: obj :meth:`~rele.config.Config.credentials`.
     :param default_ack_deadline: int Ack Deadline defined in settings
     """
 
@@ -76,7 +76,7 @@ class Subscriber:
 
         :param subscription_name: str Subscription name
         :param callback: Function which act on a topic message
-        :param scheduler: `Thread pool-based scheduler.<https://googleapis.dev/python/pubsub/latest/subscriber/api/scheduler.html?highlight=threadscheduler#google.cloud.pubsub_v1.subscriber.scheduler.ThreadScheduler>`_  # noqa
+        :param scheduler: `Thread pool-based scheduler. <https://googleapis.dev/python/pubsub/latest/subscriber/api/scheduler.html?highlight=threadscheduler#google.cloud.pubsub_v1.subscriber.scheduler.ThreadScheduler>`_  # noqa
         :return: `Future <https://googleapis.github.io/google-cloud-python/latest/pubsub/subscriber/api/futures.html>`_  # noqa
         """
         subscription_path = self._client.subscription_path(

@@ -1,4 +1,3 @@
-import os
 from concurrent import futures
 from unittest.mock import ANY, patch
 
