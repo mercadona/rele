@@ -58,7 +58,8 @@ class Config:
     def gc_project_id(self):
         if self._project_id:
             warnings.warn(
-                "GC_PROJECT_ID is deprecated in a future release.", DeprecationWarning)
+                "GC_PROJECT_ID is deprecated in a future release.", DeprecationWarning
+            )
             return self._project_id
         elif self.credentials:
             return self.credentials.project_id
