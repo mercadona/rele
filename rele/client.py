@@ -36,8 +36,8 @@ class Subscriber:
     :param default_ack_deadline: int Ack Deadline defined in settings
     """
 
-    def __init__(self, credentials, default_ack_deadline=None):
-        self._gc_project_id = credentials.project_id
+    def __init__(self, gc_project_id, credentials, default_ack_deadline=None):
+        self._gc_project_id = gc_project_id
         self._ack_deadline = default_ack_deadline or DEFAULT_ACK_DEADLINE
 
         if USE_EMULATOR:

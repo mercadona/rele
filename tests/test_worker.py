@@ -103,6 +103,7 @@ class TestWorker:
         custom_ack_deadline = 234
         worker = Worker(
             subscriptions,
+            config.gc_project_id,
             config.credentials,
             custom_ack_deadline,
             threads_per_subscription=10,
@@ -128,5 +129,5 @@ class TestCreateAndRun:
         subscriptions = (sub_stub,)
         create_and_run(subscriptions, config)
 
-        mock_worker.assert_called_with(subscriptions, ANY, 60, 2)
+        mock_worker.assert_called_with(subscriptions, "rele-test", ANY, 60, 2)
         mock_worker.return_value.run_forever.assert_called_once_with()

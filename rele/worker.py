@@ -25,11 +25,12 @@ class Worker:
     def __init__(
         self,
         subscriptions,
+        gc_project_id=None,
         credentials=None,
         default_ack_deadline=None,
         threads_per_subscription=None,
     ):
-        self._subscriber = Subscriber(credentials, default_ack_deadline)
+        self._subscriber = Subscriber(gc_project_id, credentials, default_ack_deadline)
         self._futures = []
         self._subscriptions = subscriptions
         self.threads_per_subscription = threads_per_subscription
@@ -126,7 +127,11 @@ def create_and_run(subs, config):
     for sub in subs:
         print(f"  {sub}")
     worker = Worker(
-        subs, config.credentials, config.ack_deadline, config.threads_per_subscription,
+        subs,
+        config.gc_project_id,
+        config.credentials,
+        config.ack_deadline,
+        config.threads_per_subscription,
     )
 
     signal.signal(signal.SIGINT, signal.SIG_IGN)
