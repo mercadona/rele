@@ -32,19 +32,18 @@ class Subscriber:
     For convenience, this class wraps the creation and consumption of a topic
     subscription.
 
-    :param gc_project_id: string Google Cloud Project ID.
     :param credentials: string Google Cloud Credentials.
     :param default_ack_deadline: int Ack Deadline defined in settings
     """
 
-    def __init__(self, gc_project_id=None, credentials=None, default_ack_deadline=None):
+    def __init__(self, credentials=None, default_ack_deadline=None):
 
-        if gc_project_id is None or credentials is None:
+        if credentials is None:
             creds, project = get_google_defaults()
 
-        self._gc_project_id = gc_project_id or project
         self._ack_deadline = default_ack_deadline or DEFAULT_ACK_DEADLINE
         _credentials = credentials or creds
+        self._gc_project_id = _credentials.project_id or project
 
         if USE_EMULATOR:
             self._client = pubsub_v1.SubscriberClient()

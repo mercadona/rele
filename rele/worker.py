@@ -30,7 +30,7 @@ class Worker:
         default_ack_deadline=None,
         threads_per_subscription=None,
     ):
-        self._subscriber = Subscriber(gc_project_id, credentials, default_ack_deadline)
+        self._subscriber = Subscriber(credentials, default_ack_deadline)
         self._futures = []
         self._subscriptions = subscriptions
         self.threads_per_subscription = threads_per_subscription
