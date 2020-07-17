@@ -84,6 +84,17 @@ class TestConfig:
         assert isinstance(config.credentials, google.oauth2.service_account.Credentials)
         assert config.credentials.project_id == "rele-test"
 
+    def test_uses_project_id_from_creds_when_no_project_id_given(self):
+        settings = {
+            "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
+        }
+
+        config = Config(settings)
+
+        assert isinstance(config.credentials, google.oauth2.service_account.Credentials)
+        assert config.credentials.project_id == "rele-test"
+        assert config.gc_project_id == 'rele-test'
+
     @patch.dict(os.environ, {"GOOGLE_APPLICATION_CREDENTIALS": ""})
     def test_sets_defaults(self):
         settings = {}
