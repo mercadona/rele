@@ -36,19 +36,14 @@ class Subscriber:
     :param default_ack_deadline: int Ack Deadline defined in settings
     """
 
-    def __init__(self, credentials=None, default_ack_deadline=None):
-
-        if credentials is None:
-            creds, project = get_google_defaults()
-
+    def __init__(self, credentials, default_ack_deadline=None):
+        self._gc_project_id = credentials.project_id
         self._ack_deadline = default_ack_deadline or DEFAULT_ACK_DEADLINE
-        _credentials = credentials or creds
-        self._gc_project_id = _credentials.project_id or project
 
         if USE_EMULATOR:
             self._client = pubsub_v1.SubscriberClient()
         else:
-            self._client = pubsub_v1.SubscriberClient(credentials=_credentials)
+            self._client = pubsub_v1.SubscriberClient(credentials=credentials)
 
     def create_subscription(self, subscription, topic):
         """Handles creating the subscription when it does not exists.
