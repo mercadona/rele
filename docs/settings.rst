@@ -46,9 +46,12 @@ Path to service account json file with access to PubSub
 ``GC_PROJECT_ID``
 ------------------
 
-**Optional**
+**Deprecated**
 
 Valid Google Project ID
+
+.. warning:: This will be removed in an upcoming release in favor of getting
+    project_id from the credentials.
 
 
 ``MIDDLEWARE``

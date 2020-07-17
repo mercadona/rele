@@ -1,5 +1,6 @@
 import importlib
 import os
+import warnings
 
 from google.oauth2 import service_account
 
@@ -56,6 +57,8 @@ class Config:
     @property
     def gc_project_id(self):
         if self._project_id:
+            warnings.warn(
+                "GC_PROJECT_ID is deprecated in a future release.", DeprecationWarning)
             return self._project_id
         elif self.credentials:
             return self.credentials.project_id
