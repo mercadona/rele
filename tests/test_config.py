@@ -93,7 +93,7 @@ class TestConfig:
 
         assert isinstance(config.credentials, google.oauth2.service_account.Credentials)
         assert config.credentials.project_id == "rele-test"
-        assert config.gc_project_id == 'rele-test'
+        assert config.gc_project_id == "rele-test"
 
     @patch.dict(os.environ, {"GOOGLE_APPLICATION_CREDENTIALS": ""})
     def test_sets_defaults(self):

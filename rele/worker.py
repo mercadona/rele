@@ -126,10 +126,7 @@ def create_and_run(subs, config):
     for sub in subs:
         print(f"  {sub}")
     worker = Worker(
-        subs,
-        config.credentials,
-        config.ack_deadline,
-        config.threads_per_subscription,
+        subs, config.credentials, config.ack_deadline, config.threads_per_subscription,
     )
 
     signal.signal(signal.SIGINT, signal.SIG_IGN)
