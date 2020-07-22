@@ -7,6 +7,7 @@ from contextlib import suppress
 import google.auth
 from google.api_core import exceptions
 from google.cloud import pubsub_v1
+from google.cloud.pubsub_v1.exceptions import TimeoutError
 
 from rele.middleware import run_middleware_hook
 
@@ -119,7 +120,9 @@ class Publisher:
         else:
             self._client = pubsub_v1.PublisherClient(credentials=credentials)
 
-    def publish(self, topic, data, blocking=False, timeout=None, **attrs):
+    def publish(
+        self, topic, data, blocking=False, timeout=None, raise_exception=True, **attrs
+    ):
         """Publishes message to Google PubSub topic.
 
         Usage::
@@ -148,7 +151,8 @@ class Publisher:
         :param topic: string topic to publish the data.
         :param data: dict with the content of the message.
         :param blocking: boolean
-        :param timeout: float, default None fallsback to :ref:`settings_publisher_timeout`
+        :param timeout: float, default None falls back to :ref:`settings_publisher_timeout`
+        :param raise_exception: boolean. If True, exceptions coming from PubSub will be raised
         :param attrs: additional string parameters to be published.
         :return: `Future <https://googleapis.github.io/google-cloud-python/latest/pubsub/subscriber/api/futures.html>`_  # noqa
         """
@@ -161,6 +165,13 @@ class Publisher:
         if not blocking:
             return future
 
-        future.result(timeout=timeout or self._timeout)
-        run_middleware_hook("post_publish", topic)
+        try:
+            future.result(timeout=timeout or self._timeout)
+        except TimeoutError as e:
+            run_middleware_hook("post_publish_failure", topic, e, data)
+            if raise_exception:
+                raise e
+        else:
+            run_middleware_hook("post_publish", topic)
+
         return future
