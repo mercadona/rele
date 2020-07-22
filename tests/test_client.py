@@ -5,6 +5,7 @@ from unittest.mock import ANY, patch
 import pytest
 from google.api_core import exceptions
 from google.cloud.pubsub_v1 import SubscriberClient
+from google.cloud.pubsub_v1.exceptions import TimeoutError
 
 
 @pytest.mark.usefixtures("publisher", "time_mock")
@@ -51,7 +52,6 @@ class TestPublisher:
 
         publisher._client.publish.assert_called_with(ANY, b"1.2", published_at=ANY)
 
-    @patch.object(concurrent.futures.Future, "result")
     def test_publishes_data_with_client_timeout_when_blocking(
         self, mock_future, publisher
     ):
@@ -62,9 +62,8 @@ class TestPublisher:
         publisher._client.publish.assert_called_with(
             ANY, b'{"foo": "bar"}', published_at=ANY
         )
-        mock_future.assert_called_once_with(timeout=100)
+        mock_future.result.assert_called_once_with(timeout=100)
 
-    @patch.object(concurrent.futures.Future, "result")
     def test_publishes_data_with_client_timeout_when_blocking_and_timeout_specified(
         self, mock_future, publisher
     ):
@@ -77,7 +76,55 @@ class TestPublisher:
         publisher._client.publish.assert_called_with(
             ANY, b'{"foo": "bar"}', published_at=ANY
         )
-        mock_future.assert_called_once_with(timeout=50)
+        mock_future.result.assert_called_once_with(timeout=50)
+
+    def test_runs_post_publish_failure_hook_when_future_result_raises_timeout(
+        self, mock_future, publisher, mock_post_publish_failure
+    ):
+        message = {"foo": "bar"}
+        exception = TimeoutError()
+        mock_future.result.side_effect = exception
+
+        with pytest.raises(TimeoutError):
+            publisher.publish(
+                topic="order-cancelled", data=message, myattr="hello", blocking=True
+            )
+        mock_post_publish_failure.assert_called_once_with(
+            "order-cancelled", exception, {"foo": "bar"}
+        )
+
+    def test_raises_when_timeout_error_and_raise_exception_is_true(
+        self, publisher, mock_future
+    ):
+        message = {"foo": "bar"}
+        e = TimeoutError()
+        mock_future.result.side_effect = e
+
+        with pytest.raises(TimeoutError):
+            publisher.publish(
+                topic="order-cancelled",
+                data=message,
+                myattr="hello",
+                blocking=True,
+                raise_exception=True,
+            )
+
+    def test_returns_future_when_timeout_error_and_raise_exception_is_false(
+        self, publisher, mock_future
+    ):
+        message = {"foo": "bar"}
+        e = TimeoutError()
+        mock_future.result.side_effect = e
+
+        result = publisher.publish(
+            topic="order-cancelled",
+            data=message,
+            myattr="hello",
+            blocking=True,
+            raise_exception=False,
+        )
+
+        assert result is mock_future
 
 
 class TestSubscriber:

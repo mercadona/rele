@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from google.cloud.pubsub_v1 import PublisherClient
+from google.cloud.pubsub_v1.exceptions import TimeoutError
 
 from rele import Publisher
 from rele.client import Subscriber
@@ -36,7 +37,12 @@ def subscriber(project_id, config):
 
 
 @pytest.fixture
-def publisher(config):
+def mock_future():
+    return MagicMock(spec=concurrent.futures.Future)
+
+
+@pytest.fixture
+def publisher(config, mock_future):
     publisher = Publisher(
         gc_project_id=config.gc_project_id,
         credentials=config.credentials,
@@ -44,7 +50,7 @@ def publisher(config):
         timeout=config.publisher_timeout,
     )
     publisher._client = MagicMock(spec=PublisherClient)
-    publisher._client.publish.return_value = concurrent.futures.Future()
+    publisher._client.publish.return_value = mock_future
 
     return publisher
 
@@ -74,3 +80,18 @@ def custom_encoder():
                 return float(obj)
 
     return DecimalEncoder
+
+
+@pytest.fixture
+def mock_publish_timeout():
+    with patch("rele.client.Publisher.publish") as mock:
+        mock.side_effect = TimeoutError()
+        yield mock
+
+
+@pytest.fixture
+def mock_post_publish_failure():
+    with patch(
+        "rele.contrib.logging_middleware.LoggingMiddleware.post_publish_failure"
+    ) as mock:
+        yield mock
