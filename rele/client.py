@@ -148,11 +148,11 @@ class Publisher:
         message attrs using `epoch floating point number
         <https://docs.python.org/3/library/time.html#time.time>`_.
 
-        :param raise_exception: boolean. If True, exceptions coming from PubSub will be raised
         :param topic: string topic to publish the data.
         :param data: dict with the content of the message.
         :param blocking: boolean
-        :param timeout: float, default None fallsback to :ref:`settings_publisher_timeout`
+        :param timeout: float, default None falls back to :ref:`settings_publisher_timeout`
+        :param raise_exception: boolean. If True, exceptions coming from PubSub will be raised
         :param attrs: additional string parameters to be published.
         :return: `Future <https://googleapis.github.io/google-cloud-python/latest/pubsub/subscriber/api/futures.html>`_  # noqa
         """
