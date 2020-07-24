@@ -40,12 +40,19 @@ Example::
 
 Path to service account json file with access to PubSub
 
+
+.. _settings_project_id:
+
 ``GC_PROJECT_ID``
 ------------------
 
-**Required**
+**Deprecated**
 
 Valid Google Project ID
+
+.. warning:: This will be removed in an upcoming release in favor of getting
+    project_id from the credentials.
+
 
 ``MIDDLEWARE``
 ------------------

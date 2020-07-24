@@ -140,6 +140,7 @@ class TestSubscriber:
         _mocked_client.assert_called_once_with(
             ack_deadline_seconds=60, name=expected_subscription, topic=expected_topic,
         )
+        assert subscriber._gc_project_id == "rele-test"
 
     @patch.object(SubscriberClient, "create_subscription")
     def test_creates_subscription_with_custom_ack_deadline_when_provided(

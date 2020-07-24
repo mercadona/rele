@@ -1,4 +1,3 @@
-import os
 from concurrent import futures
 from unittest.mock import ANY, patch
 
@@ -113,23 +112,6 @@ class TestWorker:
         worker.setup()
 
         assert worker._subscriber._ack_deadline == custom_ack_deadline
-
-    @patch.dict(
-        os.environ,
-        {
-            "GOOGLE_APPLICATION_CREDENTIALS": os.path.dirname(
-                os.path.realpath(__file__)
-            )
-            + "/dummy-pub-sub-credentials.json"
-        },
-    )
-    @pytest.mark.usefixtures("mock_create_subscription")
-    def test_creates_without_config(self):
-        subscriptions = (sub_stub,)
-        worker = Worker(subscriptions)
-        worker.setup()
-
-        assert worker._subscriber._ack_deadline == 60
         assert worker._subscriber._gc_project_id == "rele-test"
 
 

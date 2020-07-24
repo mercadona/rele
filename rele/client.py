@@ -32,24 +32,19 @@ class Subscriber:
     For convenience, this class wraps the creation and consumption of a topic
     subscription.
 
-    :param gc_project_id: string Google Cloud Project ID.
-    :param credentials: string Google Cloud Credentials.
+    :param gc_project_id: str :ref:`settings_project_id` .
+    :param credentials: obj :meth:`~rele.config.Config.credentials`.
     :param default_ack_deadline: int Ack Deadline defined in settings
     """
 
-    def __init__(self, gc_project_id=None, credentials=None, default_ack_deadline=None):
-
-        if gc_project_id is None or credentials is None:
-            creds, project = get_google_defaults()
-
-        self._gc_project_id = gc_project_id or project
+    def __init__(self, gc_project_id, credentials, default_ack_deadline=None):
+        self._gc_project_id = gc_project_id
         self._ack_deadline = default_ack_deadline or DEFAULT_ACK_DEADLINE
-        _credentials = credentials or creds
 
         if USE_EMULATOR:
             self._client = pubsub_v1.SubscriberClient()
         else:
-            self._client = pubsub_v1.SubscriberClient(credentials=_credentials)
+            self._client = pubsub_v1.SubscriberClient(credentials=credentials)
 
     def create_subscription(self, subscription, topic):
         """Handles creating the subscription when it does not exists.
@@ -82,7 +77,7 @@ class Subscriber:
 
         :param subscription_name: str Subscription name
         :param callback: Function which act on a topic message
-        :param scheduler: `Thread pool-based scheduler.<https://googleapis.dev/python/pubsub/latest/subscriber/api/scheduler.html?highlight=threadscheduler#google.cloud.pubsub_v1.subscriber.scheduler.ThreadScheduler>`_  # noqa
+        :param scheduler: `Thread pool-based scheduler. <https://googleapis.dev/python/pubsub/latest/subscriber/api/scheduler.html?highlight=threadscheduler#google.cloud.pubsub_v1.subscriber.scheduler.ThreadScheduler>`_  # noqa
         :return: `Future <https://googleapis.github.io/google-cloud-python/latest/pubsub/subscriber/api/futures.html>`_  # noqa
         """
         subscription_path = self._client.subscription_path(

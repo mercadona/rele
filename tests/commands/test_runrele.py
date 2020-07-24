@@ -9,7 +9,9 @@ from rele import Worker
 class TestRunReleCommand:
     @pytest.fixture(autouse=True)
     def worker_wait_forever(self):
-        with patch.object(Worker, "_wait_forever", return_value=None) as p:
+        with patch.object(
+            Worker, "_wait_forever", return_value=None, autospec=True
+        ) as p:
             yield p
 
     @pytest.fixture
