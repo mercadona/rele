@@ -5,14 +5,20 @@ API Reference
 
 .. _ client
 
-Client
-------
+Clients
+-------
 
 .. autoclass:: rele.client.Publisher
    :members:
 
 
 .. _ publish
+
+.. autoclass:: rele.client.Subscriber
+   :members:
+
+
+.. _ subscriber
 
 Publish
 -------

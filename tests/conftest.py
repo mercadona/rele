@@ -24,7 +24,6 @@ def config(project_id):
         {
             "APP_NAME": "rele",
             "SUB_PREFIX": "rele",
-            "GC_PROJECT_ID": project_id,
             "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
             "MIDDLEWARE": ["rele.contrib.LoggingMiddleware"],
         }
@@ -33,7 +32,7 @@ def config(project_id):
 
 @pytest.fixture
 def subscriber(project_id, config):
-    return Subscriber(project_id, config.credentials, 60)
+    return Subscriber(config.gc_project_id, config.credentials, 60)
 
 
 @pytest.fixture

@@ -1,5 +1,6 @@
 import importlib
 import os
+import warnings
 
 from google.oauth2 import service_account
 
@@ -21,10 +22,7 @@ class Config:
     """
 
     def __init__(self, setting):
-        if setting.get("GC_PROJECT_ID") is None:
-            credentials, project = get_google_defaults()
-
-        self.gc_project_id = setting.get("GC_PROJECT_ID") or project
+        self._project_id = setting.get("GC_PROJECT_ID")
         self.gc_credentials_path = setting.get("GC_CREDENTIALS_PATH")
         self.app_name = setting.get("APP_NAME")
         self.sub_prefix = setting.get("SUB_PREFIX")
@@ -37,6 +35,7 @@ class Config:
         self.publisher_timeout = setting.get("PUBLISHER_TIMEOUT", 3.0)
         self.threads_per_subscription = setting.get("THREADS_PER_SUBSCRIPTION", 2)
         self.filter_by = setting.get("FILTER_SUBS_BY")
+        self._credentials = None
 
     @property
     def encoder(self):
@@ -47,12 +46,25 @@ class Config:
     @property
     def credentials(self):
         if self.gc_credentials_path:
-            return service_account.Credentials.from_service_account_file(
+            self._credentials = service_account.Credentials.from_service_account_file(
                 self.gc_credentials_path
             )
         else:
-            credentials, project_id = get_google_defaults()
-            return credentials
+            credentials, __ = get_google_defaults()
+            self._credentials = credentials
+        return self._credentials
+
+    @property
+    def gc_project_id(self):
+        if self._project_id:
+            warnings.warn(
+                "GC_PROJECT_ID is deprecated in a future release.", DeprecationWarning
+            )
+            return self._project_id
+        elif self.credentials:
+            return self.credentials.project_id
+        else:
+            return None
 
 
 def setup(setting=None, **kwargs):
