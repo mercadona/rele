@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.14.0 (2020-8-5)
+-------------------
+* BREAKING CHANGE: Remove GC_CREDENTIALS (#174)
+* Add changelog to the docs site (#179)
+* Catch TimeoutError and run post_publish_failure when blocking (#172)
+* Deprecate GC_PROJECT_ID setting (#178)
+
 0.13.0 (2020-7-9)
 -------------------
 * Add documentation for class based subscriptions (#169)
