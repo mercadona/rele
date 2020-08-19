@@ -26,7 +26,6 @@ DATABASES = {"default": {"CONN_MAX_AGE": 0}}
 
 RELE = {
     "APP_NAME": "test-rele",
-    "GC_PROJECT_ID": "SOME-PROJECT-ID",
     "GC_CREDENTIALS_PATH": f"{BASE_DIR}/tests/dummy-pub-sub-credentials.json",
     "SUB_PREFIX": "rele",
     "MIDDLEWARE": [
