@@ -73,7 +73,6 @@ class TestConfig:
 
     def test_inits_service_account_creds_when_credential_path_given(self, project_id):
         settings = {
-            "GC_PROJECT_ID": project_id,
             "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
         }
 
@@ -82,17 +81,6 @@ class TestConfig:
         assert config.gc_project_id == project_id
         assert isinstance(config.credentials, google.oauth2.service_account.Credentials)
         assert config.credentials.project_id == "rele-test"
-
-    def test_warns_when_gc_project_id_given(self, project_id):
-        settings = {
-            "GC_PROJECT_ID": project_id,
-            "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
-        }
-
-        config = Config(settings)
-
-        with pytest.warns(DeprecationWarning):
-            assert config.gc_project_id == project_id
 
     def test_uses_project_id_from_creds_when_no_project_id_given(self):
         settings = {

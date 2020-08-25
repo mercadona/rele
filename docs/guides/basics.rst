@@ -26,7 +26,6 @@ To configure Relé, our settings may look something like:
 
     RELE = {
         'GC_CREDENTIALS_PATH': 'credentials.json',
-        'GC_PROJECT_ID': 'photo-uploading-app',
     }
 
 .. code:: python

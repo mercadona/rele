@@ -30,7 +30,6 @@ To be able to do that we can follow the steps below:
     RELE = {
         'APP_NAME': 'my-awesome-app',
         'SUB_PREFIX': 'test',
-        'GC_PROJECT_ID': 'my-awesome-project',
         'GC_CREDENTIALS_PATH': 'my-credentials',
         'MIDDLEWARE': [
             'rele.contrib.LoggingMiddleware',

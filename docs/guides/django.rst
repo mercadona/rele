@@ -17,7 +17,6 @@ To configure Relé, our settings may look something like:
 
     RELE = {
         'GC_CREDENTIALS_PATH': 'photo_project/settings/dummy-credentials.json',
-        'GC_PROJECT_ID': 'photo-imaging',
         'MIDDLEWARE': [
             'rele.contrib.LoggingMiddleware',
             'rele.contrib.DjangoDBMiddleware',

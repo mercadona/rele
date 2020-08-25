@@ -18,7 +18,6 @@ First make sure the middleware is included in your Relé config.
 
     RELE = {
         'GC_CREDENTIALSGC_CREDENTIALS_PATH': 'credentials.json',
-        'GC_PROJECT_ID': 'photo-uploading-app',
         'MIDDLEWARE': ['rele.contrib.UnrecoverableMiddleWare']
     }
     config = rele.config.setup(RELE)
