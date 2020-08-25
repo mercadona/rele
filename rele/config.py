@@ -22,7 +22,6 @@ class Config:
     """
 
     def __init__(self, setting):
-        self._project_id = setting.get("GC_PROJECT_ID")
         self.gc_credentials_path = setting.get("GC_CREDENTIALS_PATH")
         self.app_name = setting.get("APP_NAME")
         self.sub_prefix = setting.get("SUB_PREFIX")
@@ -56,12 +55,7 @@ class Config:
 
     @property
     def gc_project_id(self):
-        if self._project_id:
-            warnings.warn(
-                "GC_PROJECT_ID is deprecated in a future release.", DeprecationWarning
-            )
-            return self._project_id
-        elif self.credentials:
+        if self.credentials:
             return self.credentials.project_id
         else:
             return None
