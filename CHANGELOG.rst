@@ -3,12 +3,12 @@ Changelog
 
 1.0.0 (2020-9-25)
 -------------------
-* Remove GC_CREDENTIALS (#174)
+*  BREAKING: Remove GC_PROJECT_ID (#183)
 
 
 0.14.0 (2020-8-5)
 -------------------
-* BREAKING CHANGE: Remove GC_CREDENTIALS (#174)
+* BREAKING: Remove GC_CREDENTIALS (#174)
 * Add changelog to the docs site (#179)
 * Catch TimeoutError and run post_publish_failure when blocking (#172)
 * Deprecate GC_PROJECT_ID setting (#178)
