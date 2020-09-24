@@ -45,7 +45,9 @@ class TestWorker:
         worker.start()
 
         mock_consume.assert_called_once_with(
-            subscription_name="rele-some-cool-topic", callback=ANY, scheduler=ANY,
+            subscription_name="rele-some-cool-topic",
+            callback=ANY,
+            scheduler=ANY,
         )
         scheduler = mock_consume.call_args_list[0][1]["scheduler"]
         assert isinstance(scheduler, ThreadScheduler)
@@ -70,7 +72,9 @@ class TestWorker:
         subscription = "rele-some-cool-topic"
         mock_create_subscription.assert_called_once_with(subscription, topic)
         mock_consume.assert_called_once_with(
-            subscription_name="rele-some-cool-topic", callback=ANY, scheduler=ANY,
+            subscription_name="rele-some-cool-topic",
+            callback=ANY,
+            scheduler=ANY,
         )
         scheduler = mock_consume.call_args_list[0][1]["scheduler"]
         assert isinstance(scheduler, ThreadScheduler)

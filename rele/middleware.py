@@ -61,8 +61,7 @@ class BaseMiddleware:
         """
 
     def post_process_message(self):
-        """Called after the Worker processes the message.
-        """
+        """Called after the Worker processes the message."""
 
     def post_process_message_success(self, subscription, start_time, message):
         """Called after the message has been successfully processed.
@@ -82,17 +81,13 @@ class BaseMiddleware:
         """
 
     def pre_worker_start(self):
-        """Called before the Worker process starts up.
-        """
+        """Called before the Worker process starts up."""
 
     def post_worker_start(self):
-        """Called after the Worker process starts up.
-        """
+        """Called after the Worker process starts up."""
 
     def pre_worker_stop(self, subscriptions):
-        """Called before the Worker process shuts down.
-        """
+        """Called before the Worker process shuts down."""
 
     def post_worker_stop(self):
-        """Called after the Worker process shuts down.
-        """
+        """Called after the Worker process shuts down."""
