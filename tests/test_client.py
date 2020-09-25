@@ -19,7 +19,10 @@ class TestPublisher:
         assert isinstance(result, concurrent.futures.Future)
 
         publisher._client.publish.assert_called_with(
-            ANY, b'{"foo": "bar"}', myattr="hello", published_at=str(published_at),
+            ANY,
+            b'{"foo": "bar"}',
+            myattr="hello",
+            published_at=str(published_at),
         )
 
     def test_save_log_when_published_called(self, published_at, publisher, caplog):
@@ -69,7 +72,10 @@ class TestPublisher:
     ):
         publisher._timeout = 100.0
         publisher.publish(
-            topic="order-cancelled", data={"foo": "bar"}, blocking=True, timeout=50,
+            topic="order-cancelled",
+            data={"foo": "bar"},
+            blocking=True,
+            timeout=50,
         )
 
         publisher._client.publish.return_value = mock_future
@@ -138,7 +144,9 @@ class TestSubscriber:
         subscriber.create_subscription("test-topic", f"{project_id}-test-topic")
 
         _mocked_client.assert_called_once_with(
-            ack_deadline_seconds=60, name=expected_subscription, topic=expected_topic,
+            ack_deadline_seconds=60,
+            name=expected_subscription,
+            topic=expected_topic,
         )
         assert subscriber._gc_project_id == "rele-test"
 
@@ -154,7 +162,9 @@ class TestSubscriber:
         )
 
         _mocked_client.assert_called_once_with(
-            ack_deadline_seconds=100, name=expected_subscription, topic=expected_topic,
+            ack_deadline_seconds=100,
+            name=expected_subscription,
+            topic=expected_topic,
         )
 
     @patch.object(
