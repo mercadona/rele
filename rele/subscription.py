@@ -121,7 +121,10 @@ class Callback:
         else:
             message.ack()
             run_middleware_hook(
-                "post_process_message_success", self._subscription, start_time, message,
+                "post_process_message_success",
+                self._subscription,
+                start_time,
+                message,
             )
             return res
         finally:
@@ -178,7 +181,11 @@ def sub(topic, prefix=None, suffix=None, filter_by=None):
 
     def decorator(func):
         return Subscription(
-            func=func, topic=topic, prefix=prefix, suffix=suffix, filter_by=filter_by,
+            func=func,
+            topic=topic,
+            prefix=prefix,
+            suffix=suffix,
+            filter_by=filter_by,
         )
 
     return decorator
