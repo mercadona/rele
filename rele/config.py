@@ -104,7 +104,8 @@ def load_subscriptions_from_paths(sub_module_paths, sub_prefix=None, filter_by=N
 
             if subscription.name in subscriptions:
                 raise RuntimeError(
-                    f"Duplicated subscription found: {subscription.name}."
+                    f"Duplicated subscription found: {subscription.name}. Handled by "
+                    f"{sub_module_path}.{attr_name} and some more."
                 )
 
             subscriptions[subscription.name] = subscription
