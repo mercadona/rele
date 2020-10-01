@@ -55,8 +55,8 @@ class TestLoadSubscriptions:
 
         assert (
             str(excinfo.value)
-            == "Duplicated subscription found: rele-another-cool-topic. "
-            "Handled by tests.more_subs.subs.another_sub_stub and tests.test_config.another_sub_stub."
+            == "Duplicate subscription name found: rele-another-cool-topic. Subs "
+            "tests.more_subs.subs.another_sub_stub and tests.test_config.another_sub_stub collide."
         )
 
     def test_returns_sub_value_when_filtered_value_applied(self, subscriptions):
