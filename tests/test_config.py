@@ -15,6 +15,11 @@ def sub_stub(data, **kwargs):
     return data["id"]
 
 
+@sub(topic="another-cool-topic", prefix="rele")
+def another_sub_stub(data, **kwargs):
+    return data["id"]
+
+
 class TestLoadSubscriptions:
     @pytest.fixture
     def subscriptions(self):
@@ -25,8 +30,8 @@ class TestLoadSubscriptions:
         )
 
     def test_load_subscriptions_in_a_module(self, subscriptions):
-        assert len(subscriptions) == 1
-        func_sub = subscriptions[0]
+        assert len(subscriptions) == 2
+        func_sub = subscriptions[-1]
         assert isinstance(func_sub, Subscription)
         assert func_sub.name == "rele-test-topic"
         assert func_sub({"id": 4}, lang="en") == 4
@@ -43,6 +48,15 @@ class TestLoadSubscriptions:
         assert isinstance(klass_sub, Subscription)
         assert klass_sub.name == "test-alternative-cool-topic"
         assert klass_sub({"id": 4}, lang="en") == 4
+
+    def test_raises_error_when_subscription_is_duplicated(self):
+        with pytest.raises(RuntimeError) as excinfo:
+            load_subscriptions_from_paths(["tests.test_config", "tests.more_subs.subs"])
+
+        assert (
+            str(excinfo.value)
+            == "Duplicated subscription found: rele-another-cool-topic."
+        )
 
     def test_returns_sub_value_when_filtered_value_applied(self, subscriptions):
 

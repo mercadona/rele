@@ -87,7 +87,7 @@ def subscription_from_attribute(attribute):
 
 def load_subscriptions_from_paths(sub_module_paths, sub_prefix=None, filter_by=None):
 
-    subscriptions = []
+    subscriptions = {}
     for sub_module_path in sub_module_paths:
         sub_module = importlib.import_module(sub_module_path)
         for attr_name in dir(sub_module):
@@ -102,5 +102,10 @@ def load_subscriptions_from_paths(sub_module_paths, sub_prefix=None, filter_by=N
             if filter_by and not subscription.filter_by:
                 subscription.set_filters(filter_by)
 
-            subscriptions.append(subscription)
-    return subscriptions
+            if subscription.name in subscriptions:
+                raise RuntimeError(
+                    f"Duplicated subscription found: {subscription.name}."
+                )
+
+            subscriptions[subscription.name] = subscription
+    return list(subscriptions.values())
