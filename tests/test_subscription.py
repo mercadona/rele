@@ -308,3 +308,32 @@ class TestCallback:
 
         assert res == 123
         assert mock_close_old_connections.call_count == 2
+
+
+class TestDecorator:
+    def test_returns_susbscription_when_function_valid(self):
+        subscription = sub(topic="topic", prefix="rele")(lambda data: None)
+        assert isinstance(subscription, Subscription)
+
+    def test_raises_error_when_function_signature_is_not_valid(self):
+        with pytest.raises(RuntimeError):
+            sub(topic="topic", prefix="rele")(lambda: None)
+
+    def test_logs_warning_when_function_not_in_subs_module(self, caplog):
+        sub(topic="topic", prefix="rele")(lambda data: None)
+        assert (
+            "Subscription function tests.test_subscription.<lambda> is outside a subs "
+        )
+        "module that will not be discovered." in caplog.text
+
+    def test_raises_error_when_filter_by_is_not_valid(self, caplog):
+        sub(topic="topic", prefix="rele", filter_by=lambda x: True)(lambda data: None)
+        sub(topic="topic", prefix="rele", filter_by=((lambda x: True),))(
+            lambda data: None
+        )
+
+        with pytest.raises(ValueError):
+            sub(topic="topic", prefix="rele", filter_by=1)(lambda data: None)
+
+        with pytest.raises(ValueError):
+            sub(topic="topic", prefix="rele", filter_by=(1,))(lambda data: None)

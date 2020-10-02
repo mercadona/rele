@@ -1,6 +1,8 @@
 import json
 import logging
 import time
+from collections.abc import Iterable
+from inspect import getfullargspec, getmodule, signature
 
 from .middleware import run_middleware_hook
 
@@ -178,8 +180,29 @@ def sub(topic, prefix=None, suffix=None, filter_by=None):
                       the sub regarding their attributes.
     :return: :class:`~rele.subscription.Subscription`
     """
+    if filter_by and not (
+        callable(filter_by)
+        or (
+            isinstance(filter_by, Iterable)
+            and all(callable(filter) for filter in filter_by)
+        )
+    ):
+        raise ValueError("Filter_by must be a callable or a list of callables.")
 
     def decorator(func):
+        args_spec = getfullargspec(func)
+        if len(args_spec.args) != 1:
+            raise RuntimeError(
+                f"Subscription function {func.__module__}.{func.__name__} is not valid. "
+                "The function must have one argument. "
+            )
+
+        if getmodule(func).__name__.split(".")[-1] != "subs":
+            logger.warning(
+                f"Subscription function {func.__module__}.{func.__name__} is "
+                "outside a subs module that will not be discovered."
+            )
+
         return Subscription(
             func=func,
             topic=topic,
