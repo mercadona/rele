@@ -111,6 +111,25 @@ class TestSubscription:
 
         assert response is None
 
+    def test_raises_error_when_filter_by_is_not_valid(self, caplog):
+        Subscription(
+            func=lambda x: None, topic="topic", prefix="rele", filter_by=lambda x: True
+        )
+        Subscription(
+            func=lambda x: None,
+            topic="topic",
+            prefix="rele",
+            filter_by=((lambda x: True),),
+        )
+
+        with pytest.raises(ValueError):
+            Subscription(func=lambda x: None, topic="topic", prefix="rele", filter_by=1)
+
+        with pytest.raises(ValueError):
+            Subscription(
+                func=lambda x: None, topic="topic", prefix="rele", filter_by=(1,)
+            )
+
 
 class TestCallback:
     @pytest.fixture(autouse=True)
@@ -325,16 +344,3 @@ class TestDecorator:
             "Subscription function tests.test_subscription.<lambda> is outside a subs "
             "module that will not be discovered." in caplog.text
         )
-        
-
-    def test_raises_error_when_filter_by_is_not_valid(self, caplog):
-        sub(topic="topic", prefix="rele", filter_by=lambda x: True)(lambda data: None)
-        sub(topic="topic", prefix="rele", filter_by=((lambda x: True),))(
-            lambda data: None
-        )
-
-        with pytest.raises(ValueError):
-            sub(topic="topic", prefix="rele", filter_by=1)(lambda data: None)
-
-        with pytest.raises(ValueError):
-            sub(topic="topic", prefix="rele", filter_by=(1,))(lambda data: None)

@@ -42,7 +42,16 @@ class Subscription:
         self._filters = self._init_filters(filter_by)
 
     def _init_filters(self, filter_by):
-        if hasattr(filter_by, "__iter__"):
+        if filter_by and not (
+            callable(filter_by)
+            or (
+                isinstance(filter_by, Iterable)
+                and all(callable(filter) for filter in filter_by)
+            )
+        ):
+            raise ValueError("Filter_by must be a callable or a list of callables.")
+
+        if isinstance(filter_by, Iterable):
             return filter_by
         elif filter_by:
             return [filter_by]
@@ -180,18 +189,10 @@ def sub(topic, prefix=None, suffix=None, filter_by=None):
                       the sub regarding their attributes.
     :return: :class:`~rele.subscription.Subscription`
     """
-    if filter_by and not (
-        callable(filter_by)
-        or (
-            isinstance(filter_by, Iterable)
-            and all(callable(filter) for filter in filter_by)
-        )
-    ):
-        raise ValueError("Filter_by must be a callable or a list of callables.")
 
     def decorator(func):
         args_spec = getfullargspec(func)
-        if len(args_spec.args) < 2:
+        if len(args_spec.args) != 1:
             raise RuntimeError(
                 f"Subscription function {func.__module__}.{func.__name__} is not valid. "
                 "The function must have one argument. "
