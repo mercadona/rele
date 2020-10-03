@@ -3,6 +3,7 @@ from unittest.mock import patch
 import pytest
 
 import rele
+from rele.middleware import BaseMiddleware
 
 
 class TestMiddleware:
@@ -23,3 +24,11 @@ class TestMiddleware:
         rele.setup(settings, foo="bar")
         assert mock_middleware_setup.called
         assert mock_middleware_setup.call_args_list[0][-1] == {"foo": "bar"}
+
+    def test_warns_about_deprecated_hooks(self, caplog):
+
+        with pytest.warns(DeprecationWarning):
+
+            class TestMiddleware(BaseMiddleware):
+                def post_publish(self, topic):
+                    pass

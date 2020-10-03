@@ -1,4 +1,5 @@
 import importlib
+import warnings
 
 _middlewares = []
 
@@ -24,7 +25,20 @@ def run_middleware_hook(hook_name, *args, **kwargs):
         getattr(middleware, hook_name)(*args, **kwargs)
 
 
-class BaseMiddleware:
+class WarnDeprecatedHooks(type):
+    def __new__(cls, *args, **kwargs):
+        x = super().__new__(cls, *args, **kwargs)
+        if hasattr(x, "post_publish"):
+            warnings.warn(
+                "The post_publish hook in the middleware is deprecated "
+                "and will be removed in future versions. Please substitute it with "
+                "the post_publish_success hook instead.",
+                DeprecationWarning,
+            )
+        return x
+
+
+class BaseMiddleware(metaclass=WarnDeprecatedHooks):
     """Base class for middleware.  The default implementations
     for all hooks are no-ops and subclasses may implement whatever
     subset of hooks they like.
@@ -43,7 +57,12 @@ class BaseMiddleware:
         """
 
     def post_publish(self, topic):
-        """Called after Publisher sends message.
+        """DEPRECATED: Called after Publisher sends message.
+        :param topic:
+        """
+
+    def post_publish_success(self, topic):
+        """DEPRECATED: Called after Publisher sends message.
         :param topic:
         """
 
