@@ -323,8 +323,9 @@ class TestDecorator:
         sub(topic="topic", prefix="rele")(lambda data: None)
         assert (
             "Subscription function tests.test_subscription.<lambda> is outside a subs "
+            "module that will not be discovered." in caplog.text
         )
-        "module that will not be discovered." in caplog.text
+        
 
     def test_raises_error_when_filter_by_is_not_valid(self, caplog):
         sub(topic="topic", prefix="rele", filter_by=lambda x: True)(lambda data: None)

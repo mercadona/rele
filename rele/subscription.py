@@ -191,7 +191,7 @@ def sub(topic, prefix=None, suffix=None, filter_by=None):
 
     def decorator(func):
         args_spec = getfullargspec(func)
-        if len(args_spec.args) != 1:
+        if len(args_spec.args) < 2:
             raise RuntimeError(
                 f"Subscription function {func.__module__}.{func.__name__} is not valid. "
                 "The function must have one argument. "
