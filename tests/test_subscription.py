@@ -311,7 +311,7 @@ class TestCallback:
 
 
 class TestDecorator:
-    def test_returns_susbscription_when_function_valid(self):
+    def test_returns_subscription_when_callback_valid(self):
         subscription = sub(topic="topic", prefix="rele")(lambda data: None)
         assert isinstance(subscription, Subscription)
 
