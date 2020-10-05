@@ -62,7 +62,7 @@ class BaseMiddleware(metaclass=WarnDeprecatedHooks):
         """
 
     def post_publish_success(self, topic):
-        """DEPRECATED: Called after Publisher sends message.
+        """Called after Publisher sends message.
         :param topic:
         """
 
