@@ -1,3 +1,5 @@
+from rele import config, discover
+
 from .client import Publisher
 
 _publisher = None
@@ -41,5 +43,10 @@ def publish(topic, data, **kwargs):
     :return: None
     """
     if not _publisher:
-        raise ValueError("init_global_publisher must be called first.")
+        settings, _ = discover.sub_modules()
+        if not hasattr(settings, "RELE"):
+            raise ValueError("Config setup not called and settings module not found.")
+
+        config.setup(settings.RELE)
+
     _publisher.publish(topic, data, **kwargs)
