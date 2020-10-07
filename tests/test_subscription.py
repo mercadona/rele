@@ -331,15 +331,21 @@ class TestCallback:
 
 class TestDecorator:
     def test_returns_subscription_when_callback_valid(self):
-        subscription = sub(topic="topic", prefix="rele")(lambda data: None)
+        subscription = sub(topic="topic", prefix="rele")(lambda data, **kwargs: None)
         assert isinstance(subscription, Subscription)
 
     def test_raises_error_when_function_signature_is_not_valid(self):
         with pytest.raises(RuntimeError):
             sub(topic="topic", prefix="rele")(lambda: None)
 
+        with pytest.raises(RuntimeError):
+            sub(topic="topic", prefix="rele")(lambda data: None)
+
+        with pytest.raises(RuntimeError):
+            sub(topic="topic", prefix="rele")(lambda data, value=None: None)
+
     def test_logs_warning_when_function_not_in_subs_module(self, caplog):
-        sub(topic="topic", prefix="rele")(lambda data: None)
+        sub(topic="topic", prefix="rele")(lambda data, **kwargs: None)
         assert (
             "Subscription function tests.test_subscription.<lambda> is outside a subs "
             "module that will not be discovered." in caplog.text

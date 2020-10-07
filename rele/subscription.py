@@ -192,10 +192,10 @@ def sub(topic, prefix=None, suffix=None, filter_by=None):
 
     def decorator(func):
         args_spec = getfullargspec(func)
-        if len(args_spec.args) != 1:
+        if len(args_spec.args) != 1 or not args_spec.varkw:
             raise RuntimeError(
                 f"Subscription function {func.__module__}.{func.__name__} is not valid. "
-                "The function must have one argument. "
+                "The function must have one argument and accept keyword arguments."
             )
 
         if getmodule(func).__name__.split(".")[-1] != "subs":
