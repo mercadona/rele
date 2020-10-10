@@ -9,6 +9,7 @@ from google.api_core import exceptions
 from google.cloud import pubsub_v1
 from google.cloud.pubsub_v1.exceptions import TimeoutError
 
+
 from rele.middleware import run_middleware_hook
 
 logger = logging.getLogger(__name__)
@@ -60,7 +61,8 @@ class Subscriber:
         subscription_path = self._client.subscription_path(
             self._gc_project_id, subscription
         )
-        topic_path = self._client.topic_path(self._gc_project_id, topic)
+        publisher = pubsub_v1.PublisherClient()
+        topic_path = publisher.topic_path(self._gc_project_id, topic)
 
         with suppress(exceptions.AlreadyExists):
             try:
