@@ -182,7 +182,10 @@ class TestCallback:
     @pytest.fixture
     def message_wrapper_invalid_json(self, publish_time):
         rele_message = pubsub_v1.types.PubsubMessage(
-            data=b"foobar", attributes={}, message_id="1", publish_time=publish_time,
+            data=b"foobar",
+            attributes={},
+            message_id="1",
+            publish_time=publish_time,
         )
         message = pubsub_v1.subscriber.message.Message(
             rele_message._pb,

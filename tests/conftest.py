@@ -59,7 +59,7 @@ def publisher(config, mock_future):
 def publisher_client():
     with patch("google.cloud.pubsub_v1.PublisherClient") as mock:
         attrs = {
-            'topic_path.return_value': 'projects/rele-test/topics/rele-test-test-topic'
+            "topic_path.return_value": "projects/rele-test/topics/rele-test-test-topic"
         }
         mock().configure_mock(**attrs)
         mock.mock_add_spec(PublisherClient)

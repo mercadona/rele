@@ -136,7 +136,11 @@ class TestPublisher:
 class TestSubscriber:
     @patch.object(SubscriberClient, "create_subscription")
     def test_creates_subscription_with_default_ack_deadline_when_none_provided(
-        self, _mocked_client, project_id, subscriber, publisher_client,
+        self,
+        _mocked_client,
+        project_id,
+        subscriber,
+        publisher_client,
     ):
         expected_subscription = f"projects/{project_id}/subscriptions/" f"test-topic"
         expected_topic = f"projects/{project_id}/topics/" f"{project_id}-test-topic"
