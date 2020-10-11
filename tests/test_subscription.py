@@ -160,7 +160,7 @@ class TestCallback:
         )
 
         message = pubsub_v1.subscriber.message.Message(
-            rele_message,
+            rele_message._pb,
             "ack-id",
             delivery_attempt=1,
             request_queue=queue.Queue(),
