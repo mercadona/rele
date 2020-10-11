@@ -180,12 +180,12 @@ class TestCallback:
         return message
 
     @pytest.fixture
-    def message_wrapper_invalid_json(self):
+    def message_wrapper_invalid_json(self, publish_time):
         rele_message = pubsub_v1.types.PubsubMessage(
-            data=b"foobar", attributes={}, message_id="1"
+            data=b"foobar", attributes={}, message_id="1", publish_time=publish_time,
         )
         message = pubsub_v1.subscriber.message.Message(
-            rele_message,
+            rele_message._pb,
             "ack-id",
             delivery_attempt=1,
             request_queue=queue.Queue(),
