@@ -9,7 +9,6 @@ from google.api_core import exceptions
 from google.cloud import pubsub_v1
 from google.cloud.pubsub_v1.exceptions import TimeoutError
 
-
 from rele.middleware import run_middleware_hook
 
 logger = logging.getLogger(__name__)

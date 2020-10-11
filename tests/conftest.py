@@ -5,7 +5,6 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from google.cloud.pubsub_v1 import PublisherClient
-
 from google.cloud.pubsub_v1.exceptions import TimeoutError
 
 from rele import Publisher
