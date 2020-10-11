@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from google.cloud import pubsub_v1
+from google.protobuf import timestamp_pb2
 
 from rele import Callback, Subscription, sub
 from rele.middleware import register_middleware
@@ -144,11 +145,18 @@ class TestCallback:
         return time.time()
 
     @pytest.fixture
-    def message_wrapper(self, published_at):
+    def publish_time(self):
+        timestamp = timestamp_pb2.Timestamp()
+        timestamp.GetCurrentTime()
+        return timestamp
+
+    @pytest.fixture
+    def message_wrapper(self, published_at, publish_time):
         rele_message = pubsub_v1.types.PubsubMessage(
             data=b'{"id": 123}',
             attributes={"lang": "es", "published_at": str(published_at)},
             message_id="1",
+            publish_time=publish_time,
         )
 
         message = pubsub_v1.subscriber.message.Message(
