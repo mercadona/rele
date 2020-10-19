@@ -4,7 +4,7 @@ import json
 from unittest.mock import MagicMock, patch
 
 import pytest
-from google.cloud.pubsub_v1 import PublisherClient
+from google.cloud.pubsub_v1 import PublisherClient, SubscriberClient
 from google.cloud.pubsub_v1.exceptions import TimeoutError
 
 from rele import Publisher
@@ -62,6 +62,17 @@ def publisher_client():
         }
         mock().configure_mock(**attrs)
         mock.mock_add_spec(PublisherClient)
+        yield mock
+
+
+@pytest.fixture
+def subscriber_client():
+    with patch("google.cloud.pubsub_v1.SubscriberClient") as mock:
+        attrs = {
+            "topic_path.return_value": "projects/rele-test/topics/rele-test-test-topic"
+        }
+        mock().configure_mock(**attrs)
+        mock.mock_add_spec(SubscriberClient)
         yield mock
 
 
