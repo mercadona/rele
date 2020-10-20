@@ -4,7 +4,7 @@ from unittest.mock import ANY, patch
 
 import pytest
 from google.api_core import exceptions
-from google.cloud.pubsub_v1 import PublisherClient, SubscriberClient
+from google.cloud.pubsub_v1 import SubscriberClient
 from google.cloud.pubsub_v1.exceptions import TimeoutError
 
 
