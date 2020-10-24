@@ -60,8 +60,8 @@ class Subscriber:
         subscription_path = self._client.subscription_path(
             self._gc_project_id, subscription
         )
-        subscriber = pubsub_v1.SubscriberClient()
-        topic_path = subscriber.topic_path(self._gc_project_id, topic)
+        publisher = pubsub_v1.PublisherClient()
+        topic_path = publisher.topic_path(self._gc_project_id, topic)
 
         with suppress(exceptions.AlreadyExists):
             try:
