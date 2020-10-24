@@ -136,7 +136,11 @@ class TestPublisher:
 class TestSubscriber:
     @patch.object(SubscriberClient, "create_subscription")
     def test_creates_subscription_with_default_ack_deadline_when_none_provided(
-        self, _mocked_client, project_id, subscriber, subscriber_client
+        self,
+        _mocked_client,
+        project_id,
+        subscriber,
+        publisher_client,
     ):
         expected_subscription = f"projects/{project_id}/subscriptions/" f"test-topic"
         expected_topic = f"projects/{project_id}/topics/" f"{project_id}-test-topic"
@@ -151,7 +155,7 @@ class TestSubscriber:
 
     @patch.object(SubscriberClient, "create_subscription")
     def test_creates_subscription_with_custom_ack_deadline_when_provided(
-            self, _mocked_client, project_id, subscriber, subscriber_client
+        self, _mocked_client, project_id, subscriber, publisher_client
     ):
         expected_subscription = f"projects/{project_id}/subscriptions/" f"test-topic"
         expected_topic = f"projects/{project_id}/topics/" f"{project_id}-test-topic"
@@ -172,7 +176,7 @@ class TestSubscriber:
         side_effect=exceptions.AlreadyExists("Subscription already exists"),
     )
     def test_does_not_raise_when_subscription_already_exists(
-        self, _mocked_client, project_id, subscriber, subscriber_client
+        self, _mocked_client, project_id, subscriber, publisher_client
     ):
         subscriber.create_subscription(
             subscription="test-topic", topic=f"{project_id}-test-topic"
@@ -186,7 +190,7 @@ class TestSubscriber:
         side_effect=exceptions.NotFound("Subscription topic does not exist"),
     )
     def test_logs_error_when_subscription_topic_does_not_exist(
-        self, _mocked_client, project_id, subscriber, caplog, subscriber_client
+        self, _mocked_client, project_id, subscriber, caplog, publisher_client
     ):
         subscriber.create_subscription(
             subscription="test-topic", topic=f"{project_id}-test-topic"
