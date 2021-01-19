@@ -35,6 +35,7 @@ class Config:
         self.threads_per_subscription = setting.get("THREADS_PER_SUBSCRIPTION", 2)
         self.filter_by = setting.get("FILTER_SUBS_BY")
         self._credentials = None
+        self._gc_project_id = None
 
     @property
     def encoder(self):
@@ -48,17 +49,14 @@ class Config:
             self._credentials = service_account.Credentials.from_service_account_file(
                 self.gc_credentials_path
             )
+            self._gc_project_id = self._credentials.project_id
         else:
-            credentials, __ = get_google_defaults()
-            self._credentials = credentials
+            self._credentials, self._gc_project_id = get_google_defaults()
         return self._credentials
 
     @property
     def gc_project_id(self):
-        if self.credentials:
-            return self.credentials.project_id
-        else:
-            return None
+        return self._gc_project_id
 
 
 def setup(setting=None, **kwargs):
