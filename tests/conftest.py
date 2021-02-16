@@ -55,17 +55,6 @@ def publisher(config, mock_future):
 
 
 @pytest.fixture
-def publisher_client():
-    with patch("google.cloud.pubsub_v1.PublisherClient") as mock:
-        attrs = {
-            "topic_path.return_value": "projects/rele-test/topics/rele-test-test-topic"
-        }
-        mock().configure_mock(**attrs)
-        mock.mock_add_spec(PublisherClient)
-        yield mock
-
-
-@pytest.fixture
 def published_at():
     return 1560244246.863829
 
