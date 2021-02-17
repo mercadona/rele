@@ -1,9 +1,9 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
-from tests import settings
 
 from rele import Publisher, publishing
+from tests import settings
 
 
 class TestPublish:
