@@ -1,7 +1,7 @@
 import pytest
+from tests import settings
 
 from rele import discover
-from tests import settings
 
 
 class TestDiscoverSubModules:
