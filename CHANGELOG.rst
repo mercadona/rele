@@ -1,10 +1,17 @@
 Changelog
 =========
 
+1.1.0 (2021-3-10)
+-------------------
+* Google Pubsub 2.0 Compat (#192)
+* Add validations to the sub decorator (#189)
+* Add new post_publish_hook and deprecate the old one (#190)
+* Discover and load settings when publishing (#188)
+* Fix #180: Raise error when the config loads a repeated subscription (#187)
+
 1.0.0 (2020-9-25)
 -------------------
-*  BREAKING: Remove GC_PROJECT_ID (#183)
-
+* BREAKING: Remove GC_PROJECT_ID (#183)
 
 0.14.0 (2020-8-5)
 -------------------
@@ -96,7 +103,7 @@ Changelog
 -------------------
 
 * Set ``DEFAULT_ACK_DEADLINE`` (#49)
-* Filter by message attributes (#66) 
+* Filter by message attributes (#66)
 * BREAKING: All Relé settings are defined in a dict (#60)
 
 Old structure:
@@ -128,7 +135,7 @@ New structure:
     }
 
 * ``rele.contrib.middleware`` (#55)
-* Prefix argument in sub decorator (#47) 
+* Prefix argument in sub decorator (#47)
 * Add timestamp to the published message (#42)
 * BREAKING: Explicit publisher and subscriber configuration (#43)
 * Sphinx documentation (#27, #34, #40, #41)
