@@ -3,8 +3,8 @@ import warnings
 
 _middlewares = []
 
-
 default_middleware = ["rele.contrib.LoggingMiddleware"]
+DEPRECATED_HOOKS = ["post_publish"]
 
 
 def register_middleware(config, **kwargs):
@@ -22,19 +22,21 @@ def register_middleware(config, **kwargs):
 
 def run_middleware_hook(hook_name, *args, **kwargs):
     for middleware in _middlewares:
-        getattr(middleware, hook_name)(*args, **kwargs)
+        if hook_name not in DEPRECATED_HOOKS or hasattr(middleware, hook_name):
+            getattr(middleware, hook_name)(*args, **kwargs)
 
 
 class WarnDeprecatedHooks(type):
     def __new__(cls, *args, **kwargs):
         x = super().__new__(cls, *args, **kwargs)
-        if hasattr(x, "post_publish"):
-            warnings.warn(
-                "The post_publish hook in the middleware is deprecated "
-                "and will be removed in future versions. Please substitute it with "
-                "the post_publish_success hook instead.",
-                DeprecationWarning,
-            )
+        for deprecated_hook in DEPRECATED_HOOKS:
+            if hasattr(x, deprecated_hook):
+                warnings.warn(
+                    "The post_publish hook in the middleware is deprecated "
+                    "and will be removed in future versions. Please substitute it with "
+                    "the post_publish_success hook instead.",
+                    DeprecationWarning,
+                )
         return x
 
 
@@ -54,11 +56,6 @@ class BaseMiddleware(metaclass=WarnDeprecatedHooks):
         :param topic:
         :param data:
         :param attrs:
-        """
-
-    def post_publish(self, topic):
-        """DEPRECATED: Called after Publisher sends message.
-        :param topic:
         """
 
     def post_publish_success(self, topic):

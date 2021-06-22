@@ -16,7 +16,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath(".."))
 
-import rele
+import rele  # noqa
 
 # -- Project information -----------------------------------------------------
 
@@ -51,7 +51,9 @@ html_theme = "alabaster"
 html_theme_options = {
     "font_family": "Heebo",
     "logo_name": False,
-    "code_font_family": '"SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace',
+    "code_font_family": (
+        '"SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier,' " monospace"
+    ),
     "code_font_size": "0.8em",
     "show_related": False,
     "fixed_sidebar": False,
@@ -69,6 +71,7 @@ master_doc = "index"
 html_static_path = ["_static"]
 
 html_sidebars = {"**": ["sidebar.html", "navigation.html", "searchbox.html"]}
+
 
 # Setup function
 def setup(app):
