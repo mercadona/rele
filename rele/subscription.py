@@ -2,7 +2,7 @@ import json
 import logging
 import time
 from collections.abc import Iterable
-from inspect import getfullargspec, getmodule, signature
+from inspect import getfullargspec, getmodule
 
 from .middleware import run_middleware_hook
 
