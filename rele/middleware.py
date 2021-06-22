@@ -4,7 +4,7 @@ import warnings
 _middlewares = []
 
 default_middleware = ["rele.contrib.LoggingMiddleware"]
-DEPRECATED_HOOKS = ['post_publish']
+DEPRECATED_HOOKS = ["post_publish"]
 
 
 def register_middleware(config, **kwargs):
