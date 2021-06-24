@@ -37,8 +37,20 @@ class LoggingMiddleware(BaseMiddleware):
         return result
 
     def pre_publish(self, topic, data, attrs):
-        self._logger.info(
+        self._logger.debug(
             f"Publishing to {topic}",
+            extra={
+                "pubsub_publisher_attrs": attrs,
+                "metrics": {
+                    "name": "publications",
+                    "data": {"agent": self._app_name, "topic": topic},
+                },
+            },
+        )
+
+    def post_publish_success(self, topic, data, attrs):
+        self._logger.info(
+            f"Successfully published to {topic}",
             extra={
                 "pubsub_publisher_attrs": attrs,
                 "metrics": {

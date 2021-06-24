@@ -1,5 +1,6 @@
 import concurrent
 import decimal
+import logging
 from unittest.mock import ANY, patch
 
 import pytest
@@ -26,8 +27,8 @@ class TestPublisher:
         )
 
     def test_save_log_when_published_called(self, published_at, publisher, caplog):
+        caplog.set_level(logging.DEBUG)
         message = {"foo": "bar"}
-
         publisher.publish(topic="order-cancelled", data=message, myattr="hello")
 
         log = caplog.records[0]
