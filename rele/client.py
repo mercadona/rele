@@ -167,7 +167,7 @@ class Publisher:
             if raise_exception:
                 raise e
         else:
-            run_middleware_hook("post_publish_success", topic)
+            run_middleware_hook("post_publish_success", topic, data, attrs)
 
             # DEPRECATED
             run_middleware_hook("post_publish", topic)

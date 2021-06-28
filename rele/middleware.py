@@ -58,9 +58,11 @@ class BaseMiddleware(metaclass=WarnDeprecatedHooks):
         :param attrs:
         """
 
-    def post_publish_success(self, topic):
-        """Called after Publisher sends message.
+    def post_publish_success(self, topic, data, attrs):
+        """Called after Publisher succesfully sends message.
         :param topic:
+        :param data:
+        :param attrs:
         """
 
     def post_publish_failure(self, topic, exception, message):
