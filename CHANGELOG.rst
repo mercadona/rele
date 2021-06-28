@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.1.1 (2021-6-28)
+-------------------
+* Do not define default_app_config, it's deprecated (#199)
+* Do not implement deprecated middlewares in the base class (#200)
+
 1.1.0 (2021-3-10)
 -------------------
 * Google Pubsub 2.0 Compat (#192)
