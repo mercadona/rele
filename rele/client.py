@@ -42,9 +42,15 @@ class Subscriber:
         self._ack_deadline = default_ack_deadline or DEFAULT_ACK_DEADLINE
 
         if USE_EMULATOR:
-            self._client = pubsub_v1.SubscriberClient()
+            self._subscriber_client = pubsub_v1.SubscriberClient()
+            self._publisher_subscriber_client = pubsub_v1.PublisherClient()
         else:
-            self._client = pubsub_v1.SubscriberClient(credentials=credentials)
+            self._subscriber_client = pubsub_v1.SubscriberClient(
+                credentials=credentials
+            )
+            self._publisher_subscriber_client = pubsub_v1.PublisherClient(
+                credentials=credentials
+            )
 
     def create_subscription(self, subscription, topic):
         """Handles creating the subscription when it does not exists.
@@ -57,20 +63,27 @@ class Subscriber:
         :param subscription: str Subscription name
         :param topic: str Topic name to subscribe
         """
-        subscription_path = self._client.subscription_path(
+        subscription_path = self._subscriber_client.subscription_path(
             self._gc_project_id, subscription
         )
-        topic_path = self._client.topic_path(self._gc_project_id, topic)
+        topic_path = self._subscriber_client.topic_path(self._gc_project_id, topic)
 
         with suppress(exceptions.AlreadyExists):
             try:
-                self._client.create_subscription(
+                self._subscriber_client.create_subscription(
                     name=subscription_path,
                     topic=topic_path,
                     ack_deadline_seconds=self._ack_deadline,
                 )
             except exceptions.NotFound:
-                logger.error("Cannot subscribe to a topic that does not exist.")
+                logger.info(
+                    "Cannot subscribe to a topic that does not exist."
+                    "Creating topic..."
+                )
+                topic = self._publisher_subscriber_client.create_topic(
+                    request={"name": topic_path}
+                )
+                logger.info(f"Topic {topic.name} created.")
 
     def consume(self, subscription_name, callback, scheduler):
         """Begin listening to topic from the SubscriberClient.
@@ -80,10 +93,10 @@ class Subscriber:
         :param scheduler: `Thread pool-based scheduler. <https://googleapis.dev/python/pubsub/latest/subscriber/api/scheduler.html?highlight=threadscheduler#google.cloud.pubsub_v1.subscriber.scheduler.ThreadScheduler>`_  # noqa
         :return: `Future <https://googleapis.github.io/google-cloud-python/latest/pubsub/subscriber/api/futures.html>`_  # noqa
         """
-        subscription_path = self._client.subscription_path(
+        subscription_path = self._subscriber_client.subscription_path(
             self._gc_project_id, subscription_name
         )
-        return self._client.subscribe(
+        return self._subscriber_client.subscribe(
             subscription_path, callback=callback, scheduler=scheduler
         )
 
