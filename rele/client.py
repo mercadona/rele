@@ -41,7 +41,7 @@ class Subscriber:
         self._gc_project_id = gc_project_id
         self._ack_deadline = default_ack_deadline or DEFAULT_ACK_DEADLINE
         self.credentials = credentials if not USE_EMULATOR else None
-        self._subscriber_client = pubsub_v1.SubscriberClient(credentials=credentials)
+        self._client = pubsub_v1.SubscriberClient(credentials=credentials)
 
     def create_subscription(self, subscription, topic):
         """Handles creating the subscription when it does not exists.
@@ -54,10 +54,10 @@ class Subscriber:
         :param subscription: str Subscription name
         :param topic: str Topic name to subscribe
         """
-        subscription_path = self._subscriber_client.subscription_path(
+        subscription_path = self._client.subscription_path(
             self._gc_project_id, subscription
         )
-        topic_path = self._subscriber_client.topic_path(self._gc_project_id, topic)
+        topic_path = self._client.topic_path(self._gc_project_id, topic)
 
         with suppress(exceptions.AlreadyExists):
             try:
@@ -76,7 +76,7 @@ class Subscriber:
         return publisher_client.create_topic(request={"name": topic_path})
 
     def _create_subscription(self, name, topic):
-        self._subscriber_client.create_subscription(
+        self._client.create_subscription(
             name=name,
             topic=topic,
             ack_deadline_seconds=self._ack_deadline,
@@ -90,10 +90,10 @@ class Subscriber:
         :param scheduler: `Thread pool-based scheduler. <https://googleapis.dev/python/pubsub/latest/subscriber/api/scheduler.html?highlight=threadscheduler#google.cloud.pubsub_v1.subscriber.scheduler.ThreadScheduler>`_  # noqa
         :return: `Future <https://googleapis.github.io/google-cloud-python/latest/pubsub/subscriber/api/futures.html>`_  # noqa
         """
-        subscription_path = self._subscriber_client.subscription_path(
+        subscription_path = self._client.subscription_path(
             self._gc_project_id, subscription_name
         )
-        return self._subscriber_client.subscribe(
+        return self._client.subscribe(
             subscription_path, callback=callback, scheduler=scheduler
         )
 
