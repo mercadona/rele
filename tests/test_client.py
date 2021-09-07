@@ -194,7 +194,7 @@ class TestSubscriber:
     @patch.object(
         SubscriberClient,
         "create_subscription",
-        side_effect=exceptions.NotFound("Subscription topic does not exist"),
+        side_effect=[exceptions.NotFound("Subscription topic does not exist"), True],
     )
     def test_create_topic_when_subscription_topic_does_not_exist(
         self, _mocked_client, project_id, subscriber, mock_create_topic
@@ -203,5 +203,5 @@ class TestSubscriber:
             subscription="test-topic", topic=f"{project_id}-test-topic"
         )
 
-        _mocked_client.assert_called()
+        assert _mocked_client.call_count == 2
         mock_create_topic.assert_called()

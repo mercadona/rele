@@ -70,11 +70,7 @@ class Subscriber:
 
         with suppress(exceptions.AlreadyExists):
             try:
-                self._subscriber_client.create_subscription(
-                    name=subscription_path,
-                    topic=topic_path,
-                    ack_deadline_seconds=self._ack_deadline,
-                )
+                self._create_subscription(subscription_path, topic_path)
             except exceptions.NotFound:
                 logger.info(
                     "Cannot subscribe to a topic that does not exist."
@@ -84,6 +80,14 @@ class Subscriber:
                     request={"name": topic_path}
                 )
                 logger.info(f"Topic {topic.name} created.")
+                self._create_subscription(subscription_path, topic_path)
+
+    def _create_subscription(self, name, topic):
+        self._subscriber_client.create_subscription(
+            name=name,
+            topic=topic,
+            ack_deadline_seconds=self._ack_deadline,
+        )
 
     def consume(self, subscription_name, callback, scheduler):
         """Begin listening to topic from the SubscriberClient.
