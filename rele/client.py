@@ -43,14 +43,12 @@ class Subscriber:
 
         if USE_EMULATOR:
             self._subscriber_client = pubsub_v1.SubscriberClient()
-            self._publisher_subscriber_client = pubsub_v1.PublisherClient()
+            self._publisher_client = pubsub_v1.PublisherClient()
         else:
             self._subscriber_client = pubsub_v1.SubscriberClient(
                 credentials=credentials
             )
-            self._publisher_subscriber_client = pubsub_v1.PublisherClient(
-                credentials=credentials
-            )
+            self._publisher_client = pubsub_v1.PublisherClient(credentials=credentials)
 
     def create_subscription(self, subscription, topic):
         """Handles creating the subscription when it does not exists.
@@ -72,14 +70,14 @@ class Subscriber:
             try:
                 self._create_subscription(subscription_path, topic_path)
             except exceptions.NotFound:
-                logger.info(
+                logger.warning(
                     "Cannot subscribe to a topic that does not exist."
-                    "Creating topic..."
+                    f"Creating {topic_path}..."
                 )
-                topic = self._publisher_subscriber_client.create_topic(
+                topic = self._publisher_client.create_topic(
                     request={"name": topic_path}
                 )
-                logger.info(f"Topic {topic.name} created.")
+                logger.warning(f"{topic.name} created.")
                 self._create_subscription(subscription_path, topic_path)
 
     def _create_subscription(self, name, topic):

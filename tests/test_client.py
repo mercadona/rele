@@ -196,7 +196,7 @@ class TestSubscriber:
         "create_subscription",
         side_effect=[exceptions.NotFound("Subscription topic does not exist"), True],
     )
-    def test_create_topic_when_subscription_topic_does_not_exist(
+    def test_creates_topic_when_subscription_topic_does_not_exist(
         self, _mocked_client, project_id, subscriber, mock_create_topic
     ):
         subscriber.create_subscription(
@@ -204,4 +204,6 @@ class TestSubscriber:
         )
 
         assert _mocked_client.call_count == 2
-        mock_create_topic.assert_called()
+        mock_create_topic.assert_called_with(
+            request={"name": f"projects/rele-test/topics/{project_id}-test-topic"}
+        )
