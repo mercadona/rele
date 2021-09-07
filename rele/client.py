@@ -40,15 +40,8 @@ class Subscriber:
     def __init__(self, gc_project_id, credentials, default_ack_deadline=None):
         self._gc_project_id = gc_project_id
         self._ack_deadline = default_ack_deadline or DEFAULT_ACK_DEADLINE
-
-        if USE_EMULATOR:
-            self._subscriber_client = pubsub_v1.SubscriberClient()
-            self._publisher_client = pubsub_v1.PublisherClient()
-        else:
-            self._subscriber_client = pubsub_v1.SubscriberClient(
-                credentials=credentials
-            )
-            self._publisher_client = pubsub_v1.PublisherClient(credentials=credentials)
+        self.credentials = credentials if not USE_EMULATOR else None
+        self._subscriber_client = pubsub_v1.SubscriberClient(credentials=credentials)
 
     def create_subscription(self, subscription, topic):
         """Handles creating the subscription when it does not exists.
@@ -74,11 +67,13 @@ class Subscriber:
                     "Cannot subscribe to a topic that does not exist."
                     f"Creating {topic_path}..."
                 )
-                topic = self._publisher_client.create_topic(
-                    request={"name": topic_path}
-                )
+                topic = self._create_topic(topic_path)
                 logger.warning(f"{topic.name} created.")
                 self._create_subscription(subscription_path, topic_path)
+
+    def _create_topic(self, topic_path):
+        publisher_client = pubsub_v1.PublisherClient(credentials=self.credentials)
+        return publisher_client.create_topic(request={"name": topic_path})
 
     def _create_subscription(self, name, topic):
         self._subscriber_client.create_subscription(
