@@ -2,8 +2,9 @@ Filtering Messages
 ==================
 
 Filter can be used to execute a subscription with specific parameters.
-There's two types of filters, global or passing a filter_by parameter in the
-subscription.
+There's three types of filters, global, by passing a filter_by parameter in the
+subscription (this applies the filter locally) or by passing a filter_expression
+parameter in the subscription (this applies the filter on pubsub).
 
 
 `filter_by` parameter
@@ -25,6 +26,26 @@ is passed as parameter ``filter_by`` in the subscription.
     def sub_process_landscape_photos(data, **kwargs):
         print(f'Received a photo of type {kwargs.get("type")}')
 
+
+`filter_expression` parameter
+_____________________________
+
+This filter is an expression that is applied to the subscription creation. This filter
+expression is applied by pubsub before passing the message to the subscriber. More info
+about filter expressions `here <https://cloud.google.com/pubsub/docs/filtering#filtering_syntax>`_.
+
+.. note::
+   Filter expressions are only applied on the subscription creation, they are not updated
+   if changed if you do not recreate the subscription on pubsub.
+
+.. code:: python
+
+    # This subscription is going to be called if in the kwargs
+    # has a key type with value landscape
+
+    @sub(topic='photo-updated', filter_expression='attributes.type = "landscape"')
+    def sub_process_landscape_photos(data, **kwargs):
+        print(f'Received a photo of type {kwargs.get("type")}')
 
 
 Global Filter

@@ -42,7 +42,7 @@ class Worker:
         re-created. Therefore, it is idempotent.
         """
         for subscription in self._subscriptions:
-            self._subscriber.create_subscription(subscription.name, subscription.topic)
+            self._subscriber.create_subscription(subscription)
 
     def start(self):
         """Begin consuming all subscriptions.

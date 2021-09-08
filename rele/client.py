@@ -46,7 +46,7 @@ class Subscriber:
         else:
             self._client = pubsub_v1.SubscriberClient(credentials=credentials)
 
-    def create_subscription(self, subscription, topic):
+    def create_subscription(self, subscription):
         """Handles creating the subscription when it does not exists.
 
         This makes it easier to deploy a worker and forget about the
@@ -58,17 +58,22 @@ class Subscriber:
         :param topic: str Topic name to subscribe
         """
         subscription_path = self._client.subscription_path(
-            self._gc_project_id, subscription
+            self._gc_project_id, subscription.name
         )
-        topic_path = self._client.topic_path(self._gc_project_id, topic)
+        topic_path = self._client.topic_path(self._gc_project_id, subscription.topic)
 
         with suppress(exceptions.AlreadyExists):
             try:
-                self._client.create_subscription(
-                    name=subscription_path,
-                    topic=topic_path,
-                    ack_deadline_seconds=self._ack_deadline,
-                )
+                request = {
+                    "name": subscription_path,
+                    "topic": topic_path,
+                    "ack_deadline_seconds": self._ack_deadline,
+                }
+
+                if subscription.filter_expression:
+                    request["filter"] = subscription.filter_expression
+
+                self._client.create_subscription(request=request)
             except exceptions.NotFound:
                 logger.error("Cannot subscribe to a topic that does not exist.")
 

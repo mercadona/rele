@@ -1,6 +1,7 @@
 import concurrent
 import decimal
 import logging
+from rele.subscription import Subscription
 from unittest.mock import ANY, patch
 
 import pytest
@@ -142,14 +143,20 @@ class TestSubscriber:
         project_id,
         subscriber,
     ):
-        expected_subscription = f"projects/{project_id}/subscriptions/" f"test-topic"
+        expected_subscription = (
+            f"projects/{project_id}/subscriptions/" f"{project_id}-test-topic"
+        )
         expected_topic = f"projects/{project_id}/topics/" f"{project_id}-test-topic"
 
-        subscriber.create_subscription("test-topic", f"{project_id}-test-topic")
+        subscriber.create_subscription(
+            Subscription(None, topic=f"{project_id}-test-topic")
+        )
         _mocked_client.assert_called_once_with(
-            ack_deadline_seconds=60,
-            name=expected_subscription,
-            topic=expected_topic,
+            request={
+                "ack_deadline_seconds": 60,
+                "name": expected_subscription,
+                "topic": expected_topic,
+            }
         )
         assert subscriber._gc_project_id == "rele-test"
 
@@ -157,17 +164,47 @@ class TestSubscriber:
     def test_creates_subscription_with_custom_ack_deadline_when_provided(
         self, _mocked_client, project_id, subscriber
     ):
-        expected_subscription = f"projects/{project_id}/subscriptions/" f"test-topic"
+        expected_subscription = (
+            f"projects/{project_id}/subscriptions/" f"{project_id}-test-topic"
+        )
         expected_topic = f"projects/{project_id}/topics/" f"{project_id}-test-topic"
         subscriber._ack_deadline = 100
         subscriber.create_subscription(
-            subscription="test-topic", topic=f"{project_id}-test-topic"
+            Subscription(None, topic=f"{project_id}-test-topic")
         )
 
         _mocked_client.assert_called_once_with(
-            ack_deadline_seconds=100,
-            name=expected_subscription,
-            topic=expected_topic,
+            request={
+                "ack_deadline_seconds": 100,
+                "name": expected_subscription,
+                "topic": expected_topic,
+            }
+        )
+
+    @patch.object(SubscriberClient, "create_subscription")
+    def test_creates_subscription_with_filter_expression_when_provided(
+        self, _mocked_client, project_id, subscriber
+    ):
+        expected_subscription = (
+            f"projects/{project_id}/subscriptions/" f"{project_id}-test-topic"
+        )
+        expected_topic = f"projects/{project_id}/topics/" f"{project_id}-test-topic"
+        filter_expression = "attributes:domain"
+        subscriber.create_subscription(
+            Subscription(
+                None,
+                topic=f"{project_id}-test-topic",
+                filter_expression=filter_expression,
+            )
+        )
+
+        _mocked_client.assert_called_once_with(
+            request={
+                "ack_deadline_seconds": 60,
+                "name": expected_subscription,
+                "topic": expected_topic,
+                "filter": filter_expression,
+            }
         )
 
     @patch.object(
@@ -179,7 +216,7 @@ class TestSubscriber:
         self, _mocked_client, project_id, subscriber
     ):
         subscriber.create_subscription(
-            subscription="test-topic", topic=f"{project_id}-test-topic"
+            Subscription(None, topic=f"{project_id}-test-topic")
         )
 
         _mocked_client.assert_called()
@@ -193,7 +230,7 @@ class TestSubscriber:
         self, _mocked_client, project_id, subscriber, caplog
     ):
         subscriber.create_subscription(
-            subscription="test-topic", topic=f"{project_id}-test-topic"
+            Subscription(None, topic=f"{project_id}-test-topic")
         )
 
         _mocked_client.assert_called()

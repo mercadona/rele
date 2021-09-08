@@ -53,24 +53,13 @@ class TestWorker:
         assert isinstance(scheduler, ThreadScheduler)
         assert isinstance(scheduler._executor, futures.ThreadPoolExecutor)
 
-    def test_setup_creates_subscription_when_topic_given(
-        self, mock_create_subscription, worker
-    ):
-        worker.setup()
-
-        topic = "some-cool-topic"
-        subscription = "rele-some-cool-topic"
-        mock_create_subscription.assert_called_once_with(subscription, topic)
-
     @patch.object(Worker, "_wait_forever")
     def test_run_sets_up_and_creates_subscriptions_when_called(
         self, mock_wait_forever, mock_consume, mock_create_subscription, worker
     ):
         worker.run_forever()
 
-        topic = "some-cool-topic"
-        subscription = "rele-some-cool-topic"
-        mock_create_subscription.assert_called_once_with(subscription, topic)
+        mock_create_subscription.assert_called_once_with(sub_stub)
         mock_consume.assert_called_once_with(
             subscription_name="rele-some-cool-topic",
             callback=ANY,
