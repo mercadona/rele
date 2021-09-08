@@ -68,7 +68,7 @@ class Subscriber:
                     f"Creating {topic_path}..."
                 )
                 topic = self._create_topic(topic_path)
-                logger.warning(f"{topic.name} created.")
+                logger.info(f"Topic {topic.name} created.")
                 self._create_subscription(subscription_path, topic_path)
 
     def _create_topic(self, topic_path):
