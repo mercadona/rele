@@ -5,7 +5,7 @@ from unittest.mock import ANY, patch
 
 import pytest
 from google.api_core import exceptions
-from google.cloud.pubsub_v1 import SubscriberClient
+from google.cloud.pubsub_v1 import PublisherClient, SubscriberClient
 from google.cloud.pubsub_v1.exceptions import TimeoutError
 
 from rele.subscription import Subscription
@@ -137,6 +137,13 @@ class TestPublisher:
 
 
 class TestSubscriber:
+    @pytest.fixture(autouse=True)
+    def mock_create_topic(self):
+        with patch.object(
+            PublisherClient, "create_topic", return_values={"name": "test-topic"}
+        ) as mock:
+            yield mock
+
     @patch.object(SubscriberClient, "create_subscription")
     def test_creates_subscription_with_default_ack_deadline_when_none_provided(
         self,
@@ -225,16 +232,16 @@ class TestSubscriber:
     @patch.object(
         SubscriberClient,
         "create_subscription",
-        side_effect=exceptions.NotFound("Subscription topic does not exist"),
+        side_effect=[exceptions.NotFound("Subscription topic does not exist"), True],
     )
-    def test_logs_error_when_subscription_topic_does_not_exist(
-        self, _mocked_client, project_id, subscriber, caplog
+    def test_creates_topic_when_subscription_topic_does_not_exist(
+        self, _mocked_client, project_id, subscriber, mock_create_topic
     ):
         subscriber.create_subscription(
             Subscription(None, topic=f"{project_id}-test-topic")
         )
 
-        _mocked_client.assert_called()
-        log = caplog.records[0]
-        assert log.message == "Cannot subscribe to a topic that does not exist."
-        assert log.levelname == "ERROR"
+        assert _mocked_client.call_count == 2
+        mock_create_topic.assert_called_with(
+            request={"name": f"projects/rele-test/topics/{project_id}-test-topic"}
+        )
