@@ -29,7 +29,7 @@ Example::
         'ENCODER_PATH': 'rest_framework.utils.encoders.JSONEncoder',
         'ACK_DEADLINE': 120,
         'PUBLISHER_TIMEOUT': 3.0,
-        'FILTER_SUBS_BY': landscape_filter
+        'FILTER_SUBS_BY': boolean_function
     }
 
 
