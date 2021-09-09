@@ -28,7 +28,8 @@ Example::
         'APP_NAME': 'myappname',
         'ENCODER_PATH': 'rest_framework.utils.encoders.JSONEncoder',
         'ACK_DEADLINE': 120,
-        'PUBLISHER_TIMEOUT': 3.0
+        'PUBLISHER_TIMEOUT': 3.0,
+        'FILTER_SUBS_BY': landscape_filter
     }
 
 
@@ -143,3 +144,11 @@ Default behavior of the Google Cloud PubSub library is to use 10 threads per sub
 We thought this was too much for a default setting and have taken the liberty of
 reducing the thread count to 2. If you would like to maintain the default Google PubSub
 library behavior, please set this value to 10.
+
+``FILTER_SUBS_BY``
+----------------------------
+
+**Optional**
+
+Boolean function that applies a global filter on all subscriptions.
+For more information, please see `Filtering Messages section <https://mercadonarele.readthedocs.io/en/latest/guides/filters.html#global-filter>`.
