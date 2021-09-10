@@ -17,6 +17,21 @@ class ClassBasedSub(Subscription):
         return data["id"]
 
 
+class GenericClassBasedSub(Subscription):
+    topic = None
+
+    def __init__(self):
+        self._func = self.callback_func
+        super().__init__(self._func, self.topic)
+
+    def callback_func(self, data, **kwargs):
+        return data["id"]
+
+
+class FinalClassBasedSub(GenericClassBasedSub):
+    topic = "final-cool-topic"
+
+
 class CustomException(Exception):
     pass
 

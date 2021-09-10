@@ -94,7 +94,7 @@ def load_subscriptions_from_paths(sub_module_paths, sub_prefix=None, filter_by=N
             attribute = getattr(sub_module, attr_name)
 
             subscription = subscription_from_attribute(attribute)
-            if not subscription:
+            if not subscription or subscription.topic is None:
                 continue
             if sub_prefix and not subscription.prefix:
                 subscription.set_prefix(sub_prefix)

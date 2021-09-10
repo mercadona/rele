@@ -43,7 +43,7 @@ class TestLoadSubscriptions:
             filter_by=[lambda attrs: attrs.get("lang") == "en"],
         )
 
-        assert len(subscriptions) == 2
+        assert len(subscriptions) == 3
         klass_sub = subscriptions[0]
         assert isinstance(klass_sub, Subscription)
         assert klass_sub.name == "test-alternative-cool-topic"
@@ -58,6 +58,15 @@ class TestLoadSubscriptions:
             == "Duplicate subscription name found: rele-another-cool-topic. Subs "
             "tests.more_subs.subs.another_sub_stub and tests.test_config.another_sub_stub collide."
         )
+
+    def test_does_not_load_subscriptions_without_topic(self):
+        subscriptions = load_subscriptions_from_paths(
+            ["tests.subs"],
+            sub_prefix="test",
+            filter_by=[lambda attrs: attrs.get("lang") == "en"],
+        )
+
+        assert any([sub.topic is not None for sub in subscriptions])
 
     def test_returns_sub_value_when_filtered_value_applied(self, subscriptions):
 
