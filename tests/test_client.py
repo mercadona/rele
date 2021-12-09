@@ -1,12 +1,12 @@
 import concurrent
 import decimal
 import logging
+from concurrent.futures import TimeoutError
 from unittest.mock import ANY, patch
 
 import pytest
 from google.api_core import exceptions
 from google.cloud.pubsub_v1 import PublisherClient, SubscriberClient
-from google.cloud.pubsub_v1.exceptions import TimeoutError
 
 
 @pytest.mark.usefixtures("publisher", "time_mock")
