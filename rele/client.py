@@ -2,12 +2,12 @@ import json
 import logging
 import os
 import time
+from concurrent.futures import TimeoutError
 from contextlib import suppress
 
 import google.auth
 from google.api_core import exceptions
 from google.cloud import pubsub_v1
-from google.cloud.pubsub_v1.exceptions import TimeoutError
 
 from rele.middleware import run_middleware_hook
 
