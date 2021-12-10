@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.2.0 (2021-12-10)
+-------------------
+* [CHANGED] TimeotError from publisher (#212)
+* Added filter_subs_by setting in documentation (#208)
+* Automatic topic creation (#206)
+* Log post publish success (#204)
+
 1.1.1 (2021-6-28)
 -------------------
 * Do not define default_app_config, it's deprecated (#199)
