@@ -134,7 +134,13 @@ def create_and_run(subs, config):
         config.threads_per_subscription,
     )
 
-    signal.signal(signal.SIGINT, signal.SIG_IGN)
+    # to allow killing runrele worker via ctrl+c
+    signal.signal(signal.SIGINT, worker.stop)
     signal.signal(signal.SIGTERM, worker.stop)
-    signal.signal(signal.SIGTSTP, worker.stop)
+    try:
+        signal.signal(signal.SIGTSTP, worker.stop)
+    except:
+        # SIGSTP doesn't exist on windows, so we use SIGBREAK instead
+        signal.signal(signal.SIGBREAK, worker.stop)
+
     worker.run_forever()
