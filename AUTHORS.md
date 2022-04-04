@@ -13,3 +13,4 @@ Thank you to all the contributors to Relé!
 * Craig Mulligan (@hobochild)
 * Daniel Demmel (@daaain)
 * Luis Garcia Cuesta (@luisgc93)
+* Chirag Jain (@chirgjin-les)

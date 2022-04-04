@@ -111,6 +111,18 @@ class Worker:
             time.sleep(sleep_interval)
 
 
+def _get_stop_signal():
+    """
+    Get stop signal for worker.
+    Returns `SIGBREAK` on windows because `SIGSTP` doesn't exist on it
+    """
+    if sys.platform.startswith("win"):
+        # SIGSTP doesn't exist on windows, so we use SIGBREAK instead
+        return signal.SIGBREAK
+
+    return signal.SIGTSTP
+
+
 def create_and_run(subs, config):
     """
     Create and run a worker from a list of Subscription objects and a config
@@ -134,7 +146,9 @@ def create_and_run(subs, config):
         config.threads_per_subscription,
     )
 
-    signal.signal(signal.SIGINT, signal.SIG_IGN)
+    # to allow killing runrele worker via ctrl+c
+    signal.signal(signal.SIGINT, worker.stop)
     signal.signal(signal.SIGTERM, worker.stop)
-    signal.signal(signal.SIGTSTP, worker.stop)
+    signal.signal(_get_stop_signal(), worker.stop)
+
     worker.run_forever()

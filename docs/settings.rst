@@ -32,6 +32,14 @@ Example::
         'FILTER_SUBS_BY': boolean_function
     }
 
+``GC_PROJECT_ID``
+------------------
+
+**Optional**
+
+GCP project id to use. If this is not provided then it is inferred via either
+service account's project id or quota project id if using Application Default Credentials (ADC)
+
 
 ``GC_CREDENTIALS_PATH``
 -----------------------
