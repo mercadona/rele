@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.3.0 (2022-04-04)
+-------------------
+* GC Project Id & Windows support (#215)
+
 1.2.0 (2021-12-10)
 -------------------
 * [CHANGED] TimeotError from publisher (#212)
