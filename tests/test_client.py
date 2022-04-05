@@ -190,19 +190,19 @@ class TestSubscriber:
         )
 
     @patch.object(SubscriberClient, "create_subscription")
-    def test_creates_subscription_with_filter_expression_when_provided(
+    def test_creates_subscription_with_backend_filter_by_when_provided(
         self, _mocked_client, project_id, subscriber
     ):
         expected_subscription = (
             f"projects/{project_id}/subscriptions/" f"{project_id}-test-topic"
         )
         expected_topic = f"projects/{project_id}/topics/" f"{project_id}-test-topic"
-        filter_expression = "attributes:domain"
+        backend_filter_by = "attributes:domain"
         subscriber.create_subscription(
             Subscription(
                 None,
                 topic=f"{project_id}-test-topic",
-                filter_expression=filter_expression,
+                backend_filter_by=backend_filter_by,
             )
         )
 
@@ -211,7 +211,7 @@ class TestSubscriber:
                 "ack_deadline_seconds": 60,
                 "name": expected_subscription,
                 "topic": expected_topic,
-                "filter": filter_expression,
+                "filter": backend_filter_by,
             }
         )
 

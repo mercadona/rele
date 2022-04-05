@@ -67,8 +67,8 @@ class Subscriber:
                     "ack_deadline_seconds": self._ack_deadline,
                 }
 
-                if subscription.filter_expression:
-                    request["filter"] = subscription.filter_expression
+                if subscription.backend_filter_by:
+                    request["filter"] = subscription.backend_filter_by
 
                 self._client.create_subscription(request=request)
             except exceptions.NotFound:

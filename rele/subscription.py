@@ -35,14 +35,14 @@ class Subscription:
     """
 
     def __init__(
-        self, func, topic, prefix="", suffix="", filter_by=None, filter_expression=None
+        self, func, topic, prefix="", suffix="", filter_by=None, backend_filter_by=None
     ):
         self._func = func
         self.topic = topic
         self._prefix = prefix
         self._suffix = suffix
         self._filters = self._init_filters(filter_by)
-        self.filter_expression = filter_expression
+        self.backend_filter_by = backend_filter_by
 
     def _init_filters(self, filter_by):
         if filter_by and not (
@@ -145,7 +145,7 @@ class Callback:
             run_middleware_hook("post_process_message")
 
 
-def sub(topic, prefix=None, suffix=None, filter_by=None, filter_expression=None):
+def sub(topic, prefix=None, suffix=None, filter_by=None, backend_filter_by=None):
     """Decorator function that makes declaring a PubSub Subscription simple.
 
     The Subscriber returned will automatically create and name

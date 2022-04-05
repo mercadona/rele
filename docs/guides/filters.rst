@@ -3,7 +3,7 @@ Filtering Messages
 
 Filter can be used to execute a subscription with specific parameters.
 There's three types of filters, global, by passing a filter_by parameter in the
-subscription (this applies the filter locally) or by passing a filter_expression
+subscription (this applies the filter locally) or by passing a backend_filter_by
 parameter in the subscription (this applies the filter on pubsub).
 
 
@@ -27,7 +27,7 @@ is passed as parameter ``filter_by`` in the subscription.
         print(f'Received a photo of type {kwargs.get("type")}')
 
 
-`filter_expression` parameter
+`backend_filter_by` parameter
 _____________________________
 
 This filter is an expression that is applied to the subscription creation. This filter
@@ -43,7 +43,7 @@ about filter expressions `here <https://cloud.google.com/pubsub/docs/filtering#f
     # This subscription is going to be called if in the kwargs
     # has a key type with value landscape
 
-    @sub(topic='photo-updated', filter_expression='attributes.type = "landscape"')
+    @sub(topic='photo-updated', backend_filter_by='attributes.type = "landscape"')
     def sub_process_landscape_photos(data, **kwargs):
         print(f'Received a photo of type {kwargs.get("type")}')
 
