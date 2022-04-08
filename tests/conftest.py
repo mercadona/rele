@@ -6,6 +6,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from google.cloud.pubsub_v1 import PublisherClient
 from google.cloud.pubsub_v1.exceptions import TimeoutError
+from google.protobuf import timestamp_pb2
 
 from rele import Publisher
 from rele.client import Subscriber
@@ -94,3 +95,10 @@ def mock_post_publish_failure():
         "rele.contrib.logging_middleware.LoggingMiddleware.post_publish_failure"
     ) as mock:
         yield mock
+
+
+@pytest.fixture
+def publish_time():
+    timestamp = timestamp_pb2.Timestamp()
+    timestamp.GetCurrentTime()
+    return timestamp
