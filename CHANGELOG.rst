@@ -1,9 +1,9 @@
 Changelog
 =========
 
-1.4.0 (2022-04-04)
+1.4.0 (2022-04-13)
 -------------------
-* [Added] Added a Logging Middleware that does not truncate mesage payload. (#218)
+* [Added] Added a VerboseLoggingMiddleware that does not truncate mesage payload. (#218)
 
 1.3.0 (2022-04-04)
 -------------------
