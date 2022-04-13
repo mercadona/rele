@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.4.0 (2022-04-04)
+-------------------
+* [Added] Added a Logging Middleware that does not truncate mesage payload. (#218)
+
 1.3.0 (2022-04-04)
 -------------------
 * GC Project Id & Windows support (#215)
