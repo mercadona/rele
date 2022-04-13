@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.4.0 (2022-04-13)
+-------------------
+* [Added] Added a VerboseLoggingMiddleware that does not truncate mesage payload. (#218)
+
 1.3.0 (2022-04-04)
 -------------------
 * GC Project Id & Windows support (#215)
