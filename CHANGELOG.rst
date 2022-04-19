@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.4.1 (2022-04-19)
+-------------------
+* [Modified] Fixed bug in the post-publish-failure VerboseLoggingMiddleware hook. (#220)
+
 1.4.0 (2022-04-13)
 -------------------
 * [Added] Added a VerboseLoggingMiddleware that does not truncate mesage payload. (#218)
