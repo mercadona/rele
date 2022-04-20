@@ -213,6 +213,7 @@ def sub(topic, prefix=None, suffix=None, filter_by=None, backend_filter_by=None)
             prefix=prefix,
             suffix=suffix,
             filter_by=filter_by,
+            backend_filter_by=backend_filter_by,
         )
 
     return decorator
