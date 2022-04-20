@@ -2,7 +2,7 @@ Filtering Messages
 ==================
 
 Filter can be used to execute a subscription with specific parameters.
-There's three types of filters, global, by passing a filter_by parameter in the
+There are three types of filters, global, by passing a filter_by parameter in the
 subscription (this applies the filter locally) or by passing a backend_filter_by
 parameter in the subscription (this applies the filter on pubsub).
 
