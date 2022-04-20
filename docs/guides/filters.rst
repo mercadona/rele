@@ -43,7 +43,7 @@ about filter expressions `here <https://cloud.google.com/pubsub/docs/filtering#f
     # This subscription is going to be called if in the kwargs
     # has a key type with value landscape
 
-    @sub(topic='photo-updated', backend_filter_by='attributes.type = "landscape"')
+    @sub(topic='photo-updated', backend_filter_by='attributes:type = "landscape"')
     def sub_process_landscape_photos(data, **kwargs):
         print(f'Received a photo of type {kwargs.get("type")}')
 
