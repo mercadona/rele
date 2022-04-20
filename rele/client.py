@@ -43,7 +43,7 @@ class Subscriber:
         self.credentials = credentials if not USE_EMULATOR else None
         self._client = pubsub_v1.SubscriberClient(credentials=credentials)
 
-    def create_subscription(self, subscription, topic):
+    def create_subscription(self, subscription):
         """Handles creating the subscription when it does not exists.
 
         This makes it easier to deploy a worker and forget about the
@@ -55,13 +55,13 @@ class Subscriber:
         :param topic: str Topic name to subscribe
         """
         subscription_path = self._client.subscription_path(
-            self._gc_project_id, subscription
+            self._gc_project_id, subscription.name
         )
-        topic_path = self._client.topic_path(self._gc_project_id, topic)
+        topic_path = self._client.topic_path(self._gc_project_id, subscription.topic)
 
         with suppress(exceptions.AlreadyExists):
             try:
-                self._create_subscription(subscription_path, topic_path)
+                self._create_subscription(subscription_path, topic_path, subscription)
             except exceptions.NotFound:
                 logger.warning(
                     "Cannot subscribe to a topic that does not exist."
@@ -69,18 +69,23 @@ class Subscriber:
                 )
                 topic = self._create_topic(topic_path)
                 logger.info(f"Topic {topic.name} created.")
-                self._create_subscription(subscription_path, topic_path)
+                self._create_subscription(subscription_path, topic_path, subscription)
 
     def _create_topic(self, topic_path):
         publisher_client = pubsub_v1.PublisherClient(credentials=self.credentials)
         return publisher_client.create_topic(request={"name": topic_path})
 
-    def _create_subscription(self, name, topic):
-        self._client.create_subscription(
-            name=name,
-            topic=topic,
-            ack_deadline_seconds=self._ack_deadline,
-        )
+    def _create_subscription(self, subscription_path, topic_path, subscription):
+        request = {
+            "name": subscription_path,
+            "topic": topic_path,
+            "ack_deadline_seconds": self._ack_deadline,
+        }
+
+        if subscription.backend_filter_by:
+            request["filter"] = subscription.backend_filter_by
+
+        self._client.create_subscription(request=request)
 
     def consume(self, subscription_name, callback, scheduler):
         """Begin listening to topic from the SubscriberClient.
