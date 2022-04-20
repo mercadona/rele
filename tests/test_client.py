@@ -237,11 +237,29 @@ class TestSubscriber:
     def test_creates_topic_when_subscription_topic_does_not_exist(
         self, _mocked_client, project_id, subscriber, mock_create_topic
     ):
+        expected_subscription = (
+            f"projects/{project_id}/subscriptions/" f"{project_id}-test-topic"
+        )
+        expected_topic = f"projects/{project_id}/topics/" f"{project_id}-test-topic"
+        backend_filter_by = "attributes:domain"
         subscriber.create_subscription(
-            Subscription(None, topic=f"{project_id}-test-topic")
+            Subscription(
+                None,
+                topic=f"{project_id}-test-topic",
+                backend_filter_by=backend_filter_by,
+            )
         )
 
         assert _mocked_client.call_count == 2
         mock_create_topic.assert_called_with(
             request={"name": f"projects/rele-test/topics/{project_id}-test-topic"}
+        )
+
+        _mocked_client.assert_called_with(
+            request={
+                "ack_deadline_seconds": 60,
+                "name": expected_subscription,
+                "topic": expected_topic,
+                "filter": backend_filter_by,
+            }
         )
