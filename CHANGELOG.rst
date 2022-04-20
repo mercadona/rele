@@ -3,7 +3,7 @@ Changelog
 
 1.5.0 (2022-04-20)
 -------------------
-* [Added] Add filter expressions to subscriptions . (#207)
+* [Added] Add filter expressions to subscriptions. (#207)
 
 1.4.1 (2022-04-19)
 -------------------
