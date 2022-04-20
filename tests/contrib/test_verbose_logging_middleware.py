@@ -95,33 +95,3 @@ class TestVerboseLoggingMiddleware:
         message_log = caplog.records[1].subscription_message.__repr__()
 
         assert verbose_message_log == message_log
-
-    def test_message_payload_log_is_not_truncated_on_post_publish_failure(
-        self,
-        verbose_logging_middleware,
-        caplog,
-        long_message_wrapper,
-        expected_message_log,
-    ):
-        verbose_logging_middleware.post_publish_failure(
-            sub_stub, RuntimeError("💩"), long_message_wrapper
-        )
-
-        message_log = caplog.records[0].subscription_message.__repr__()
-
-        assert message_log == expected_message_log
-
-    def test_post_publish_failure_message_payload_format_matches_logging_middleware_format(
-        self, verbose_logging_middleware, logging_middleware, caplog, message_wrapper
-    ):
-        verbose_logging_middleware.post_publish_failure(
-            sub_stub, RuntimeError("💩"), message_wrapper
-        )
-        logging_middleware.post_publish_failure(
-            sub_stub, RuntimeError("💩"), message_wrapper
-        )
-
-        verbose_message_log = caplog.records[0].subscription_message.__repr__()
-        message_log = caplog.records[1].subscription_message.__repr__()
-
-        assert verbose_message_log == message_log

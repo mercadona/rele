@@ -10,6 +10,7 @@
 /dist/
 /*.egg-info/
 /env/
+/venv/
 MANIFEST
 coverage.*
 docs/_build

@@ -11,9 +11,6 @@ class VerboseLoggingMiddleware(LoggingMiddleware):
             subscription, exception, start_time, _VerboseMessage(message)
         )
 
-    def post_publish_failure(self, topic, exception, message):
-        super().post_publish_failure(topic, exception, _VerboseMessage(message))
-
 
 class _VerboseMessage:
     def __init__(self, message):
