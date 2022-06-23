@@ -51,11 +51,24 @@ def sub_process_landscape_gif_photos(data, **kwargs):
     return f'Received a {kwargs.get("format")} photo of type {kwargs.get("type")}'
 
 
+@sub(
+    topic="some-cool-topic", retry_policy={"minimum_backoff": 10, "maximum_backoff": 50}
+)
+def sub_with_exponential_retries(data, **kwargs):
+    logger.info("I am a task with exponential retries.")
+
+
 class TestSubscription:
     def test_subs_return_subscription_objects(self):
         assert isinstance(sub_stub, Subscription)
         assert sub_stub.topic == "some-cool-topic"
         assert sub_stub.name == "rele-some-cool-topic"
+
+        assert isinstance(sub_with_exponential_retries, Subscription)
+        assert sub_with_exponential_retries.topic == "some-cool-topic"
+        assert sub_with_exponential_retries.name == "some-cool-topic"
+        assert sub_with_exponential_retries.retry_policy.get("minimum_backoff") == 10
+        assert sub_with_exponential_retries.retry_policy.get("maximum_backoff") == 50
 
     def test_subs_without_prefix_return_subscription_objects(self):
         assert isinstance(sub_fancy_stub, Subscription)
@@ -129,6 +142,16 @@ class TestSubscription:
         with pytest.raises(ValueError):
             Subscription(
                 func=lambda x: None, topic="topic", prefix="rele", filter_by=(1,)
+            )
+
+    @pytest.mark.parametrize(
+        "retry_policy_param",
+        ["retry_policy", 10, True],
+    )
+    def test_raises_error_when_retry_policy_is_not_valid(self, retry_policy_param):
+        with pytest.raises(ValueError):
+            Subscription(
+                func=lambda x: None, topic="topic", retry_policy=retry_policy_param
             )
 
 

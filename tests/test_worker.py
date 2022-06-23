@@ -107,6 +107,27 @@ class TestWorker:
         assert worker._subscriber._ack_deadline == custom_ack_deadline
         assert worker._subscriber._gc_project_id == "rele-test"
 
+    @pytest.mark.usefixtures("mock_create_subscription")
+    def test_creates_subscription_with_custom_dead_letter_policy_from_environment(
+        self, config
+    ):
+        subscriptions = (sub_stub,)
+        worker = Worker(
+            subscriptions,
+            config.gc_project_id,
+            config.credentials,
+            default_dead_letter_policy={
+                "dead_letter_topic_id": "dead-letter-topic-id",
+                "max_delivery_attempts": 5,
+            },
+        )
+        worker.setup()
+
+        assert worker._subscriber._dead_letter_policy == {
+            "dead_letter_topic_id": "dead-letter-topic-id",
+            "max_delivery_attempts": 5,
+        }
+
 
 class TestCreateAndRun:
     @pytest.fixture(autouse=True)
@@ -123,5 +144,7 @@ class TestCreateAndRun:
         subscriptions = (sub_stub,)
         create_and_run(subscriptions, config)
 
-        mock_worker.assert_called_with(subscriptions, "rele-test", ANY, 60, 2)
+        mock_worker.assert_called_with(
+            subscriptions, "rele-test", ANY, 60, 2, None, None
+        )
         mock_worker.return_value.run_forever.assert_called_once_with()

@@ -76,6 +76,8 @@ class TestConfig:
             "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
             "MIDDLEWARE": ["rele.contrib.DjangoDBMiddleware"],
             "ENCODER": custom_encoder,
+            "DEFAULT_RETRY_POLICY": {"minimum_backoff": 10, "maximum_backoff": 60},
+            "DEAD_LETTER_TOPIC_ID": "dead-letter-topic",
         }
 
         config = Config(settings)
@@ -85,6 +87,8 @@ class TestConfig:
         assert config.gc_project_id == project_id
         assert isinstance(config.credentials, service_account.Credentials)
         assert config.middleware == ["rele.contrib.DjangoDBMiddleware"]
+        assert config.retry_policy == {"minimum_backoff": 10, "maximum_backoff": 60}
+        assert config.dead_letter_topic_id == "dead-letter-topic"
 
     def test_inits_service_account_creds_when_credential_path_given(self, project_id):
         settings = {
@@ -118,8 +122,10 @@ class TestConfig:
         assert config.sub_prefix is None
         assert config.gc_project_id is None
         assert config.credentials is None
+        assert config.retry_policy is None
         assert config.middleware == ["rele.contrib.LoggingMiddleware"]
         assert config.encoder == json.JSONEncoder
+        assert config.max_delivery_attempts == 5
 
     @patch.dict(
         os.environ,
