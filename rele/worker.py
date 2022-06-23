@@ -153,12 +153,7 @@ def create_and_run(subs, config):
         config.ack_deadline,
         config.threads_per_subscription,
         config.retry_policy,
-        {
-            "dead_letter_topic_id": config.dead_letter_topic_id,
-            "max_delivery_attempts": config.max_delivery_attempts,
-        }
-        if config.dead_letter_topic_id
-        else None,
+        config.dead_letter_policy,
     )
 
     # to allow killing runrele worker via ctrl+c

@@ -39,6 +39,7 @@ class Config:
         self.retry_policy = setting.get("DEFAULT_RETRY_POLICY")
         self.dead_letter_topic_id = setting.get("DEAD_LETTER_TOPIC_ID")
         self.max_delivery_attempts = setting.get("MAX_DELIVERY_ATTEMPTS", 5)
+        self.dead_letter_policy = self._init_dead_letter_policy()
 
     @property
     def encoder(self):
@@ -67,6 +68,14 @@ class Config:
             return self.credentials.project_id
         else:
             return None
+
+    def _init_dead_letter_policy(self):
+        if self.dead_letter_topic_id:
+            return {
+                "dead_letter_topic_id": self.dead_letter_topic_id,
+                "max_delivery_attempts": self.max_delivery_attempts,
+            }
+        return None
 
 
 def setup(setting=None, **kwargs):
