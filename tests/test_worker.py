@@ -1,11 +1,14 @@
+import time
 from concurrent import futures
 from unittest.mock import ANY, patch
 
 import pytest
+from google.cloud import pubsub_v1
 from google.cloud.pubsub_v1.subscriber.scheduler import ThreadScheduler
 
 from rele import Subscriber, Worker, sub
 from rele.middleware import register_middleware
+from rele.subscription import Callback
 from rele.worker import create_and_run
 
 
@@ -27,8 +30,10 @@ def worker(config):
 
 
 @pytest.fixture
-def mock_consume():
+def mock_consume(config):
     with patch.object(Subscriber, "consume") as m:
+        client = pubsub_v1.SubscriberClient(credentials=config.credentials)
+        m.return_value = client.subscribe("dummy-subscription", Callback(sub_stub))
         yield m
 
 
@@ -106,6 +111,48 @@ class TestWorker:
 
         assert worker._subscriber._ack_deadline == custom_ack_deadline
         assert worker._subscriber._gc_project_id == "rele-test"
+
+
+@pytest.mark.usefixtures("mock_create_subscription")
+class TestRestartConsumer:
+    @pytest.fixture(autouse=True)
+    def mock_sleep(self):
+        with patch.object(time, "sleep", side_effect=ValueError) as m:
+            yield m
+
+    def test_does_not_restart_consumption_when_everything_goes_well(
+        self, worker, mock_consume
+    ):
+        with pytest.raises(ValueError):
+            worker.run_forever()
+
+        assert len(mock_consume.call_args_list) == 1
+
+    def test_restarts_consumption_when_future_is_cancelled(self, worker, mock_consume):
+        mock_consume.return_value._StreamingPullFuture__cancelled = True
+
+        with pytest.raises(ValueError):
+            worker.run_forever()
+
+        assert len(mock_consume.call_args_list) == 2
+
+    def test_restarts_consumption_when_future_is_done(self, worker, mock_consume):
+        mock_consume.return_value.set_result(True)
+
+        with pytest.raises(ValueError):
+            worker.run_forever()
+
+        assert len(mock_consume.call_args_list) == 2
+
+    def test_restarts_consumption_when_streaming_pull_manager_is_not_active(
+        self, worker, mock_consume
+    ):
+        mock_consume.return_value._StreamingPullFuture__manager._consumer.stop()
+
+        with pytest.raises(ValueError):
+            worker.run_forever()
+
+        assert len(mock_consume.call_args_list) == 2
 
 
 class TestCreateAndRun:
