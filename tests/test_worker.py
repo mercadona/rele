@@ -129,7 +129,7 @@ class TestRestartConsumer:
         assert len(mock_consume.call_args_list) == 1
 
     def test_restarts_consumption_when_future_is_cancelled(self, worker, mock_consume):
-        mock_consume.return_value._StreamingPullFuture__cancelled = True
+        mock_consume.return_value.cancel()
 
         with pytest.raises(ValueError):
             worker.run_forever()
