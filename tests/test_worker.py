@@ -144,16 +144,6 @@ class TestRestartConsumer:
 
         assert len(mock_consume.call_args_list) == 2
 
-    def test_restarts_consumption_when_streaming_pull_manager_is_not_active(
-        self, worker, mock_consume
-    ):
-        mock_consume.return_value._StreamingPullFuture__manager._consumer.stop()
-
-        with pytest.raises(ValueError):
-            worker.run_forever()
-
-        assert len(mock_consume.call_args_list) == 2
-
 
 class TestCreateAndRun:
     @pytest.fixture(autouse=True)

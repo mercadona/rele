@@ -112,12 +112,8 @@ class Worker:
         logger.info("Consuming subscriptions...")
         while True:
             for subscription, future in self._futures.items():
-                if (
-                    future.cancelled()
-                    or future.done()
-                    or not future._StreamingPullFuture__manager.is_active
-                ):
-                    logger.info(f"Restaring consumption of {subscription.name}.")
+                if future.cancelled() or future.done():
+                    logger.info(f"Restarting consumption of {subscription.name}.")
                     self._boostrap_consumption(subscription)
 
             time.sleep(sleep_interval)
