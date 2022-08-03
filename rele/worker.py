@@ -31,7 +31,7 @@ class Worker:
         threads_per_subscription=None,
     ):
         self._subscriber = Subscriber(gc_project_id, credentials, default_ack_deadline)
-        self._futures = []
+        self._futures = {}
         self._subscriptions = subscriptions
         self.threads_per_subscription = threads_per_subscription
 
@@ -56,20 +56,7 @@ class Worker:
         """
         run_middleware_hook("pre_worker_start")
         for subscription in self._subscriptions:
-            executor_kwargs = {
-                "thread_name_prefix": "ThreadPoolExecutor-ThreadScheduler"
-            }
-            executor = futures.ThreadPoolExecutor(
-                max_workers=self.threads_per_subscription, **executor_kwargs
-            )
-            scheduler = ThreadScheduler(executor=executor)
-            self._futures.append(
-                self._subscriber.consume(
-                    subscription_name=subscription.name,
-                    callback=Callback(subscription),
-                    scheduler=scheduler,
-                )
-            )
+            self._boostrap_consumption(subscription)
         run_middleware_hook("post_worker_start")
 
     def run_forever(self, sleep_interval=1):
@@ -99,15 +86,36 @@ class Worker:
         :param frame: Needed for `signal.signal <https://docs.python.org/3/library/signal.html#signal.signal>`_  # noqa
         """
         run_middleware_hook("pre_worker_stop", self._subscriptions)
-        for future in self._futures:
+        for future in self._futures.values():
             future.cancel()
 
         run_middleware_hook("post_worker_stop")
         sys.exit(0)
 
+    def _boostrap_consumption(self, subscription):
+        if subscription in self._futures:
+            self._futures[subscription].cancel()
+
+        executor_kwargs = {"thread_name_prefix": "ThreadPoolExecutor-ThreadScheduler"}
+        executor = futures.ThreadPoolExecutor(
+            max_workers=self.threads_per_subscription, **executor_kwargs
+        )
+        scheduler = ThreadScheduler(executor=executor)
+
+        self._futures[subscription] = self._subscriber.consume(
+            subscription_name=subscription.name,
+            callback=Callback(subscription),
+            scheduler=scheduler,
+        )
+
     def _wait_forever(self, sleep_interval):
         logger.info("Consuming subscriptions...")
         while True:
+            for subscription, future in self._futures.items():
+                if future.cancelled() or future.done():
+                    logger.info(f"Restarting consumption of {subscription.name}.")
+                    self._boostrap_consumption(subscription)
+
             time.sleep(sleep_interval)
 
 
