@@ -4,11 +4,8 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 WORKDIR /rele
 LABEL python_version=python
 
-COPY Makefile ./
-COPY requirements requirements/
+COPY . .
 
 RUN make install-dev-requirements
-
-COPY . .
 
 CMD ["make", "clean", "lint", "test"]
