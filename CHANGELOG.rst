@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.6.0 (2022-08-03)
+-------------------
+* [Added] Implement auto restart of the consumption when futures are done or cancelled. (#226)
+
 1.5.0 (2022-04-20)
 -------------------
 * [Added] Add filter expressions to subscriptions. (#207)
