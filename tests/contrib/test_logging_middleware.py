@@ -96,4 +96,6 @@ class TestLoggingMiddleware:
         post_publish_failure_message_log = caplog.records[0].subscription_message
         post_process_message_message_log = caplog.records[1].subscription_message
 
-        assert type(post_publish_failure_message_log) == type(post_process_message_message_log)
+        assert type(post_publish_failure_message_log) == type(
+            post_process_message_message_log
+        )
