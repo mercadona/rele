@@ -292,7 +292,7 @@ class TestCallback:
                 },
             },
         }
-        assert failed_log.subscription_message == message_wrapper
+        assert failed_log.subscription_message == str(message_wrapper)
 
     def test_log_acks_called_message_when_not_json_serializable(
         self, caplog, message_wrapper_invalid_json, published_at
@@ -319,7 +319,7 @@ class TestCallback:
                 "attributes": {},
             },
         }
-        assert failed_log.subscription_message == message_wrapper_invalid_json
+        assert failed_log.subscription_message == str(message_wrapper_invalid_json)
 
     def test_published_time_as_message_attribute(self, message_wrapper, caplog):
         callback = Callback(sub_published_time_type)

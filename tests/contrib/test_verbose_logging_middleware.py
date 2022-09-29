@@ -77,7 +77,7 @@ class TestVerboseLoggingMiddleware:
             sub_stub, RuntimeError("💩"), 1, long_message_wrapper
         )
 
-        message_log = caplog.records[0].subscription_message.__repr__()
+        message_log = caplog.records[0].subscription_message
 
         assert message_log == expected_message_log
 
@@ -91,7 +91,7 @@ class TestVerboseLoggingMiddleware:
             sub_stub, RuntimeError("💩"), 1, message_wrapper
         )
 
-        verbose_message_log = caplog.records[0].subscription_message.__repr__()
-        message_log = caplog.records[1].subscription_message.__repr__()
+        verbose_message_log = caplog.records[0].subscription_message
+        message_log = caplog.records[1].subscription_message
 
         assert verbose_message_log == message_log
