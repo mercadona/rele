@@ -1,3 +1,4 @@
+import json
 import logging
 import time
 
@@ -70,7 +71,7 @@ class LoggingMiddleware(BaseMiddleware):
                     "name": "publications",
                     "data": {"agent": self._app_name, "topic": topic},
                 },
-                "subscription_message": message,
+                "subscription_message": json.dumps(message),
             },
         )
 
@@ -112,7 +113,7 @@ class LoggingMiddleware(BaseMiddleware):
                         subscription, message, "failed", start_time
                     ),
                 },
-                "subscription_message": message,
+                "subscription_message": str(message),
             },
         )
 
