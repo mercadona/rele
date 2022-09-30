@@ -42,7 +42,7 @@ class Subscription:
         suffix="",
         filter_by=None,
         backend_filter_by=None,
-        deserialize=lambda x: json.loads(x.data.decode("utf-8")),
+        deserializer=lambda x: json.loads(x.data.decode("utf-8")),
     ):
         self._func = func
         self.topic = topic
@@ -50,7 +50,7 @@ class Subscription:
         self._suffix = suffix
         self._filters = self._init_filters(filter_by)
         self.backend_filter_by = backend_filter_by
-        self._deserialize = self._init_deserialize(deserialize)
+        self._deserializer = self._init_deserializer(deserializer)
 
     def _init_filters(self, filter_by):
         if filter_by and not (
@@ -69,10 +69,10 @@ class Subscription:
 
         return None
 
-    def _init_deserialize(self, deserialize):
-        if not callable(deserialize):
-            raise ValueError("deserialize must be a callable or None.")
-        return deserialize
+    def _init_deserializer(self, deserializer):
+        if not callable(deserializer):
+            raise ValueError("deserializer must be a callable or None.")
+        return deserializer
 
     @property
     def name(self):
@@ -122,7 +122,7 @@ class Callback:
         start_time = time.time()
 
         try:
-            data = self._subscription._deserialize(message)
+            data = self._subscription._deserializer(message)
         except Exception as e:
             message.ack()
             run_middleware_hook(
@@ -164,7 +164,7 @@ def sub(
     suffix=None,
     filter_by=None,
     backend_filter_by=None,
-    deserialize=lambda x: json.loads(x.data.decode("utf-8")),
+    deserializer=lambda x: json.loads(x.data.decode("utf-8")),
 ):
     """Decorator function that makes declaring a PubSub Subscription simple.
 
@@ -201,7 +201,7 @@ def sub(
         def sub_process_landscape_photos(data, **kwargs):
             pass
 
-        @sub(topic='string-messages', deserialize=lambda x: x.data.decode('utf-8'))
+        @sub(topic='string-messages', deserializer=lambda x: x.data.decode('utf-8'))
         def sub_process_non_json(data, **kwargs):
             pass
 
@@ -215,7 +215,7 @@ def sub(
     :param filter_by: Union[function, list] An optional function or tuple of
                       functions that filters the messages to be processed by
                       the sub regarding their attributes.
-    :param deserialize: function An optional deserialization function that
+    :param deserializer: function An optional deserialization function that
                         replaces the default json deserialization.
     :return: :class:`~rele.subscription.Subscription`
     """
@@ -241,7 +241,7 @@ def sub(
             suffix=suffix,
             filter_by=filter_by,
             backend_filter_by=backend_filter_by,
-            deserialize=deserialize,
+            deserializer=deserializer,
         )
 
     return decorator

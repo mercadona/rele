@@ -51,11 +51,11 @@ def sub_process_landscape_gif_photos(data, **kwargs):
     return f'Received a {kwargs.get("format")} photo of type {kwargs.get("type")}'
 
 
-def deserialize_handler(message):
+def deserializer_handler(message):
     return message.data.decode("utf-8")
 
 
-@sub(topic="string-data", deserialize=deserialize_handler)
+@sub(topic="string-data", deserializer=deserializer_handler)
 def sub_string_deserializer(data, **kwargs):
     return data
 
@@ -303,7 +303,7 @@ class TestCallback:
         }
         assert failed_log.subscription_message == str(message_wrapper)
 
-    def test_deserialize_handler(self, message_wrapper_invalid_json):
+    def test_deserializer_handler(self, message_wrapper_invalid_json):
         callback = Callback(sub_string_deserializer)
         res = callback(message_wrapper_invalid_json)
 
