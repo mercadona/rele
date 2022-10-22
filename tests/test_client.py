@@ -70,6 +70,29 @@ class TestPublisher:
         )
         mock_future.result.assert_called_once_with(timeout=100)
 
+    def test_publishes_data_with_client_timeout_when_blocking_by_default(
+        self, mock_future, publisher
+    ):
+        publisher._timeout = 100.0
+        publisher._blocking = True
+        publisher.publish(topic="order-cancelled", data={"foo": "bar"})
+
+        publisher._client.publish.return_value = mock_future
+        publisher._client.publish.assert_called_with(
+            ANY, b'{"foo": "bar"}', published_at=ANY
+        )
+        mock_future.result.assert_called_once_with(timeout=100)
+
+    def test_publishes_data_non_blocking_by_default(self, mock_future, publisher):
+        publisher._timeout = 100.0
+        publisher.publish(topic="order-cancelled", data={"foo": "bar"})
+
+        publisher._client.publish.return_value = mock_future
+        publisher._client.publish.assert_called_with(
+            ANY, b'{"foo": "bar"}', published_at=ANY
+        )
+        mock_future.result.assert_not_called()
+
     def test_publishes_data_with_client_timeout_when_blocking_and_timeout_specified(
         self, mock_future, publisher
     ):

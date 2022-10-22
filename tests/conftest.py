@@ -48,6 +48,7 @@ def publisher(config, mock_future):
         credentials=config.credentials,
         encoder=config.encoder,
         timeout=config.publisher_timeout,
+        blocking=config.publisher_blocking,
     )
     publisher._client = MagicMock(spec=PublisherClient)
     publisher._client.publish.return_value = mock_future

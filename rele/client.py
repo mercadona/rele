@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 USE_EMULATOR = True if os.environ.get("PUBSUB_EMULATOR_HOST") else False
 DEFAULT_ENCODER_PATH = "json.JSONEncoder"
 DEFAULT_ACK_DEADLINE = 60
+DEFAULT_BLOCKING = False
 
 
 def get_google_defaults():
@@ -119,11 +120,13 @@ class Publisher:
     :param credentials: string Google Cloud Credentials.
     :param encoder: A valid `json.encoder.JSONEncoder subclass <https://docs.python.org/3/library/json.html#json.JSONEncoder>`_  # noqa
     :param timeout: float, default :ref:`settings_publisher_timeout`
+    :param blocking: boolean, default None falls back to :ref:`settings_publisher_blocking`
     """
 
-    def __init__(self, gc_project_id, credentials, encoder, timeout):
+    def __init__(self, gc_project_id, credentials, encoder, timeout, blocking=None):
         self._gc_project_id = gc_project_id
         self._timeout = timeout
+        self._blocking = blocking
         self._encoder = encoder
         if USE_EMULATOR:
             self._client = pubsub_v1.PublisherClient()
@@ -131,7 +134,7 @@ class Publisher:
             self._client = pubsub_v1.PublisherClient(credentials=credentials)
 
     def publish(
-        self, topic, data, blocking=False, timeout=None, raise_exception=True, **attrs
+        self, topic, data, blocking=None, timeout=None, raise_exception=True, **attrs
     ):
         """Publishes message to Google PubSub topic.
 
@@ -160,12 +163,14 @@ class Publisher:
 
         :param topic: string topic to publish the data.
         :param data: dict with the content of the message.
-        :param blocking: boolean
+        :param blocking: boolean, default None falls back to :ref:`settings_publisher_blocking`
         :param timeout: float, default None falls back to :ref:`settings_publisher_timeout`
         :param raise_exception: boolean. If True, exceptions coming from PubSub will be raised
         :param attrs: additional string parameters to be published.
         :return: `Future <https://googleapis.github.io/google-cloud-python/latest/pubsub/subscriber/api/futures.html>`_  # noqa
         """
+        if blocking is None:
+            blocking = self._blocking
 
         attrs["published_at"] = str(time.time())
         run_middleware_hook("pre_publish", topic, data, attrs)
