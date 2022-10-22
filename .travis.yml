@@ -1,4 +1,4 @@
-dist: xenial
+dist: bionic
 sudo: false
 notifications:
   email: false
@@ -11,8 +11,7 @@ addons:
 language: python
 python:
   - "3.6"
-  - "3.8"
-  - "3.9"
+  - "3.10"
 
 install:
   - make install-requirements
