@@ -3,11 +3,6 @@ sudo: false
 notifications:
   email: false
 
-services:
-  - postgresql
-addons:
-  postgresql: "9.6"
-
 language: python
 python:
   - "3.6"
@@ -21,7 +16,6 @@ install:
 
 before_script:
   - make lint
-  - psql -c 'create database travis_ci_test;' -U postgres
 
 script:
   - make coverage
