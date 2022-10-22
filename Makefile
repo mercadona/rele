@@ -21,9 +21,13 @@ clean-tests: ## remove pytest artifacts
 	rm -fr .pytest_cache/
 	rm -fr htmlcov/
 
-lint: ## check style with flake8
+lint: ## check for coding style issues
 	black . --check --diff
 	isort . --check-only
+
+lint-fix: ## try to automagically fix coding style issues
+	black . --diff
+	isort .
 
 test: ## run tests quickly with the default Python
 	python runtests.py tests
