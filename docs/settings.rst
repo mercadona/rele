@@ -159,4 +159,4 @@ library behavior, please set this value to 10.
 **Optional**
 
 Boolean function that applies a global filter on all subscriptions.
-For more information, please see `Filtering Messages section <https://mercadonarele.readthedocs.io/en/latest/guides/filters.html#global-filter>`.
+For more information, please see `Filtering Messages section <https://mercadonarele.readthedocs.io/en/latest/guides/filters.html#global-filter>`_.
