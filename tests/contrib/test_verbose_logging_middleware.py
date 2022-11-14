@@ -3,10 +3,10 @@ from unittest.mock import MagicMock
 
 import pytest
 from google.cloud import pubsub_v1
-from tests.subs import sub_stub
 
 from rele.contrib.logging_middleware import LoggingMiddleware
 from rele.contrib.verbose_logging_middleware import VerboseLoggingMiddleware
+from tests.subs import sub_stub
 
 
 @pytest.fixture
