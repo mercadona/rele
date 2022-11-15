@@ -13,6 +13,7 @@ def init_global_publisher(config):
             credentials=config.credentials,
             encoder=config.encoder,
             timeout=config.publisher_timeout,
+            blocking=config.publisher_blocking,
         )
     return _publisher
 
