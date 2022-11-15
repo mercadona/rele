@@ -76,6 +76,7 @@ class TestConfig:
             "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
             "MIDDLEWARE": ["rele.contrib.DjangoDBMiddleware"],
             "ENCODER": custom_encoder,
+            "PUBLISHER_BLOCKING": True,
         }
 
         config = Config(settings)
@@ -85,6 +86,7 @@ class TestConfig:
         assert config.gc_project_id == project_id
         assert isinstance(config.credentials, service_account.Credentials)
         assert config.middleware == ["rele.contrib.DjangoDBMiddleware"]
+        assert config.publisher_blocking is True
 
     def test_inits_service_account_creds_when_credential_path_given(self, project_id):
         settings = {
@@ -120,6 +122,7 @@ class TestConfig:
         assert config.credentials is None
         assert config.middleware == ["rele.contrib.LoggingMiddleware"]
         assert config.encoder == json.JSONEncoder
+        assert config.publisher_blocking is False
 
     @patch.dict(
         os.environ,
@@ -141,3 +144,4 @@ class TestConfig:
         assert isinstance(config.credentials, google.oauth2.service_account.Credentials)
         assert config.middleware == ["rele.contrib.LoggingMiddleware"]
         assert config.encoder == json.JSONEncoder
+        assert config.publisher_blocking is False

@@ -4,7 +4,12 @@ import warnings
 
 from google.oauth2 import service_account
 
-from .client import DEFAULT_ACK_DEADLINE, DEFAULT_ENCODER_PATH, get_google_defaults
+from .client import (
+    DEFAULT_ACK_DEADLINE,
+    DEFAULT_BLOCKING,
+    DEFAULT_ENCODER_PATH,
+    get_google_defaults,
+)
 from .middleware import default_middleware, register_middleware
 from .publishing import init_global_publisher
 from .subscription import Subscription
@@ -31,6 +36,7 @@ class Config:
             "ACK_DEADLINE",
             os.environ.get("DEFAULT_ACK_DEADLINE", DEFAULT_ACK_DEADLINE),
         )
+        self.publisher_blocking = setting.get("PUBLISHER_BLOCKING", DEFAULT_BLOCKING)
         self._encoder_path = setting.get("ENCODER_PATH", DEFAULT_ENCODER_PATH)
         self.publisher_timeout = setting.get("PUBLISHER_TIMEOUT", 3.0)
         self.threads_per_subscription = setting.get("THREADS_PER_SUBSCRIPTION", 2)
