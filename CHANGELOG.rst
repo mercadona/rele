@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.7.0 (2022-11-15)
+-------------------
+* [Added] Add PUBLISHER_BLOCKING setting
+* [Changed] Provide a `subscription_message` argument of a consistent data type to all hooks
+* [Changed] Fix rendering of links in docs
+* [Changed] Add improvements for local development
+
 1.6.0 (2022-08-03)
 -------------------
 * [Added] Implement auto restart of the consumption when futures are done or cancelled. (#226)
