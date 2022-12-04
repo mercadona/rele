@@ -15,7 +15,7 @@ Changelog
 
 1.4.0 (2022-04-13)
 -------------------
-* [Added] Added a VerboseLoggingMiddleware that does not truncate mesage payload. (#218)
+* [Added] Added a VerboseLoggingMiddleware that does not truncate message payload. (#218)
 
 1.3.0 (2022-04-04)
 -------------------
@@ -23,7 +23,7 @@ Changelog
 
 1.2.0 (2021-12-10)
 -------------------
-* [CHANGED] TimeotError from publisher (#212)
+* [CHANGED] TimeoutError from publisher (#212)
 * Added filter_subs_by setting in documentation (#208)
 * Automatic topic creation (#206)
 * Log post publish success (#204)

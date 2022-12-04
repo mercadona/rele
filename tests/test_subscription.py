@@ -83,7 +83,7 @@ class TestSubscription:
 
         assert response is None
 
-    def test_sub_executes_when_message_attributes_matches_multiple_criterias(
+    def test_sub_executes_when_message_attributes_matches_multiple_criteria(
         self,
     ):
         data = {"name": "my_new_photo.jpeg"}
@@ -104,7 +104,7 @@ class TestSubscription:
             (None, None),
         ],
     )
-    def test_sub_is_not_executed_when_message_attribs_dont_match_all_criterias(
+    def test_sub_is_not_executed_when_message_attribs_dont_match_all_criteria(
         self, type, format
     ):
         data = {"name": "my_new_photo.jpeg"}
@@ -235,7 +235,7 @@ class TestCallback:
             "I am a task doing " "stuff with ID 123 (es)"
         )
 
-    def test_log_when_execution_is_succesful(
+    def test_log_when_execution_is_successful(
         self, message_wrapper, caplog, published_at
     ):
         callback = Callback(sub_stub)
