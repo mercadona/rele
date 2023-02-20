@@ -27,7 +27,9 @@ class VerboseLoggingMiddleware(LoggingMiddleware):
             extra={
                 "metrics": {
                     "name": "subscriptions",
-                    "data": self._build_data_metrics(subscription, message, "succeeded", start_time),
+                    "data": self._build_data_metrics(
+                        subscription, message, "succeeded", start_time
+                    ),
                 },
                 "subscription_message": str(_VerboseMessage(message)),
             },
@@ -39,7 +41,7 @@ class VerboseLoggingMiddleware(LoggingMiddleware):
         super().post_process_message_failure(
             subscription, exception, start_time, _VerboseMessage(message)
         )
-    
+
 
 class _VerboseMessage:
     def __init__(self, message):

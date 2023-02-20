@@ -1,11 +1,11 @@
-from datetime import datetime
 import queue
+from datetime import datetime
 from unittest.mock import MagicMock
 
 import pytest
 from google.cloud import pubsub_v1
-from rele.config import Config
 
+from rele.config import Config
 from rele.contrib.logging_middleware import LoggingMiddleware
 from rele.contrib.verbose_logging_middleware import VerboseLoggingMiddleware
 from tests.subs import sub_stub
@@ -95,7 +95,9 @@ class TestVerboseLoggingMiddleware:
 
         assert message_log == expected_message_log
 
-    def test_logs_message_data_when_message_is_successfully_published(self, verbose_logging_middleware, caplog):
+    def test_logs_message_data_when_message_is_successfully_published(
+        self, verbose_logging_middleware, caplog
+    ):
         message_data = {
             "id": 123,
             "key": "confirmed",
@@ -103,7 +105,9 @@ class TestVerboseLoggingMiddleware:
         }
         message_attributes = {"published_at": 1.0}
 
-        verbose_logging_middleware.post_publish_success("pubsub-topic", message_data, message_attributes)
+        verbose_logging_middleware.post_publish_success(
+            "pubsub-topic", message_data, message_attributes
+        )
 
         emitted_log = caplog.records[0]
         assert emitted_log.message == "Successfully published to pubsub-topic"
@@ -117,12 +121,21 @@ class TestVerboseLoggingMiddleware:
         )
 
     def test_logs_message_data_when_message_is_successfully_processed(
-        self, verbose_logging_middleware, long_message_wrapper, expected_message_log, caplog
+        self,
+        verbose_logging_middleware,
+        long_message_wrapper,
+        expected_message_log,
+        caplog,
     ):
-        verbose_logging_middleware.post_process_message_success(sub_stub, None, long_message_wrapper)
+        verbose_logging_middleware.post_process_message_success(
+            sub_stub, None, long_message_wrapper
+        )
 
         emitted_log = caplog.records[-1]
-        assert emitted_log.message == "Successfully processed message for rele-some-cool-topic - sub_stub"
+        assert (
+            emitted_log.message
+            == "Successfully processed message for rele-some-cool-topic - sub_stub"
+        )
         assert emitted_log.metrics == {
             "name": "subscriptions",
             "data": {
