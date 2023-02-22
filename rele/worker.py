@@ -56,7 +56,7 @@ class Worker:
         """
         run_middleware_hook("pre_worker_start")
         for subscription in self._subscriptions:
-            self._boostrap_consumption(subscription)
+            self._bootstrap_consumption(subscription)
         run_middleware_hook("post_worker_start")
 
     def run_forever(self, sleep_interval=1):
@@ -92,7 +92,7 @@ class Worker:
         run_middleware_hook("post_worker_stop")
         sys.exit(0)
 
-    def _boostrap_consumption(self, subscription):
+    def _bootstrap_consumption(self, subscription):
         if subscription in self._futures:
             self._futures[subscription].cancel()
 
@@ -114,7 +114,7 @@ class Worker:
             for subscription, future in self._futures.items():
                 if future.cancelled() or future.done():
                     logger.info(f"Restarting consumption of {subscription.name}.")
-                    self._boostrap_consumption(subscription)
+                    self._bootstrap_consumption(subscription)
 
             time.sleep(sleep_interval)
 
