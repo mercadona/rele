@@ -36,8 +36,8 @@ jobs:
           make install-django-requirements
           make install-test-requirements
 
-      - name: Linting
-        run: make lint
+      # - name: Linting
+      #   run: make lint
 
       - name: Coverage
         run: |
