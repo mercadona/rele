@@ -63,7 +63,7 @@ class TestVerboseLoggingMiddleware:
                 "APP_NAME": "rele",
                 "SUB_PREFIX": "rele",
                 "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
-                "ENCODER_PATH": "rest_framework.utils.encoders.JSONEncoder",
+                "ENCODER_PATH": "django.core.serializers.json.DjangoJSONEncoder",
                 "MIDDLEWARE": ["rele.contrib.LoggingMiddleware"],
             }
         )
