@@ -60,11 +60,9 @@ class TestLoadSubscriptions:
         )
 
     def test_returns_sub_value_when_filtered_value_applied(self, subscriptions):
-
         assert subscriptions[-1]({"id": 4}, lang="en") == 4
 
     def test_returns_none_when_filtered_value_does_not_apply(self, subscriptions):
-
         assert subscriptions[0]({"id": 4}, lang="es") is None
 
 
