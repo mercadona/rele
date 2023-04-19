@@ -8,6 +8,8 @@ from .middleware import run_middleware_hook
 
 logger = logging.getLogger(__name__)
 
+def json_deserializer(message):
+    return json.loads(message.data.decode("utf-8"))
 
 class Subscription:
     """The Subscription class
@@ -35,7 +37,14 @@ class Subscription:
     """
 
     def __init__(
-        self, func, topic, prefix="", suffix="", filter_by=None, backend_filter_by=None
+        self,
+        func,
+        topic,
+        prefix="",
+        suffix="",
+        filter_by=None,
+        backend_filter_by=None,
+        deserializer=json_deserializer,
     ):
         self._func = func
         self.topic = topic
@@ -43,6 +52,7 @@ class Subscription:
         self._suffix = suffix
         self._filters = self._init_filters(filter_by)
         self.backend_filter_by = backend_filter_by
+        self._deserializer = self._init_deserializer(deserializer)
 
     def _init_filters(self, filter_by):
         if filter_by and not (
@@ -60,6 +70,11 @@ class Subscription:
             return [filter_by]
 
         return None
+
+    def _init_deserializer(self, deserializer):
+        if not callable(deserializer):
+            raise ValueError("deserializer must be a callable or None.")
+        return deserializer
 
     @property
     def name(self):
@@ -109,8 +124,8 @@ class Callback:
         start_time = time.time()
 
         try:
-            data = json.loads(message.data.decode("utf-8"))
-        except json.JSONDecodeError as e:
+            data = self._subscription._deserializer(message)
+        except Exception as e:
             message.ack()
             run_middleware_hook(
                 "post_process_message_failure",
@@ -145,7 +160,14 @@ class Callback:
             run_middleware_hook("post_process_message")
 
 
-def sub(topic, prefix=None, suffix=None, filter_by=None, backend_filter_by=None):
+def sub(
+    topic,
+    prefix=None,
+    suffix=None,
+    filter_by=None,
+    backend_filter_by=None,
+    deserializer=json_deserializer,
+):
     """Decorator function that makes declaring a PubSub Subscription simple.
 
     The Subscriber returned will automatically create and name
@@ -181,6 +203,11 @@ def sub(topic, prefix=None, suffix=None, filter_by=None, backend_filter_by=None)
         def sub_process_landscape_photos(data, **kwargs):
             pass
 
+        @sub(topic='string-messages', deserializer=lambda x: x.data.decode('utf-8'))
+        def sub_process_non_json(data, **kwargs):
+            pass
+
+
     :param topic: string The topic that is being subscribed to.
     :param prefix: string An optional prefix to the subscription name.
                    Useful to namespace your subscription with your project name
@@ -190,6 +217,8 @@ def sub(topic, prefix=None, suffix=None, filter_by=None, backend_filter_by=None)
     :param filter_by: Union[function, list] An optional function or tuple of
                       functions that filters the messages to be processed by
                       the sub regarding their attributes.
+    :param deserializer: function An optional deserialization function that
+                        replaces the default json deserialization.
     :return: :class:`~rele.subscription.Subscription`
     """
 
@@ -214,6 +243,7 @@ def sub(topic, prefix=None, suffix=None, filter_by=None, backend_filter_by=None)
             suffix=suffix,
             filter_by=filter_by,
             backend_filter_by=backend_filter_by,
+            deserializer=deserializer,
         )
 
     return decorator
