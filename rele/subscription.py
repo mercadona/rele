@@ -8,6 +8,8 @@ from .middleware import run_middleware_hook
 
 logger = logging.getLogger(__name__)
 
+def json_deserializer(message):
+    return json.loads(message.data.decode("utf-8"))
 
 class Subscription:
     """The Subscription class
@@ -42,7 +44,7 @@ class Subscription:
         suffix="",
         filter_by=None,
         backend_filter_by=None,
-        deserializer=lambda x: json.loads(x.data.decode("utf-8")),
+        deserializer=json_deserializer,
     ):
         self._func = func
         self.topic = topic
@@ -164,7 +166,7 @@ def sub(
     suffix=None,
     filter_by=None,
     backend_filter_by=None,
-    deserializer=lambda x: json.loads(x.data.decode("utf-8")),
+    deserializer=json_deserializer,
 ):
     """Decorator function that makes declaring a PubSub Subscription simple.
 
