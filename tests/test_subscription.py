@@ -361,3 +361,12 @@ class TestDecorator:
             "Subscription function tests.test_subscription.<lambda> is outside a subs "
             "module that will not be discovered." in caplog.text
         )
+
+    def test_exponential_backoff_is_applied_when_specified(self):
+        subscription = sub(
+            topic="topic",
+            prefix="rele",
+            retry_policy={"minimum_backoff": 1, "maximum_backoff": 10}
+        )(lambda data, **kwargs: None)
+
+        assert subscription.retry_policy == {"minimum_backoff": 1, "maximum_backoff": 10}

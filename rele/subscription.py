@@ -153,7 +153,7 @@ class Callback:
             run_middleware_hook("post_process_message")
 
 
-def sub(topic, prefix=None, suffix=None, filter_by=None, backend_filter_by=None):
+def sub(topic, prefix=None, suffix=None, filter_by=None, backend_filter_by=None, retry_policy=None):
     """Decorator function that makes declaring a PubSub Subscription simple.
 
     The Subscriber returned will automatically create and name
@@ -198,6 +198,12 @@ def sub(topic, prefix=None, suffix=None, filter_by=None, backend_filter_by=None)
     :param filter_by: Union[function, list] An optional function or tuple of
                       functions that filters the messages to be processed by
                       the sub regarding their attributes.
+    :param retry_policy: An optional dictionary to define the policy that specifies
+                        how Cloud Pub/Sub retries message delivery. It has two keys;
+                        minimum_backoff: Value should be between 0 and 600 seconds.
+                            Defaults to 10 seconds.
+                        maximum_backoff: Value should be between 0 and 600 seconds.
+                            Defaults to 600 seconds.
     :return: :class:`~rele.subscription.Subscription`
     """
 
@@ -222,6 +228,7 @@ def sub(topic, prefix=None, suffix=None, filter_by=None, backend_filter_by=None)
             suffix=suffix,
             filter_by=filter_by,
             backend_filter_by=backend_filter_by,
+            retry_policy=retry_policy
         )
 
     return decorator
