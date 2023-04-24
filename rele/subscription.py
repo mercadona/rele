@@ -44,6 +44,7 @@ class Subscription:
         backend_filter_by=None,
         retry_policy=None,
     ):
+        self._validate_filter_by(filter_by)
         self._validate_retry_policy(retry_policy)
 
         self._func = func
@@ -67,7 +68,7 @@ class Subscription:
         if retry_policy.get("minimum_backoff") > retry_policy.get("maximum_backoff"):
             raise ValueError("minimum_backoff should be less than maximum_backoff.")
 
-    def _init_filters(self, filter_by):
+    def _validate_filter_by(self, filter_by):
         if filter_by and not (
             callable(filter_by)
             or (
@@ -77,6 +78,7 @@ class Subscription:
         ):
             raise ValueError("Filter_by must be a callable or a list of callables.")
 
+    def _init_filters(self, filter_by):
         if isinstance(filter_by, Iterable):
             return filter_by
         elif filter_by:
