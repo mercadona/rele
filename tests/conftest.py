@@ -27,6 +27,7 @@ def config(project_id):
             "SUB_PREFIX": "rele",
             "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
             "MIDDLEWARE": ["rele.contrib.LoggingMiddleware"],
+            "DEFAULT_RETRY_POLICY": {"minimum_backoff": 5, "maximum_backoff": 30},
         }
     )
 

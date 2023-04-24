@@ -35,7 +35,14 @@ class Subscription:
     """
 
     def __init__(
-        self, func, topic, prefix="", suffix="", filter_by=None, backend_filter_by=None
+        self,
+        func,
+        topic,
+        prefix="",
+        suffix="",
+        filter_by=None,
+        backend_filter_by=None,
+        retry_policy=None,
     ):
         self._func = func
         self.topic = topic
@@ -43,6 +50,7 @@ class Subscription:
         self._suffix = suffix
         self._filters = self._init_filters(filter_by)
         self.backend_filter_by = backend_filter_by
+        self.retry_policy = retry_policy
 
     def _init_filters(self, filter_by):
         if filter_by and not (
@@ -60,6 +68,7 @@ class Subscription:
             return [filter_by]
 
         return None
+
 
     @property
     def name(self):

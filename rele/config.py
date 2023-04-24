@@ -42,6 +42,7 @@ class Config:
         self.threads_per_subscription = setting.get("THREADS_PER_SUBSCRIPTION", 2)
         self.filter_by = setting.get("FILTER_SUBS_BY")
         self._credentials = None
+        self.retry_policy = setting.get("DEFAULT_RETRY_POLICY")
 
     @property
     def encoder(self):
