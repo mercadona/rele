@@ -26,7 +26,7 @@ def worker(config):
         config.credentials,
         default_ack_deadline=60,
         threads_per_subscription=10,
-        default_retry_policy=config.retry_policy
+        default_retry_policy=config.retry_policy,
     )
 
 
@@ -162,5 +162,11 @@ class TestCreateAndRun:
         create_and_run(subscriptions, config)
 
         mock_worker.assert_called_with(
-            subscriptions, "rele-test", ANY, 60, 2, {"minimum_backoff": 5, "maximum_backoff": 30})
+            subscriptions,
+            "rele-test",
+            ANY,
+            60,
+            2,
+            {"minimum_backoff": 5, "maximum_backoff": 30},
+        )
         mock_worker.return_value.run_forever.assert_called_once_with()

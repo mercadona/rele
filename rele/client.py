@@ -40,7 +40,13 @@ class Subscriber:
     :param default_ack_deadline: int Ack Deadline defined in settings
     """
 
-    def __init__(self, gc_project_id, credentials, default_ack_deadline=None, default_retry_policy=None):
+    def __init__(
+        self,
+        gc_project_id,
+        credentials,
+        default_ack_deadline=None,
+        default_retry_policy=None,
+    ):
         self._gc_project_id = gc_project_id
         self._ack_deadline = default_ack_deadline or DEFAULT_ACK_DEADLINE
         self.credentials = credentials if not USE_EMULATOR else None
@@ -90,9 +96,15 @@ class Subscriber:
 
         retry_policy = subscription.retry_policy or self._retry_policy
         if retry_policy:
-            minimum_backoff = duration_pb2.Duration(seconds=retry_policy.get("minimum_backoff"))
-            maximum_backoff = duration_pb2.Duration(seconds=retry_policy.get("maximum_backoff"))
-            request["retry_policy"] = RetryPolicy(minimum_backoff=minimum_backoff, maximum_backoff=maximum_backoff)
+            minimum_backoff = duration_pb2.Duration(
+                seconds=retry_policy.get("minimum_backoff")
+            )
+            maximum_backoff = duration_pb2.Duration(
+                seconds=retry_policy.get("maximum_backoff")
+            )
+            request["retry_policy"] = RetryPolicy(
+                minimum_backoff=minimum_backoff, maximum_backoff=maximum_backoff
+            )
 
         self._client.create_subscription(request=request)
 

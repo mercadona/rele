@@ -69,7 +69,6 @@ class Subscription:
 
         return None
 
-
     @property
     def name(self):
         name_parts = [self._prefix, self.topic, self._suffix]
