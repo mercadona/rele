@@ -170,7 +170,14 @@ class Callback:
             run_middleware_hook("post_process_message")
 
 
-def sub(topic, prefix=None, suffix=None, filter_by=None, backend_filter_by=None, retry_policy=None):
+def sub(
+    topic,
+    prefix=None,
+    suffix=None,
+    filter_by=None,
+    backend_filter_by=None,
+    retry_policy=None,
+):
     """Decorator function that makes declaring a PubSub Subscription simple.
 
     The Subscriber returned will automatically create and name
@@ -245,7 +252,7 @@ def sub(topic, prefix=None, suffix=None, filter_by=None, backend_filter_by=None,
             suffix=suffix,
             filter_by=filter_by,
             backend_filter_by=backend_filter_by,
-            retry_policy=retry_policy
+            retry_policy=retry_policy,
         )
 
     return decorator

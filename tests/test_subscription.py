@@ -131,18 +131,33 @@ class TestSubscription:
                 func=lambda x: None, topic="topic", prefix="rele", filter_by=(1,)
             )
 
-    @pytest.mark.parametrize("retry_policy", [
-        1,
-        (1, 2),
-        {"minimum_viable_product": 1, "maximum_backoff": 10},
-    ])
+    @pytest.mark.parametrize(
+        "retry_policy",
+        [
+            1,
+            (1, 2),
+            {"minimum_viable_product": 1, "maximum_backoff": 10},
+        ],
+    )
     def test_value_error_is_raised_when_bad_format_is_provided(self, retry_policy):
         with pytest.raises(ValueError):
-            Subscription(func=lambda x: None, topic="topic", prefix="rele", retry_policy=retry_policy)
+            Subscription(
+                func=lambda x: None,
+                topic="topic",
+                prefix="rele",
+                retry_policy=retry_policy,
+            )
 
-    def test_value_error_is_raised_when_maximum_backoff_is_smaller_than_minimum_backoff(self):
+    def test_value_error_is_raised_when_maximum_backoff_is_smaller_than_minimum_backoff(
+        self,
+    ):
         with pytest.raises(ValueError):
-            Subscription(func=lambda x: None, topic="topic", prefix="rele", retry_policy={"minimum_backoff": 10, "maximum_backoff": 1})
+            Subscription(
+                func=lambda x: None,
+                topic="topic",
+                prefix="rele",
+                retry_policy={"minimum_backoff": 10, "maximum_backoff": 1},
+            )
 
 
 class TestCallback:
@@ -379,7 +394,10 @@ class TestDecorator:
         subscription = sub(
             topic="topic",
             prefix="rele",
-            retry_policy={"minimum_backoff": 1, "maximum_backoff": 10}
+            retry_policy={"minimum_backoff": 1, "maximum_backoff": 10},
         )(lambda data, **kwargs: None)
 
-        assert subscription.retry_policy == {"minimum_backoff": 1, "maximum_backoff": 10}
+        assert subscription.retry_policy == {
+            "minimum_backoff": 1,
+            "maximum_backoff": 10,
+        }
