@@ -112,7 +112,7 @@ class TestSubscription:
 
         assert response is None
 
-    def test_raises_error_when_filter_by_is_not_valid(self, caplog):
+    def test_raises_error_when_filter_by_is_not_valid(self):
         Subscription(
             func=lambda x: None, topic="topic", prefix="rele", filter_by=lambda x: True
         )
@@ -130,6 +130,19 @@ class TestSubscription:
             Subscription(
                 func=lambda x: None, topic="topic", prefix="rele", filter_by=(1,)
             )
+
+    @pytest.mark.parametrize("retry_policy", [
+        1,
+        (1, 2),
+        {"minimum_viable_product": 1, "maximum_backoff": 10},
+    ])
+    def test_value_error_is_raised_when_bad_format_is_provided(self, retry_policy):
+        with pytest.raises(ValueError):
+            Subscription(func=lambda x: None, topic="topic", prefix="rele", retry_policy=retry_policy)
+
+    def test_value_error_is_raised_when_maximum_backoff_is_smaller_than_minimum_backoff(self):
+        with pytest.raises(ValueError):
+            Subscription(func=lambda x: None, topic="topic", prefix="rele", retry_policy={"minimum_backoff": 10, "maximum_backoff": 1})
 
 
 class TestCallback:
@@ -362,7 +375,7 @@ class TestDecorator:
             "module that will not be discovered." in caplog.text
         )
 
-    def test_exponential_backoff_is_applied_when_specified(self):
+    def test_retry_policy_is_applied_when_specified(self):
         subscription = sub(
             topic="topic",
             prefix="rele",

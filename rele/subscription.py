@@ -44,6 +44,8 @@ class Subscription:
         backend_filter_by=None,
         retry_policy=None,
     ):
+        self._validate_retry_policy(retry_policy)
+
         self._func = func
         self.topic = topic
         self._prefix = prefix
@@ -51,6 +53,19 @@ class Subscription:
         self._filters = self._init_filters(filter_by)
         self.backend_filter_by = backend_filter_by
         self.retry_policy = retry_policy
+
+    def _validate_retry_policy(self, retry_policy):
+        if retry_policy is None:
+            return
+
+        if not isinstance(retry_policy, dict):
+            raise ValueError("Wrong retry_policy type. Must be a dictionary.")
+
+        if not ({"minimum_backoff", "maximum_backoff"} == set(retry_policy.keys())):
+            raise ValueError("minimum_backoff and maximum_backoff must be provided.")
+
+        if retry_policy.get("minimum_backoff") > retry_policy.get("maximum_backoff"):
+            raise ValueError("minimum_backoff should be less than maximum_backoff.")
 
     def _init_filters(self, filter_by):
         if filter_by and not (
