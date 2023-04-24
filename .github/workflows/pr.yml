@@ -31,4 +31,6 @@ jobs:
           make coverage
           codecov
 
+      - name: Tests
+        run: make test
 
