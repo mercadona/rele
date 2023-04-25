@@ -9,7 +9,7 @@ import google.auth
 from google.api_core import exceptions
 from google.cloud import pubsub_v1
 from google.protobuf import duration_pb2
-from google.pubsub_v1 import RetryPolicy
+from google.pubsub_v1 import RetryPolicy as GCloudRetryPolicy
 
 from rele.middleware import run_middleware_hook
 
@@ -38,6 +38,7 @@ class Subscriber:
     :param gc_project_id: str :ref:`settings_project_id` .
     :param credentials: obj :meth:`~rele.config.Config.credentials`.
     :param default_ack_deadline: int Ack Deadline defined in settings
+    :param default_retry_policy: RetryPolicy Rele's RetryPolicy defined in settings
     """
 
     def __init__(
@@ -95,18 +96,23 @@ class Subscriber:
             request["filter"] = subscription.backend_filter_by
 
         retry_policy = subscription.retry_policy or self._retry_policy
+
         if retry_policy:
-            minimum_backoff = duration_pb2.Duration(
-                seconds=retry_policy.get("minimum_backoff")
-            )
-            maximum_backoff = duration_pb2.Duration(
-                seconds=retry_policy.get("maximum_backoff")
-            )
-            request["retry_policy"] = RetryPolicy(
-                minimum_backoff=minimum_backoff, maximum_backoff=maximum_backoff
-            )
+            request["retry_policy"] = self._build_gcloud_retry_policy(retry_policy)
 
         self._client.create_subscription(request=request)
+
+    def _build_gcloud_retry_policy(self, rele_retry_policy):
+        minimum_backoff = duration_pb2.Duration(
+            seconds=rele_retry_policy.minimum_backoff
+        )
+        maximum_backoff = duration_pb2.Duration(
+            seconds=rele_retry_policy.maximum_backoff
+        )
+
+        return GCloudRetryPolicy(
+            minimum_backoff=minimum_backoff, maximum_backoff=maximum_backoff
+        )
 
     def consume(self, subscription_name, callback, scheduler):
         """Begin listening to topic from the SubscriberClient.

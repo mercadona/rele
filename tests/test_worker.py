@@ -8,6 +8,7 @@ from google.cloud.pubsub_v1.subscriber.scheduler import ThreadScheduler
 
 from rele import Subscriber, Worker, sub
 from rele.middleware import register_middleware
+from rele.retry_policy import RetryPolicy
 from rele.subscription import Callback
 from rele.worker import create_and_run
 
@@ -157,9 +158,11 @@ class TestCreateAndRun:
         with patch("rele.worker.Worker", autospec=True) as p:
             yield p
 
-    def test_waits_forever_when_called_with_config_and_subs(self, config, mock_worker):
+    def test_waits_forever_when_called_with_config_and_subs(
+        self, config_with_retry_policy, mock_worker
+    ):
         subscriptions = (sub_stub,)
-        create_and_run(subscriptions, config)
+        create_and_run(subscriptions, config_with_retry_policy)
 
         mock_worker.assert_called_with(
             subscriptions,
@@ -167,6 +170,6 @@ class TestCreateAndRun:
             ANY,
             60,
             2,
-            {"minimum_backoff": 5, "maximum_backoff": 30},
+            RetryPolicy(5, 30),
         )
         mock_worker.return_value.run_forever.assert_called_once_with()
