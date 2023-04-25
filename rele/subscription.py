@@ -208,15 +208,9 @@ def sub(
     :param filter_by: Union[function, list] An optional function or tuple of
                       functions that filters the messages to be processed by
                       the sub regarding their attributes.
-    :param retry_policy: An optional dictionary to define the policy that specifies
-                        how Cloud Pub/Sub retries message delivery. It has two keys;
-                        minimum_backoff: Value should be between 0 and 600 seconds.
-                            Defaults to 10 seconds.
-                        maximum_backoff: Value should be between 0 and 600 seconds.
-                            Defaults to 600 seconds.
+    :param retry_policy: obj :class:`~rele.retry_policy.RetryPolicy`
     :return: :class:`~rele.subscription.Subscription`
     """
-
     def decorator(func):
         args_spec = getfullargspec(func)
         if len(args_spec.args) != 1 or not args_spec.varkw:

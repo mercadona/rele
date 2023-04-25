@@ -3,6 +3,14 @@ from dataclasses import dataclass
 
 @dataclass
 class RetryPolicy:
+    """A RetryPolicy object encapsulates the validation rules.
+
+        Defines retry policy settings and ensures the values are correct.
+        If provided values are wrong, a ValidationError is raised.
+
+        :param minimum_backoff: int Accepts values greater than 0
+        :param maximum_backoff: int Accepts values greater than minimum_backoff.
+        """
     minimum_backoff: None
     maximum_backoff: None
 

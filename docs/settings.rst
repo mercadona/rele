@@ -30,10 +30,7 @@ Example::
         'ACK_DEADLINE': 120,
         'PUBLISHER_TIMEOUT': 3.0,
         'FILTER_SUBS_BY': boolean_function,
-        'DEFAULT_RETRY_POLICY': {
-            'minimum_backoff': 10,
-            'maximum_backoff': 60,
-        }
+        'DEFAULT_RETRY_POLICY': RetryPolicy(10, 50),
     }
 
 ``GC_PROJECT_ID``
@@ -185,7 +182,7 @@ For more information, please see `Filtering Messages section <https://mercadonar
 
 **Optional**
 
-Dictionary with two keys: `minimum_backoff` and `maximum_backoff`, that specifies in seconds how Pub/Sub retries message delivery for all the subscriptions.
+A RetryPolicy object which must be instantiated with `minimum_backoff` and `maximum_backoff`, that specifies in seconds how Pub/Sub retries message delivery for all the subscriptions.
 
 If not set, the default retry policy is applied, meaning a minimum backoff of 10 seconds and a maximum backoff of 60 seconds.
 This generally implies that messages will be retried as soon as possible for healthy subscribers.
