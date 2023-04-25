@@ -211,6 +211,7 @@ def sub(
     :param retry_policy: obj :class:`~rele.retry_policy.RetryPolicy`
     :return: :class:`~rele.subscription.Subscription`
     """
+
     def decorator(func):
         args_spec = getfullargspec(func)
         if len(args_spec.args) != 1 or not args_spec.varkw:
