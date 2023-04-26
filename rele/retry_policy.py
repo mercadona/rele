@@ -12,8 +12,8 @@ class RetryPolicy:
     :param maximum_backoff: int Accepts values greater than minimum_backoff.
     """
 
-    minimum_backoff: None
-    maximum_backoff: None
+    minimum_backoff: int
+    maximum_backoff: int
 
     def __init__(self, minimum_backoff, maximum_backoff):
         self._guard_against_wrong_parameters(minimum_backoff, maximum_backoff)
