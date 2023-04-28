@@ -1,4 +1,4 @@
-__version__ = "1.8.0-beta"
+__version__ = "1.8.0"
 
 try:
     import django
