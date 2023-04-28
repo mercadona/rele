@@ -29,8 +29,11 @@ class Worker:
         credentials=None,
         default_ack_deadline=None,
         threads_per_subscription=None,
+        default_retry_policy=None,
     ):
-        self._subscriber = Subscriber(gc_project_id, credentials, default_ack_deadline)
+        self._subscriber = Subscriber(
+            gc_project_id, credentials, default_ack_deadline, default_retry_policy
+        )
         self._futures = {}
         self._subscriptions = subscriptions
         self.threads_per_subscription = threads_per_subscription
@@ -152,6 +155,7 @@ def create_and_run(subs, config):
         config.credentials,
         config.ack_deadline,
         config.threads_per_subscription,
+        config.retry_policy,
     )
 
     # to allow killing runrele worker via ctrl+c

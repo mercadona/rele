@@ -8,6 +8,8 @@ from contextlib import suppress
 import google.auth
 from google.api_core import exceptions
 from google.cloud import pubsub_v1
+from google.protobuf import duration_pb2
+from google.pubsub_v1 import RetryPolicy as GCloudRetryPolicy
 
 from rele.middleware import run_middleware_hook
 
@@ -36,13 +38,21 @@ class Subscriber:
     :param gc_project_id: str :ref:`settings_project_id` .
     :param credentials: obj :meth:`~rele.config.Config.credentials`.
     :param default_ack_deadline: int Ack Deadline defined in settings
+    :param default_retry_policy: RetryPolicy Rele's RetryPolicy defined in settings
     """
 
-    def __init__(self, gc_project_id, credentials, default_ack_deadline=None):
+    def __init__(
+        self,
+        gc_project_id,
+        credentials,
+        default_ack_deadline=None,
+        default_retry_policy=None,
+    ):
         self._gc_project_id = gc_project_id
         self._ack_deadline = default_ack_deadline or DEFAULT_ACK_DEADLINE
         self.credentials = credentials if not USE_EMULATOR else None
         self._client = pubsub_v1.SubscriberClient(credentials=credentials)
+        self._retry_policy = default_retry_policy
 
     def create_subscription(self, subscription):
         """Handles creating the subscription when it does not exists.
@@ -52,8 +62,7 @@ class Subscriber:
         have a topic to subscribe to. Which means that the topic must be
         created manually before the worker is started.
 
-        :param subscription: str Subscription name
-        :param topic: str Topic name to subscribe
+        :param subscription: obj :class:`~rele.subscription.Subscription`.
         """
         subscription_path = self._client.subscription_path(
             self._gc_project_id, subscription.name
@@ -86,7 +95,24 @@ class Subscriber:
         if subscription.backend_filter_by:
             request["filter"] = subscription.backend_filter_by
 
+        retry_policy = subscription.retry_policy or self._retry_policy
+
+        if retry_policy:
+            request["retry_policy"] = self._build_gcloud_retry_policy(retry_policy)
+
         self._client.create_subscription(request=request)
+
+    def _build_gcloud_retry_policy(self, rele_retry_policy):
+        minimum_backoff = duration_pb2.Duration(
+            seconds=rele_retry_policy.minimum_backoff
+        )
+        maximum_backoff = duration_pb2.Duration(
+            seconds=rele_retry_policy.maximum_backoff
+        )
+
+        return GCloudRetryPolicy(
+            minimum_backoff=minimum_backoff, maximum_backoff=maximum_backoff
+        )
 
     def consume(self, subscription_name, callback, scheduler):
         """Begin listening to topic from the SubscriberClient.

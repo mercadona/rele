@@ -9,6 +9,7 @@ from google.protobuf import timestamp_pb2
 
 from rele import Callback, Subscription, sub
 from rele.middleware import register_middleware
+from rele.retry_policy import RetryPolicy
 
 logger = logging.getLogger(__name__)
 
@@ -112,7 +113,7 @@ class TestSubscription:
 
         assert response is None
 
-    def test_raises_error_when_filter_by_is_not_valid(self, caplog):
+    def test_raises_error_when_filter_by_is_not_valid(self):
         Subscription(
             func=lambda x: None, topic="topic", prefix="rele", filter_by=lambda x: True
         )
@@ -361,3 +362,12 @@ class TestDecorator:
             "Subscription function tests.test_subscription.<lambda> is outside a subs "
             "module that will not be discovered." in caplog.text
         )
+
+    def test_retry_policy_is_applied_when_specified(self):
+        subscription = sub(
+            topic="topic",
+            prefix="rele",
+            retry_policy=RetryPolicy(1, 10),
+        )(lambda data, **kwargs: None)
+
+        assert subscription.retry_policy == RetryPolicy(1, 10)

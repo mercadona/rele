@@ -35,16 +35,26 @@ class Subscription:
     """
 
     def __init__(
-        self, func, topic, prefix="", suffix="", filter_by=None, backend_filter_by=None
+        self,
+        func,
+        topic,
+        prefix="",
+        suffix="",
+        filter_by=None,
+        backend_filter_by=None,
+        retry_policy=None,
     ):
+        self._validate_filter_by(filter_by)
+
         self._func = func
         self.topic = topic
         self._prefix = prefix
         self._suffix = suffix
         self._filters = self._init_filters(filter_by)
         self.backend_filter_by = backend_filter_by
+        self.retry_policy = retry_policy
 
-    def _init_filters(self, filter_by):
+    def _validate_filter_by(self, filter_by):
         if filter_by and not (
             callable(filter_by)
             or (
@@ -54,6 +64,7 @@ class Subscription:
         ):
             raise ValueError("Filter_by must be a callable or a list of callables.")
 
+    def _init_filters(self, filter_by):
         if isinstance(filter_by, Iterable):
             return filter_by
         elif filter_by:
@@ -145,7 +156,14 @@ class Callback:
             run_middleware_hook("post_process_message")
 
 
-def sub(topic, prefix=None, suffix=None, filter_by=None, backend_filter_by=None):
+def sub(
+    topic,
+    prefix=None,
+    suffix=None,
+    filter_by=None,
+    backend_filter_by=None,
+    retry_policy=None,
+):
     """Decorator function that makes declaring a PubSub Subscription simple.
 
     The Subscriber returned will automatically create and name
@@ -190,6 +208,7 @@ def sub(topic, prefix=None, suffix=None, filter_by=None, backend_filter_by=None)
     :param filter_by: Union[function, list] An optional function or tuple of
                       functions that filters the messages to be processed by
                       the sub regarding their attributes.
+    :param retry_policy: obj :class:`~rele.retry_policy.RetryPolicy`
     :return: :class:`~rele.subscription.Subscription`
     """
 
@@ -214,6 +233,7 @@ def sub(topic, prefix=None, suffix=None, filter_by=None, backend_filter_by=None)
             suffix=suffix,
             filter_by=filter_by,
             backend_filter_by=backend_filter_by,
+            retry_policy=retry_policy,
         )
 
     return decorator

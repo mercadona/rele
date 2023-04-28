@@ -29,7 +29,8 @@ Example::
         'ENCODER_PATH': 'rest_framework.utils.encoders.JSONEncoder',
         'ACK_DEADLINE': 120,
         'PUBLISHER_TIMEOUT': 3.0,
-        'FILTER_SUBS_BY': boolean_function
+        'FILTER_SUBS_BY': boolean_function,
+        'DEFAULT_RETRY_POLICY': RetryPolicy(10, 50),
     }
 
 ``GC_PROJECT_ID``
@@ -174,3 +175,15 @@ library behavior, please set this value to 10.
 
 Boolean function that applies a global filter on all subscriptions.
 For more information, please see `Filtering Messages section <https://mercadonarele.readthedocs.io/en/latest/guides/filters.html#global-filter>`_.
+
+
+``DEFAULT_RETRY_POLICY``
+----------------------------
+
+**Optional**
+
+A RetryPolicy object which must be instantiated with `minimum_backoff` and `maximum_backoff`, that specifies in seconds how Pub/Sub retries message delivery for all the subscriptions.
+
+If not set, the default retry policy is applied, meaning a minimum backoff of 10 seconds and a maximum backoff of 60 seconds.
+This generally implies that messages will be retried as soon as possible for healthy subscribers.
+RetryPolicy will be triggered on NACKs or acknowledgement deadline exceeded events for a given message.

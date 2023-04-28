@@ -12,6 +12,7 @@ from rele import Publisher
 from rele.client import Subscriber
 from rele.config import Config
 from rele.middleware import register_middleware
+from rele.retry_policy import RetryPolicy
 
 
 @pytest.fixture
@@ -27,6 +28,19 @@ def config(project_id):
             "SUB_PREFIX": "rele",
             "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
             "MIDDLEWARE": ["rele.contrib.LoggingMiddleware"],
+        }
+    )
+
+
+@pytest.fixture
+def config_with_retry_policy(project_id):
+    return Config(
+        {
+            "APP_NAME": "rele",
+            "SUB_PREFIX": "rele",
+            "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
+            "MIDDLEWARE": ["rele.contrib.LoggingMiddleware"],
+            "DEFAULT_RETRY_POLICY": RetryPolicy(5, 30),
         }
     )
 
