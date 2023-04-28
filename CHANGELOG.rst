@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.8.0 (2023-04-28)
+-------------------
+* [Added] Add retry policy to subscriptions. (#222)
+
 1.7.0 (2022-11-15)
 -------------------
 * [Added] Add PUBLISHER_BLOCKING setting
