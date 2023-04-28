@@ -1,9 +1,11 @@
 import queue
+from decimal import Decimal
 from unittest.mock import MagicMock
 
 import pytest
 from google.cloud import pubsub_v1
 
+from rele.config import Config
 from rele.contrib.logging_middleware import LoggingMiddleware
 from tests.subs import sub_stub
 
@@ -16,6 +18,11 @@ def message_data():
 @pytest.fixture
 def expected_message_data_log():
     return '{"foo": "bar"}'
+
+
+@pytest.fixture
+def expected_message_data_log_with_decimal():
+    return '{"foo": "1"}'
 
 
 @pytest.fixture
@@ -49,6 +56,16 @@ class TestLoggingMiddleware:
         logging_middleware.setup(config)
         return logging_middleware
 
+    @pytest.fixture
+    def logging_middleware_with_custom_encoder(self, logging_middleware):
+        config = Config(
+            {
+                "ENCODER_PATH": "django.core.serializers.json.DjangoJSONEncoder",
+            }
+        )
+        logging_middleware.setup(config)
+        return logging_middleware
+
     def test_message_payload_log_is_converted_to_string_on_post_publish_failure(
         self,
         logging_middleware,
@@ -63,6 +80,23 @@ class TestLoggingMiddleware:
         message_log = caplog.records[0].subscription_message
 
         assert message_log == expected_message_data_log
+
+    def test_message_payload_log_uses_custom_encoder(
+        self,
+        logging_middleware_with_custom_encoder,
+        caplog,
+        message_data,
+        expected_message_data_log_with_decimal,
+    ):
+        message_data["foo"] = Decimal(1)
+
+        logging_middleware_with_custom_encoder.post_publish_failure(
+            sub_stub, RuntimeError("💩"), message_data
+        )
+
+        message_log = caplog.records[0].subscription_message
+
+        assert message_log == expected_message_data_log_with_decimal
 
     def test_message_payload_log_is_converted_to_string_on_post_process_message_failure(
         self,
