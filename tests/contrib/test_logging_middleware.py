@@ -1,12 +1,11 @@
-from decimal import Decimal
-import os
 import queue
-from unittest.mock import MagicMock, patch
+from decimal import Decimal
+from unittest.mock import MagicMock
 
 import pytest
 from google.cloud import pubsub_v1
-from rele.config import Config
 
+from rele.config import Config
 from rele.contrib.logging_middleware import LoggingMiddleware
 from tests.subs import sub_stub
 
