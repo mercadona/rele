@@ -17,7 +17,6 @@ class LoggingMiddleware(BaseMiddleware):
     def setup(self, config, **kwargs):
         self._logger = logging.getLogger(__name__)
         self._app_name = config.app_name
-        self._encoder = config.encoder
 
     def _build_data_metrics(
         self, subscription, message, status, start_processing_time=None
@@ -72,7 +71,7 @@ class LoggingMiddleware(BaseMiddleware):
                     "name": "publications",
                     "data": {"agent": self._app_name, "topic": topic},
                 },
-                "subscription_message": json.dumps(message, cls=self._encoder),
+                "subscription_message": json.dumps(message),
             },
         )
 
