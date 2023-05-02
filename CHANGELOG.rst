@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.9.0 (2023-05-02)
+-------------------
+* [Changed] Use custom encoder in logging middleware. (#247)
+
 1.8.0 (2023-04-28)
 -------------------
 * [Added] Add retry policy to subscriptions. (#222)
