@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.10.0 (2023-05-02)
+-------------------
+* [Added] Add configuration for setting the storage region for pubsub messages (#247)
+
 1.9.0 (2023-05-02)
 -------------------
 * [Changed] Use custom encoder in logging middleware. (#247)
