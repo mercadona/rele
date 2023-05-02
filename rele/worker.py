@@ -27,12 +27,17 @@ class Worker:
         subscriptions,
         gc_project_id=None,
         credentials=None,
+        gc_storage_region=None,
         default_ack_deadline=None,
         threads_per_subscription=None,
         default_retry_policy=None,
     ):
         self._subscriber = Subscriber(
-            gc_project_id, credentials, default_ack_deadline, default_retry_policy
+            gc_project_id,
+            credentials,
+            gc_storage_region,
+            default_ack_deadline,
+            default_retry_policy,
         )
         self._futures = {}
         self._subscriptions = subscriptions
@@ -153,6 +158,7 @@ def create_and_run(subs, config):
         subs,
         config.gc_project_id,
         config.credentials,
+        config.gc_storage_region,
         config.ack_deadline,
         config.threads_per_subscription,
         config.retry_policy,

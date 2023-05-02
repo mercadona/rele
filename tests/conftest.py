@@ -27,6 +27,7 @@ def config(project_id):
             "APP_NAME": "rele",
             "SUB_PREFIX": "rele",
             "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
+            "GC_STORAGE_REGION": "some-region",
             "MIDDLEWARE": ["rele.contrib.LoggingMiddleware"],
         }
     )
@@ -39,6 +40,7 @@ def config_with_retry_policy(project_id):
             "APP_NAME": "rele",
             "SUB_PREFIX": "rele",
             "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
+            "GC_STORAGE_REGION": "some-region",
             "MIDDLEWARE": ["rele.contrib.LoggingMiddleware"],
             "DEFAULT_RETRY_POLICY": RetryPolicy(5, 30),
         }
@@ -47,7 +49,9 @@ def config_with_retry_policy(project_id):
 
 @pytest.fixture
 def subscriber(project_id, config):
-    return Subscriber(config.gc_project_id, config.credentials, 60)
+    return Subscriber(
+        config.gc_project_id, config.credentials, config.gc_storage_region, 60
+    )
 
 
 @pytest.fixture
