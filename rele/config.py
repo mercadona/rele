@@ -1,6 +1,5 @@
 import importlib
 import os
-import warnings
 
 from google.oauth2 import service_account
 
@@ -29,6 +28,7 @@ class Config:
     def __init__(self, setting):
         self._gc_project_id = setting.get("GC_PROJECT_ID")
         self.gc_credentials_path = setting.get("GC_CREDENTIALS_PATH")
+        self.gc_storage_region = setting.get("GC_STORAGE_REGION", "europe-west1")
         self.app_name = setting.get("APP_NAME")
         self.sub_prefix = setting.get("SUB_PREFIX")
         self.middleware = setting.get("MIDDLEWARE", default_middleware)

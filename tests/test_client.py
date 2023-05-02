@@ -283,7 +283,7 @@ class TestSubscriber:
             request={
                 "name": f"projects/rele-test/topics/{project_id}-test-topic",
                 "message_storage_policy": MessageStoragePolicy(
-                    {"allowed_persistence_regions": ["europe-west1"]}
+                    {"allowed_persistence_regions": ["some-region"]}
                 ),
             }
         )
@@ -334,6 +334,7 @@ class TestSubscriber:
         subscriber = Subscriber(
             config_with_retry_policy.gc_project_id,
             config_with_retry_policy.credentials,
+            config_with_retry_policy.gc_storage_region,
             60,
             config_with_retry_policy.retry_policy,
         )

@@ -15,7 +15,7 @@ from rele.worker import create_and_run
 
 @sub(topic="some-cool-topic", prefix="rele")
 def sub_stub(data, **kwargs):
-    print(f"I am a task doing stuff.")
+    print("I am a task doing stuff.")
 
 
 @pytest.fixture
@@ -25,6 +25,7 @@ def worker(config):
         subscriptions,
         config.gc_project_id,
         config.credentials,
+        config.gc_storage_region,
         default_ack_deadline=60,
         threads_per_subscription=10,
         default_retry_policy=config.retry_policy,
@@ -105,6 +106,7 @@ class TestWorker:
         worker = Worker(
             subscriptions,
             config.gc_project_id,
+            config.gc_storage_region,
             config.credentials,
             custom_ack_deadline,
             threads_per_subscription=10,
@@ -168,6 +170,7 @@ class TestCreateAndRun:
             subscriptions,
             "rele-test",
             ANY,
+            "some-region",
             60,
             2,
             RetryPolicy(5, 30),

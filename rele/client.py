@@ -37,6 +37,7 @@ class Subscriber:
 
     :param gc_project_id: str :ref:`settings_project_id` .
     :param credentials: obj :meth:`~rele.config.Config.credentials`.
+    :param message_storage_policy: str Region to store the messages
     :param default_ack_deadline: int Ack Deadline defined in settings
     :param default_retry_policy: RetryPolicy Rele's RetryPolicy defined in settings
     """
@@ -45,12 +46,14 @@ class Subscriber:
         self,
         gc_project_id,
         credentials,
+        message_storage_policy,
         default_ack_deadline=None,
         default_retry_policy=None,
     ):
         self._gc_project_id = gc_project_id
         self._ack_deadline = default_ack_deadline or DEFAULT_ACK_DEADLINE
         self.credentials = credentials if not USE_EMULATOR else None
+        self._message_storage_policy = message_storage_policy
         self._client = pubsub_v1.SubscriberClient(credentials=credentials)
         self._retry_policy = default_retry_policy
 
@@ -87,7 +90,7 @@ class Subscriber:
             request={
                 "name": topic_path,
                 "message_storage_policy": MessageStoragePolicy(
-                    {"allowed_persistence_regions": ["europe-west1"]}
+                    {"allowed_persistence_regions": [self._message_storage_policy]}
                 ),
             }
         )

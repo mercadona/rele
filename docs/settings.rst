@@ -31,6 +31,7 @@ Example::
         'PUBLISHER_TIMEOUT': 3.0,
         'FILTER_SUBS_BY': boolean_function,
         'DEFAULT_RETRY_POLICY': RetryPolicy(10, 50),
+        'GC_STORAGE_REGION': 'europe-west1',
     }
 
 ``GC_PROJECT_ID``
@@ -187,3 +188,10 @@ A RetryPolicy object which must be instantiated with `minimum_backoff` and `maxi
 If not set, the default retry policy is applied, meaning a minimum backoff of 10 seconds and a maximum backoff of 60 seconds.
 This generally implies that messages will be retried as soon as possible for healthy subscribers.
 RetryPolicy will be triggered on NACKs or acknowledgement deadline exceeded events for a given message.
+
+``GC_STORAGE_REGION``
+----------------------------
+
+**Optional**
+
+Set the Google Cloud's region for storing the messages. By default is `europe-west1`
