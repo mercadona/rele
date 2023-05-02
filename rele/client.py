@@ -9,7 +9,7 @@ import google.auth
 from google.api_core import exceptions
 from google.cloud import pubsub_v1
 from google.protobuf import duration_pb2
-from google.pubsub_v1 import RetryPolicy as GCloudRetryPolicy
+from google.pubsub_v1 import RetryPolicy as GCloudRetryPolicy, MessageStoragePolicy
 
 from rele.middleware import run_middleware_hook
 
@@ -83,7 +83,14 @@ class Subscriber:
 
     def _create_topic(self, topic_path):
         publisher_client = pubsub_v1.PublisherClient(credentials=self.credentials)
-        return publisher_client.create_topic(request={"name": topic_path})
+        return publisher_client.create_topic(
+            request={
+                "name": topic_path,
+                "message_storage_policy": MessageStoragePolicy(
+                    {"allowed_persistence_regions": ["europe-west1"]}
+                ),
+            }
+        )
 
     def _create_subscription(self, subscription_path, topic_path, subscription):
         request = {

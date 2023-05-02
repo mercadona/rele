@@ -9,6 +9,7 @@ from google.api_core import exceptions
 from google.cloud import pubsub_v1
 from google.cloud.pubsub_v1 import PublisherClient, SubscriberClient
 from google.protobuf import duration_pb2
+from google.pubsub_v1 import MessageStoragePolicy
 
 from rele import Subscriber
 from rele.retry_policy import RetryPolicy
@@ -279,7 +280,12 @@ class TestSubscriber:
 
         assert _mocked_client.call_count == 2
         mock_create_topic.assert_called_with(
-            request={"name": f"projects/rele-test/topics/{project_id}-test-topic"}
+            request={
+                "name": f"projects/rele-test/topics/{project_id}-test-topic",
+                "message_storage_policy": MessageStoragePolicy(
+                    {"allowed_persistence_regions": ["europe-west1"]}
+                ),
+            }
         )
 
         _mocked_client.assert_called_with(
