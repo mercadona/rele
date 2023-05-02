@@ -37,5 +37,5 @@ class TestRunReleCommand:
             "This may result in slots for database connections to "
             "be exhausted." in err
         )
-        mock_worker.assert_called_with([], "rele-test", ANY, 60, 2, None)
+        mock_worker.assert_called_with([], "rele-test", ANY, "europe-west1", 60, 2, None)
         mock_worker.return_value.run_forever.assert_called_once_with()
