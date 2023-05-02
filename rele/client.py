@@ -9,7 +9,8 @@ import google.auth
 from google.api_core import exceptions
 from google.cloud import pubsub_v1
 from google.protobuf import duration_pb2
-from google.pubsub_v1 import RetryPolicy as GCloudRetryPolicy, MessageStoragePolicy
+from google.pubsub_v1 import MessageStoragePolicy
+from google.pubsub_v1 import RetryPolicy as GCloudRetryPolicy
 
 from rele.middleware import run_middleware_hook
 
