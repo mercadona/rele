@@ -3,11 +3,11 @@ import logging
 import os
 import time
 from concurrent.futures import TimeoutError
-from contextlib import suppress
 
 import google.auth
 from google.api_core import exceptions
 from google.cloud import pubsub_v1
+from google.cloud.pubsub_v1.types import FieldMask
 from google.protobuf import duration_pb2
 from google.pubsub_v1 import MessageStoragePolicy
 from google.pubsub_v1 import RetryPolicy as GCloudRetryPolicy
@@ -73,17 +73,36 @@ class Subscriber:
         )
         topic_path = self._client.topic_path(self._gc_project_id, subscription.topic)
 
-        with suppress(exceptions.AlreadyExists):
-            try:
-                self._create_subscription(subscription_path, topic_path, subscription)
-            except exceptions.NotFound:
-                logger.warning(
-                    "Cannot subscribe to a topic that does not exist."
-                    f"Creating {topic_path}..."
+        try:
+            self._create_subscription(subscription_path, topic_path, subscription)
+        except exceptions.NotFound:
+            logger.warning(
+                "Cannot subscribe to a topic that does not exist."
+                f"Creating {topic_path}..."
+            )
+            topic = self._create_topic(topic_path)
+            logger.info(f"Topic {topic.name} created.")
+            self._create_subscription(subscription_path, topic_path, subscription)
+        except exceptions.AlreadyExists:
+            retry_policy = subscription.retry_policy or self._retry_policy
+
+            if not retry_policy:
+                return
+
+            update_mask = FieldMask(paths=["retry_policy"])
+
+            client_retry_policy = self._build_gcloud_retry_policy(retry_policy)
+
+            subscription = pubsub_v1.types.Subscription(
+                name=subscription_path,
+                topic=topic_path,
+                retry_policy=client_retry_policy,
+            )
+
+            with self._client:
+                self._client.update_subscription(
+                    request={"subscription": subscription, "update_mask": update_mask}
                 )
-                topic = self._create_topic(topic_path)
-                logger.info(f"Topic {topic.name} created.")
-                self._create_subscription(subscription_path, topic_path, subscription)
 
     def _create_topic(self, topic_path):
         publisher_client = pubsub_v1.PublisherClient(credentials=self.credentials)
