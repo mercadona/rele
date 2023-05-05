@@ -58,7 +58,7 @@ class Subscriber:
         self._client = pubsub_v1.SubscriberClient(credentials=credentials)
         self._retry_policy = default_retry_policy
 
-    def create_subscription(self, subscription):
+    def update_or_create_subscription(self, subscription):
         """Handles creating the subscription when it does not exists or updates it
         if the subscription contains any parameter that allows it.
 

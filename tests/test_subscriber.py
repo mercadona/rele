@@ -34,7 +34,7 @@ class TestSubscriber:
         )
         expected_topic = f"projects/{project_id}/topics/" f"{project_id}-test-topic"
 
-        subscriber.create_subscription(
+        subscriber.update_or_create_subscription(
             Subscription(None, topic=f"{project_id}-test-topic")
         )
         client_create_subscription.assert_called_once_with(
@@ -56,7 +56,7 @@ class TestSubscriber:
         )
         expected_topic = f"projects/{project_id}/topics/" f"{project_id}-test-topic"
         subscriber._ack_deadline = 100
-        subscriber.create_subscription(
+        subscriber.update_or_create_subscription(
             Subscription(None, topic=f"{project_id}-test-topic")
         )
 
@@ -78,7 +78,7 @@ class TestSubscriber:
         )
         expected_topic = f"projects/{project_id}/topics/" f"{project_id}-test-topic"
         backend_filter_by = "attributes:domain"
-        subscriber.create_subscription(
+        subscriber.update_or_create_subscription(
             Subscription(
                 None,
                 topic=f"{project_id}-test-topic",
@@ -109,7 +109,7 @@ class TestSubscriber:
         )
         expected_topic = f"projects/{project_id}/topics/" f"{project_id}-test-topic"
         backend_filter_by = "attributes:domain"
-        subscriber.create_subscription(
+        subscriber.update_or_create_subscription(
             Subscription(
                 None,
                 topic=f"{project_id}-test-topic",
@@ -149,7 +149,7 @@ class TestSubscriber:
             maximum_backoff=duration_pb2.Duration(seconds=50),
         )
 
-        subscriber.create_subscription(
+        subscriber.update_or_create_subscription(
             Subscription(
                 None,
                 topic=f"{project_id}-test-topic",
@@ -187,7 +187,7 @@ class TestSubscriber:
             maximum_backoff=duration_pb2.Duration(seconds=30),
         )
 
-        subscriber.create_subscription(
+        subscriber.update_or_create_subscription(
             Subscription(
                 None,
                 topic=f"{project_id}-test-topic",
@@ -225,7 +225,7 @@ class TestSubscriber:
 
         update_mask = FieldMask(paths=["retry_policy"])
 
-        subscriber.create_subscription(
+        subscriber.update_or_create_subscription(
             Subscription(
                 None,
                 topic=f"{project_id}-test-topic",
@@ -245,7 +245,7 @@ class TestSubscriber:
         self, client_update_subscription, client_create_subscription, project_id,
         subscriber
     ):
-        subscriber.create_subscription(
+        subscriber.update_or_create_subscription(
             Subscription(
                 None,
                 topic=f"{project_id}-test-topic"
