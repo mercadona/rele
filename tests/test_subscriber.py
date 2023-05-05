@@ -25,7 +25,8 @@ class TestSubscriber:
     @patch.object(SubscriberClient, "update_subscription")
     def test_creates_subscription_with_default_ack_deadline_when_none_provided(
         self,
-        client_update_subscription, client_create_subscription,
+        client_update_subscription,
+        client_create_subscription,
         project_id,
         subscriber,
     ):
@@ -49,7 +50,11 @@ class TestSubscriber:
     @patch.object(SubscriberClient, "create_subscription")
     @patch.object(SubscriberClient, "update_subscription")
     def test_creates_subscription_with_custom_ack_deadline_when_provided(
-        self, client_update_subscription, client_create_subscription, project_id, subscriber
+        self,
+        client_update_subscription,
+        client_create_subscription,
+        project_id,
+        subscriber,
     ):
         expected_subscription = (
             f"projects/{project_id}/subscriptions/" f"{project_id}-test-topic"
@@ -71,7 +76,11 @@ class TestSubscriber:
     @patch.object(SubscriberClient, "create_subscription")
     @patch.object(SubscriberClient, "update_subscription")
     def test_creates_subscription_with_backend_filter_by_when_provided(
-        self, client_update_subscription, client_create_subscription, project_id, subscriber
+        self,
+        client_update_subscription,
+        client_create_subscription,
+        project_id,
+        subscriber,
     ):
         expected_subscription = (
             f"projects/{project_id}/subscriptions/" f"{project_id}-test-topic"
@@ -102,7 +111,12 @@ class TestSubscriber:
     )
     @patch.object(SubscriberClient, "update_subscription")
     def test_creates_topic_when_subscription_topic_does_not_exist(
-        self, client_update_subscription, client_create_subscription, project_id, subscriber, mock_create_topic
+        self,
+        client_update_subscription,
+        client_create_subscription,
+        project_id,
+        subscriber,
+        mock_create_topic,
     ):
         expected_subscription = (
             f"projects/{project_id}/subscriptions/" f"{project_id}-test-topic"
@@ -138,7 +152,11 @@ class TestSubscriber:
     @patch.object(SubscriberClient, "create_subscription")
     @patch.object(SubscriberClient, "update_subscription")
     def test_creates_subscription_with_retry_policy_when_provided(
-        self, client_update_subscription, client_create_subscription, project_id, subscriber
+        self,
+        client_update_subscription,
+        client_create_subscription,
+        project_id,
+        subscriber,
     ):
         expected_subscription = (
             f"projects/{project_id}/subscriptions/" f"{project_id}-test-topic"
@@ -169,7 +187,11 @@ class TestSubscriber:
     @patch.object(SubscriberClient, "create_subscription")
     @patch.object(SubscriberClient, "update_subscription")
     def test_default_retry_policy_is_applied_when_not_explicitly_provided(
-        self, client_update_subscription, client_create_subscription, project_id, config_with_retry_policy
+        self,
+        client_update_subscription,
+        client_create_subscription,
+        project_id,
+        config_with_retry_policy,
     ):
         subscriber = Subscriber(
             config_with_retry_policy.gc_project_id,
@@ -203,10 +225,18 @@ class TestSubscriber:
             }
         )
 
-    @patch.object(SubscriberClient, "create_subscription", side_effect=exceptions.AlreadyExists("Subscription already exists"))
+    @patch.object(
+        SubscriberClient,
+        "create_subscription",
+        side_effect=exceptions.AlreadyExists("Subscription already exists"),
+    )
     @patch.object(SubscriberClient, "update_subscription")
     def test_subscription_is_updated_with_retry_policy_when_already_exists(
-        self, client_update_subscription, client_create_subscription, project_id, subscriber
+        self,
+        client_update_subscription,
+        client_create_subscription,
+        project_id,
+        subscriber,
     ):
         subscription_path = (
             f"projects/{project_id}/subscriptions/" f"{project_id}-test-topic"
@@ -233,23 +263,24 @@ class TestSubscriber:
             )
         )
         client_update_subscription.assert_called_once_with(
-            request={
-                "subscription": subscription, "update_mask": update_mask
-            }
+            request={"subscription": subscription, "update_mask": update_mask}
         )
 
-    @patch.object(SubscriberClient, "create_subscription",
-                  side_effect=exceptions.AlreadyExists("Subscription already exists"))
+    @patch.object(
+        SubscriberClient,
+        "create_subscription",
+        side_effect=exceptions.AlreadyExists("Subscription already exists"),
+    )
     @patch.object(SubscriberClient, "update_subscription")
     def test_subscription_is_not_updated_when_exists_and_retry_policy_not_provided(
-        self, client_update_subscription, client_create_subscription, project_id,
-        subscriber
+        self,
+        client_update_subscription,
+        client_create_subscription,
+        project_id,
+        subscriber,
     ):
         subscriber.update_or_create_subscription(
-            Subscription(
-                None,
-                topic=f"{project_id}-test-topic"
-            )
+            Subscription(None, topic=f"{project_id}-test-topic")
         )
 
         client_update_subscription.assert_not_called()
