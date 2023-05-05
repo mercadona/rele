@@ -59,7 +59,8 @@ class Subscriber:
         self._retry_policy = default_retry_policy
 
     def create_subscription(self, subscription):
-        """Handles creating the subscription when it does not exists.
+        """Handles creating the subscription when it does not exists or updates it
+        if the subscription contains any parameter that allows it.
 
         This makes it easier to deploy a worker and forget about the
         subscription side of things. The subscription must
@@ -84,25 +85,7 @@ class Subscriber:
             logger.info(f"Topic {topic.name} created.")
             self._create_subscription(subscription_path, topic_path, subscription)
         except exceptions.AlreadyExists:
-            retry_policy = subscription.retry_policy or self._retry_policy
-
-            if not retry_policy:
-                return
-
-            update_mask = FieldMask(paths=["retry_policy"])
-
-            client_retry_policy = self._build_gcloud_retry_policy(retry_policy)
-
-            subscription = pubsub_v1.types.Subscription(
-                name=subscription_path,
-                topic=topic_path,
-                retry_policy=client_retry_policy,
-            )
-
-            with self._client:
-                self._client.update_subscription(
-                    request={"subscription": subscription, "update_mask": update_mask}
-                )
+            self._update_subscription(subscription_path, topic_path, subscription)
 
     def _create_topic(self, topic_path):
         publisher_client = pubsub_v1.PublisherClient(credentials=self.credentials)
@@ -131,6 +114,27 @@ class Subscriber:
             request["retry_policy"] = self._build_gcloud_retry_policy(retry_policy)
 
         self._client.create_subscription(request=request)
+
+    def _update_subscription(self, subscription_path, topic_path, subscription):
+        retry_policy = subscription.retry_policy or self._retry_policy
+
+        if not retry_policy:
+            return
+
+        update_mask = FieldMask(paths=["retry_policy"])
+
+        client_retry_policy = self._build_gcloud_retry_policy(retry_policy)
+
+        subscription = pubsub_v1.types.Subscription(
+            name=subscription_path,
+            topic=topic_path,
+            retry_policy=client_retry_policy,
+        )
+
+        with self._client:
+            self._client.update_subscription(
+                request={"subscription": subscription, "update_mask": update_mask}
+            )
 
     def _build_gcloud_retry_policy(self, rele_retry_policy):
         minimum_backoff = duration_pb2.Duration(
