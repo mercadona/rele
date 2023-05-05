@@ -4,8 +4,8 @@ import pytest
 from google.api_core import exceptions
 from google.cloud import pubsub_v1
 from google.cloud.pubsub_v1 import PublisherClient, SubscriberClient
-from google.protobuf import duration_pb2
 from google.cloud.pubsub_v1.types import FieldMask
+from google.protobuf import duration_pb2
 from google.pubsub_v1 import MessageStoragePolicy
 
 from rele import Subscriber
