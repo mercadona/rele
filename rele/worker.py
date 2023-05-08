@@ -89,17 +89,17 @@ class Worker:
         :param frame: Needed for `signal.signal <https://docs.python.org/3/library/signal.html#signal.signal>`_  # noqa
         """
 
-        logger.info(f"[rele] {signal} received, stopping workers")
+        logger.info(f"Rele receive {signal} signal, stopping worker")
 
         run_middleware_hook("pre_worker_stop", self._subscriptions)
         for future in self._futures.values():
             future.cancel()
 
-        logger.info("[rele] future cancelled")
+        logger.info("Rele cancel all futures")
 
         run_middleware_hook("post_worker_stop")
 
-        logger.info("[rele] worker stopped")
+        logger.info("Rele worker stopped")
 
         sys.exit(0)
 
