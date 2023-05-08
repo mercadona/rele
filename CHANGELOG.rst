@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.8.1 (2023-05-08)
+-------------------
+* [Added] Add logs when a worker is stopped
+
 1.8.0 (2023-04-28)
 -------------------
 * [Added] Add retry policy to subscriptions. (#222)

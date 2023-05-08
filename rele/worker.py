@@ -88,11 +88,19 @@ class Worker:
         :param signal: Needed for `signal.signal <https://docs.python.org/3/library/signal.html#signal.signal>`_  # noqa
         :param frame: Needed for `signal.signal <https://docs.python.org/3/library/signal.html#signal.signal>`_  # noqa
         """
+
+        logger.info(f"[rele] {signal} received, stopping workers")
+
         run_middleware_hook("pre_worker_stop", self._subscriptions)
         for future in self._futures.values():
             future.cancel()
 
+        logger.info("[rele] future cancelled")
+
         run_middleware_hook("post_worker_stop")
+
+        logger.info("[rele] worker stopped")
+
         sys.exit(0)
 
     def _boostrap_consumption(self, subscription):
