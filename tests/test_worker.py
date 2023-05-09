@@ -42,7 +42,7 @@ def mock_consume(config):
 
 @pytest.fixture
 def mock_create_subscription():
-    with patch.object(Subscriber, "create_subscription") as m:
+    with patch.object(Subscriber, "update_or_create_subscription") as m:
         yield m
 
 

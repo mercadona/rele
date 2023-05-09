@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.11.0 (2023-05-09)
+-------------------
+* [Added] Allow updating retry policy to existing subscriptions. (#248)
+
 1.10.0 (2023-05-02)
 -------------------
 * [Added] Add configuration for setting the storage region for pubsub messages (#247)
