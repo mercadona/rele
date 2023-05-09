@@ -131,10 +131,9 @@ class Subscriber:
             retry_policy=client_retry_policy,
         )
 
-        with self._client:
-            self._client.update_subscription(
-                request={"subscription": subscription, "update_mask": update_mask}
-            )
+        self._client.update_subscription(
+            request={"subscription": subscription, "update_mask": update_mask}
+        )
 
     def _build_gcloud_retry_policy(self, rele_retry_policy):
         minimum_backoff = duration_pb2.Duration(
