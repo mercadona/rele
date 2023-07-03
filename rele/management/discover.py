@@ -28,7 +28,7 @@ def collect_subs_from_path(folder_path, subfiles, module_name, subs_paths):
             folder_path=file_path,
             subfiles=os.listdir(file_path),
             module_name=f"{module_name}.{file}",
-            subs_paths=subs_paths
+            subs_paths=subs_paths,
         )
 
     return collect_subs_from_path(folder_path, subfiles, module_name, subs_paths)
@@ -39,7 +39,7 @@ def collect_subs_from_app(app_config):
         folder_path=app_config.path,
         subfiles=os.listdir(app_config.path),
         module_name=app_config.name,
-        subs_paths=[]
+        subs_paths=[],
     )
 
 
