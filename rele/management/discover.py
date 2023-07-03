@@ -6,10 +6,13 @@ from django.utils.module_loading import module_has_submodule
 logger = logging.getLogger(__name__)
 
 
+def travel_by_files
+
 def discover_subs_modules():
     logger.debug("Autodiscovering subs...")
     app_configs = apps.get_app_configs()
     subs_modules = []
+    breakpoint()
     for conf in app_configs:
         if module_has_submodule(conf.module, "subs"):
             module = conf.name + ".subs"

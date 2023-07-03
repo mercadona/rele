@@ -12,7 +12,7 @@ class TestDiscoverSubsModules:
             yield mock
 
     @pytest.mark.usefixtures("mock_apps_modules")
-    def test_returns_settings_and_paths_when_settings_found(self):
+    def test_returns_subs_paths_when_app_found(self):
         paths = discover_subs_modules()
-        # habrá que crear las carpetas y luego eliminarlas ya que las subs de test no sirve porque test no es una app y por eso seguramente no tenía tests
-        assert paths == ["rele.subs", "rele.more_subs.subs", "tests.example_app.subs"]
+
+        assert paths == ["test_app.infrastructure.subs", "test_app.subs"]

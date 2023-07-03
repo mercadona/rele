@@ -1,1 +1,1 @@
-from .a_sub_file import sub_inside_a_module
+from .another_sub_file import sub_inside_a_module
