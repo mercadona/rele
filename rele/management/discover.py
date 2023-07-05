@@ -19,7 +19,10 @@ def collect_subs_from_path(folder_path, subfiles, module_name, subs_paths):
 
     if is_subs_module(file):
         logger.debug(f" * Discovered subs module: {module_name}.subs")
-        subs_paths.append(f"{module_name}.subs")
+        subs_module = f"{module_name}.subs"
+        if subs_module not in subs_paths:
+            subs_paths.append(f"{module_name}.subs")
+
         return collect_subs_from_path(folder_path, subfiles, module_name, subs_paths)
 
     file_path = f"{folder_path}/{file}"
