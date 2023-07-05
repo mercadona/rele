@@ -61,8 +61,9 @@ class TestLoadSubscriptions:
         )
 
         assert len(subscriptions) == 2
-        assert subscriptions[0].name == 'sub-inside-sub-module'
-        assert subscriptions[1].name == 'sub-inside-infra-module'
+        subs_names = [subscription.name for subscription in subscriptions]
+        assert 'rele-sub-inside-another-module' in subs_names
+        assert 'rele-sub-inside-infra-module' in subs_names
 
     def test_raises_error_when_subscription_is_duplicated(self):
         with pytest.raises(RuntimeError) as excinfo:

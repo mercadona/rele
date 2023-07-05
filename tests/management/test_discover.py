@@ -24,6 +24,7 @@ class TestDiscoverSubsModules:
         assert paths == [
             "test_app.infrastructure.subs",
             "test_app.subs",
+            "test_app.another_folder.subs",
             "test_app_2.infrastructure.subs",
             "test_app_2.a_folder.subs",
             "test_app_2.subs",

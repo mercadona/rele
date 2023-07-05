@@ -107,11 +107,16 @@ def load_subscriptions_from_paths(sub_module_paths, sub_prefix=None, filter_by=N
             subscription = subscription_from_attribute(attribute)
             if not subscription:
                 continue
+
             if sub_prefix and not subscription.prefix:
                 subscription.set_prefix(sub_prefix)
 
             if filter_by and not subscription.filter_by:
                 subscription.set_filters(filter_by)
+
+            duplicated_subscription = subscriptions.get(subscription.name)
+            if id(duplicated_subscription) == id(subscription):
+                continue
 
             if subscription.name in subscriptions:
                 found_subscription = subscriptions[subscription.name]
