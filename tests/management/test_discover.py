@@ -21,10 +21,10 @@ class TestDiscoverSubsModules:
     def test_returns_subs_paths_when_app_found(self):
         paths = discover_subs_modules()
 
-        assert paths == [
-            "test_app.infrastructure.subs",
-            "test_app.subs",
-            "test_app_2.infrastructure.subs",
-            "test_app_2.a_folder.subs",
-            "test_app_2.subs",
-        ]
+        assert len(paths) == 6
+        assert "test_app.infrastructure.subs" in paths
+        assert "test_app.subs" in paths
+        assert "test_app.another_folder.subs" in paths
+        assert "test_app_2.infrastructure.subs" in paths
+        assert "test_app_2.a_folder.subs" in paths
+        assert "test_app_2.subs" in paths

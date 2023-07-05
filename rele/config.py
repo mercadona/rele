@@ -83,6 +83,15 @@ def setup(setting=None, **kwargs):
     return config
 
 
+def is_same_subscription(a_subscription, another_subscription):
+    return id(a_subscription) == id(another_subscription)
+
+
+def is_subscription_registered(subscriptions, current_subscription):
+    registered_subscription = subscriptions.get(current_subscription.name)
+    return is_same_subscription(registered_subscription, current_subscription)
+
+
 def subscription_from_attribute(attribute):
     try:
         if isinstance(attribute, Subscription):
@@ -107,11 +116,15 @@ def load_subscriptions_from_paths(sub_module_paths, sub_prefix=None, filter_by=N
             subscription = subscription_from_attribute(attribute)
             if not subscription:
                 continue
+
             if sub_prefix and not subscription.prefix:
                 subscription.set_prefix(sub_prefix)
 
             if filter_by and not subscription.filter_by:
                 subscription.set_filters(filter_by)
+
+            if is_subscription_registered(subscriptions, subscription):
+                continue
 
             if subscription.name in subscriptions:
                 found_subscription = subscriptions[subscription.name]
