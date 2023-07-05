@@ -83,18 +83,13 @@ def setup(setting=None, **kwargs):
     return config
 
 
-def is_same_susbscription(a_subscription, another_subscription):
+def is_same_subscription(a_subscription, another_subscription):
     return id(a_subscription) == id(another_subscription)
 
 
 def subscription_already_registered(subscriptions, current_subscription):
     registered_subscription = subscriptions.get(current_subscription.name)
-    if not registered_subscription:
-        return False
-
-    return subscriptions_have_same_memory_address(
-        registered_subscription, current_subscription
-    )
+    return is_same_subscription(registered_subscription, current_subscription)
 
 
 def subscription_from_attribute(attribute):
