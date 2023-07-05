@@ -83,6 +83,18 @@ def setup(setting=None, **kwargs):
     return config
 
 
+def subscriptions_have_same_memory_address(a_subscription, another_subscription):
+    return id(a_subscription) == id(another_subscription)
+
+
+def subscription_already_registered(subscriptions, current_subscription):
+    registered_subscription = subscriptions.get(current_subscription.name)
+    if not registered_subscription:
+        return False
+
+    return subscriptions_have_same_memory_address(registered_subscription, current_subscription)
+
+
 def subscription_from_attribute(attribute):
     try:
         if isinstance(attribute, Subscription):
@@ -114,8 +126,7 @@ def load_subscriptions_from_paths(sub_module_paths, sub_prefix=None, filter_by=N
             if filter_by and not subscription.filter_by:
                 subscription.set_filters(filter_by)
 
-            duplicated_subscription = subscriptions.get(subscription.name)
-            if id(duplicated_subscription) == id(subscription):
+            if subscription_already_registered(subscriptions, subscription):
                 continue
 
             if subscription.name in subscriptions:
