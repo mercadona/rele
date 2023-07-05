@@ -87,7 +87,7 @@ def is_same_subscription(a_subscription, another_subscription):
     return id(a_subscription) == id(another_subscription)
 
 
-def subscription_already_registered(subscriptions, current_subscription):
+def is_subscription_registered(subscriptions, current_subscription):
     registered_subscription = subscriptions.get(current_subscription.name)
     return is_same_subscription(registered_subscription, current_subscription)
 
@@ -123,7 +123,7 @@ def load_subscriptions_from_paths(sub_module_paths, sub_prefix=None, filter_by=N
             if filter_by and not subscription.filter_by:
                 subscription.set_filters(filter_by)
 
-            if subscription_already_registered(subscriptions, subscription):
+            if is_subscription_registered(subscriptions, subscription):
                 continue
 
             if subscription.name in subscriptions:
