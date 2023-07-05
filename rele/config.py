@@ -83,7 +83,7 @@ def setup(setting=None, **kwargs):
     return config
 
 
-def subscriptions_have_same_memory_address(a_subscription, another_subscription):
+def is_same_susbscription(a_subscription, another_subscription):
     return id(a_subscription) == id(another_subscription)
 
 
