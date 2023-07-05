@@ -49,12 +49,14 @@ class TestLoadSubscriptions:
         assert klass_sub.name == "test-alternative-cool-topic"
         assert klass_sub({"id": 4}, lang="en") == 4
 
-    def test_does_not_return_duplicates_when_importing_the_same_sub_instance_from_different_places(self):
+    def test_avoid_duplicates_when_importing_same_sub_instance_from_different_places(
+        self,
+    ):
         subscriptions = load_subscriptions_from_paths(
             [
                 "tests.sample_app.subs",
                 "tests.sample_app.another_folder.subs",
-                "tests.sample_app.infrastructure.subs"
+                "tests.sample_app.infrastructure.subs",
             ],
             sub_prefix="sub",
             filter_by=[lambda attrs: attrs.get("lang") == "en"],
@@ -62,8 +64,8 @@ class TestLoadSubscriptions:
 
         assert len(subscriptions) == 2
         subs_names = [subscription.name for subscription in subscriptions]
-        assert 'rele-sub-inside-another-module' in subs_names
-        assert 'rele-sub-inside-infra-module' in subs_names
+        assert "rele-sub-inside-another-module" in subs_names
+        assert "rele-sub-inside-infra-module" in subs_names
 
     def test_raises_error_when_subscription_is_duplicated(self):
         with pytest.raises(RuntimeError) as excinfo:
