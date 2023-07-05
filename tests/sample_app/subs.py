@@ -1,4 +1,5 @@
 # flake8: noqa
 
-from .subs import *
+from .another_folder.subs import *
 from .infrastructure.subs import *
+
