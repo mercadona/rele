@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.13.0 (2023-09-04)
+-------------------
+* [Added] Add verbosity to `VerboseLoggingMiddleware`'s hooks (#240)
+
 1.11.0 (2023-05-09)
 -------------------
 * [Added] Allow updating retry policy to existing subscriptions. (#248)
