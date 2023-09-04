@@ -1,9 +1,11 @@
 import queue
+from datetime import datetime
 from unittest.mock import MagicMock
 
 import pytest
 from google.cloud import pubsub_v1
 
+from rele.config import Config
 from rele.contrib.logging_middleware import LoggingMiddleware
 from rele.contrib.verbose_logging_middleware import VerboseLoggingMiddleware
 from tests.subs import sub_stub
@@ -55,6 +57,18 @@ def expected_message_log():
 
 class TestVerboseLoggingMiddleware:
     @pytest.fixture
+    def config(project_id):
+        return Config(
+            {
+                "APP_NAME": "rele",
+                "SUB_PREFIX": "rele",
+                "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
+                "ENCODER_PATH": "django.core.serializers.json.DjangoJSONEncoder",
+                "MIDDLEWARE": ["rele.contrib.LoggingMiddleware"],
+            }
+        )
+
+    @pytest.fixture
     def verbose_logging_middleware(self, config):
         verbose_logging_middleware = VerboseLoggingMiddleware()
         verbose_logging_middleware.setup(config)
@@ -80,6 +94,59 @@ class TestVerboseLoggingMiddleware:
         message_log = caplog.records[0].subscription_message
 
         assert message_log == expected_message_log
+
+    def test_logs_message_data_when_message_is_successfully_published(
+        self, verbose_logging_middleware, caplog
+    ):
+        message_data = {
+            "id": 123,
+            "key": "confirmed",
+            "timestamp": datetime.fromisoformat("2023-02-16T20:00:00+01:00"),
+        }
+        message_attributes = {"published_at": 1.0}
+
+        verbose_logging_middleware.post_publish_success(
+            "pubsub-topic", message_data, message_attributes
+        )
+
+        emitted_log = caplog.records[0]
+        assert emitted_log.message == "Successfully published to pubsub-topic"
+        assert emitted_log.pubsub_publisher_attrs == {"published_at": 1.0}
+        assert emitted_log.metrics == {
+            "name": "publications",
+            "data": {"agent": "rele", "topic": "pubsub-topic"},
+        }
+        assert emitted_log.subscription_message == (
+            '{"id": 123, "key": "confirmed", "timestamp": "2023-02-16T20:00:00+01:00"}'
+        )
+
+    def test_logs_message_data_when_message_is_successfully_processed(
+        self,
+        verbose_logging_middleware,
+        long_message_wrapper,
+        expected_message_log,
+        caplog,
+    ):
+        verbose_logging_middleware.post_process_message_success(
+            sub_stub, None, long_message_wrapper
+        )
+
+        emitted_log = caplog.records[-1]
+        assert (
+            emitted_log.message
+            == "Successfully processed message for rele-some-cool-topic - sub_stub"
+        )
+        assert emitted_log.metrics == {
+            "name": "subscriptions",
+            "data": {
+                "agent": "rele",
+                "topic": "some-cool-topic",
+                "status": "succeeded",
+                "subscription": "rele-some-cool-topic",
+                "attributes": {"lang": "es", "published_at": "1560244246.863829"},
+            },
+        }
+        assert emitted_log.subscription_message == expected_message_log
 
     def test_post_process_failure_message_payload_format_matches_logging_middleware_format(
         self, verbose_logging_middleware, logging_middleware, caplog, message_wrapper
