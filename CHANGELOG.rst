@@ -1,6 +1,15 @@
 Changelog
 =========
 
+1.13.0 (2023-09-04)
+-------------------
+* [Added] Add verbosity to `VerboseLoggingMiddleware`'s hooks (#240)
+
+1.12.0 (2023-07-17)
+-------------------
+* [Added] Check if subs have same memory address (#257)
+* [Changed] Detect subs module at any folder level (#255)
+
 1.11.0 (2023-05-09)
 -------------------
 * [Added] Allow updating retry policy to existing subscriptions. (#248)
