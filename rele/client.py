@@ -84,7 +84,7 @@ class Subscriber:
             topic = self._create_topic(topic_path)
             logger.info(f"Topic {topic.name} created.")
             self._create_subscription(subscription_path, topic_path, subscription)
-        except exceptions.AlreadyExists:
+        except (exceptions.AlreadyExists, exceptions.PermissionDenied):
             self._update_subscription(subscription_path, topic_path, subscription)
 
     def _create_topic(self, topic_path):
