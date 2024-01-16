@@ -158,9 +158,15 @@ class Subscriber:
         subscription_path = self._client.subscription_path(
             self._gc_project_id, subscription_name
         )
-        return self._client.subscribe(
-            subscription_path, callback=callback, scheduler=scheduler
-        )
+        print(f"[consume][0] Consuming {subscription_name} {callback} {callback.__dict__} ")
+        try:
+            return self._client.subscribe(
+                subscription_path, callback=callback, scheduler=scheduler
+            )
+        except Exception as e:
+            print(f"[consume][1] BOOM {e}")
+            raise e
+
 
 
 class Publisher:
