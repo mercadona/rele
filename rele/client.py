@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import threading
 import time
 from concurrent.futures import TimeoutError
 
@@ -158,13 +159,17 @@ class Subscriber:
         subscription_path = self._client.subscription_path(
             self._gc_project_id, subscription_name
         )
-        print(f"[consume][0] Consuming {subscription_name} {callback} {callback.__dict__} ")
+        print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][consume][0] Consuming {subscription_name} {callback} {callback.__dict__} ")
         try:
-            return self._client.subscribe(
+            result = self._client.subscribe(
                 subscription_path, callback=callback, scheduler=scheduler
             )
+
+            print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][consume][1] Consuming {subscription_name} result: {result}")
+
+            return result
         except Exception as e:
-            print(f"[consume][1] BOOM {e}")
+            print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][consume][2] BOOM {e}")
             raise e
 
 

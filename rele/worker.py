@@ -1,6 +1,7 @@
 import logging
 import signal
 import sys
+import threading
 import time
 from concurrent import futures
 from datetime import datetime
@@ -50,10 +51,11 @@ class Worker:
         If the subscription already exists, the subscription will not be
         re-created. Therefore, it is idempotent.
         """
-        print(f"[{datetime.now()}][start] start setup")
+
+        print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][start] start setup")
         for subscription in self._subscriptions:
             self._subscriber.update_or_create_subscription(subscription)
-        print(f"[{datetime.now()}][setup] end setup")
+        print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][setup] end setup")
 
     def start(self):
         """Begin consuming all subscriptions.
@@ -65,25 +67,25 @@ class Worker:
         The futures are stored so that they can be cancelled later on
         for a graceful shutdown of the worker.
         """
-        print(f"[{datetime.now()}][start] start start")
+        print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][start] start start")
         run_middleware_hook("pre_worker_start")
         for subscription in self._subscriptions:
             self._boostrap_consumption(subscription)
         run_middleware_hook("post_worker_start")
-        print(f"[{datetime.now()}][start] end start")
+        print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][start] end start")
 
     def run_forever(self, sleep_interval=1):
         """Shortcut for calling setup, start, and _wait_forever.
 
         :param sleep_interval: Number of seconds to sleep in the ``while True`` loop
         """
-        print(f"[{datetime.now()}][run_forever] setup")
+        print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][run_forever] setup")
         self.setup()
-        print(f"[{datetime.now()}][run_forever] start")
+        print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][run_forever] start")
         self.start()
-        print(f"[{datetime.now()}][run_forever] wait for ever")
+        print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][run_forever] wait for ever")
         self._wait_forever(sleep_interval=sleep_interval)
-        print(f"[{datetime.now()}][run_forever] finish")
+        print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][run_forever] finish")
 
     def stop(self, signal=None, frame=None):
         """Manage the shutdown process of the worker.
@@ -110,11 +112,11 @@ class Worker:
         sys.exit(0)
 
     def _boostrap_consumption(self, subscription):
-        print(f"[{datetime.now()}][_boostrap_consumption][0] subscription {subscription.name}")
+        print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][_boostrap_consumption][0] subscription {subscription.name}")
         if subscription in self._futures:  # if is_restart:
-            print(f"[{datetime.now()}][_boostrap_consumption][1] subscription {subscription.name} future in [{self._futures[subscription]._state}] status [cancel] {self._futures[subscription].cancelled()}, [done] {self._futures[subscription].done()}, [exception] {self._futures[subscription].exception()}")
+            print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][_boostrap_consumption][1] subscription {subscription.name} future in [{self._futures[subscription]._state}] status [cancel] {self._futures[subscription].cancelled()}, [done] {self._futures[subscription].done()}, [exception] {self._futures[subscription].exception()}")
             self._futures[subscription].cancel()
-            print(f"[{datetime.now()}][_boostrap_consumption][2] subscription {subscription.name} future in [{self._futures[subscription]._state}] status [cancel] {self._futures[subscription].cancelled()}, [done] {self._futures[subscription].done()}, [exception] {self._futures[subscription].exception()}")
+            print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][_boostrap_consumption][2] subscription {subscription.name} future in [{self._futures[subscription]._state}] status [cancel] {self._futures[subscription].cancelled()}, [done] {self._futures[subscription].done()}, [exception] {self._futures[subscription].exception()}")
 
         executor_kwargs = {"thread_name_prefix": "ThreadPoolExecutor-ThreadScheduler"}
         executor = futures.ThreadPoolExecutor(
@@ -122,28 +124,28 @@ class Worker:
         )
         scheduler = ThreadScheduler(executor=executor)
         if subscription in self._futures:
-            print(f"[{datetime.now()}][_boostrap_consumption][3] subscription {subscription.name} future in [{self._futures[subscription]._state}] status [cancel] {self._futures[subscription].cancelled()}, [done] {self._futures[subscription].done()}, [exception] {self._futures[subscription].exception()}")
+            print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][_boostrap_consumption][3] subscription {subscription.name} future in [{self._futures[subscription]._state}] status [cancel] {self._futures[subscription].cancelled()}, [done] {self._futures[subscription].done()}, [exception] {self._futures[subscription].exception()}")
 
         self._futures[subscription] = self._subscriber.consume(
             subscription_name=subscription.name,
             callback=Callback(subscription),
             scheduler=scheduler,
         )
-        print(f"[{datetime.now()}][_boostrap_consumption][4] subscription {subscription.name} future in [{self._futures[subscription]._state}] status [cancel] {self._futures[subscription].cancelled()}, [done] {self._futures[subscription].done()}, [exception] {self._futures[subscription].exception()}")
+        print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][_boostrap_consumption][4] subscription {subscription.name} future in [{self._futures[subscription]._state}] status [cancel] {self._futures[subscription].cancelled()}, [done] {self._futures[subscription].done()}, [exception] {self._futures[subscription].exception()}")
 
     def _wait_forever(self, sleep_interval):
         logger.info("Consuming subscriptions...")
         while True:
-            print(f"[{datetime.now()}][_wait_forever][0] sleep_interval {sleep_interval} {self._futures.items()}")
+            print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][_wait_forever][0] sleep_interval {sleep_interval} {self._futures.items()}")
             for subscription, future in self._futures.items():
-                print(f"[{datetime.now()}][_wait_forever][1] future in [{future._state}] status for subscription {subscription.name} [cancel] {future.cancelled()}, [done] {future.done()}, [exception] {future.exception()}")
+                print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][_wait_forever][1] future in [{future._state}] status for subscription {subscription.name} [cancel] {future.cancelled()}, [done] {future.done()}, [exception] {future.exception()}")
                 if future.cancelled() or future.done():
-                    print(f"[{datetime.now()}][_wait_forever][2] future in [{future._state}] status for subscription {subscription.name} [cancel] {future.cancelled()}, [done] {future.done()}, [exception] {future.exception()}")
-                    print(f"[{datetime.now()}]Restarting consumption of {subscription.name}.")
+                    print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][_wait_forever][2] future in [{future._state}] status for subscription {subscription.name} [cancel] {future.cancelled()}, [done] {future.done()}, [exception] {future.exception()}")
+                    print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}]Restarting consumption of {subscription.name}.")
                     logger.info(f"Restarting consumption of {subscription.name}.")
                     self._boostrap_consumption(subscription)
 
-            print(f"[{datetime.now()}][_wait_forever][3] Me duermo {sleep_interval} {self._futures.items()}")
+            print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][_wait_forever][3] Me duermo {sleep_interval} {self._futures.items()}")
             time.sleep(sleep_interval)
 
 
@@ -171,9 +173,9 @@ def create_and_run(subs, config):
     :param subs: List :class:`~rele.subscription.Subscription`
     :param config: :class:`~rele.config.Config`
     """
-    print(f"[{datetime.now()}]Configuring worker with {len(subs)} subscription(s)...")
+    print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}]Configuring worker with {len(subs)} subscription(s)...")
     for sub in subs:
-        print(f"[{datetime.now()}]  {sub}")
+        print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}]  {sub}")
     worker = Worker(
         subs,
         config.gc_project_id,
