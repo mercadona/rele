@@ -4,6 +4,7 @@ import os
 import threading
 import time
 from concurrent.futures import TimeoutError
+from datetime import datetime
 
 import google.auth
 from google.api_core import exceptions
@@ -162,7 +163,7 @@ class Subscriber:
         print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][consume][0] Consuming {subscription_name} {callback} {callback.__dict__} ")
         try:
             result = self._client.subscribe(
-                subscription_path, callback=callback, scheduler=scheduler
+                subscription_path, callback=callback, scheduler=scheduler, use_legacy_flow_control=True
             )
 
             print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][consume][1] Consuming {subscription_name} result: {result}")

@@ -4,7 +4,9 @@ import sys
 import threading
 import time
 from concurrent import futures
+from google.cloud.pubsub_v1.futures import Future
 from datetime import datetime
+from typing import Dict
 
 from google.cloud.pubsub_v1.subscriber.scheduler import ThreadScheduler
 
@@ -14,6 +16,24 @@ from .subscription import Callback
 
 logger = logging.getLogger(__name__)
 
+
+import socket
+def check_internet_connection():
+    print("Checking connection")
+    remote_server = "www.google.com"
+    port = 80
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(5)
+    try:
+        sock.connect((remote_server, port))
+        return True
+    except socket.error:
+        return False
+    finally:
+        sock.close()
+
+class NotConnectionError (BaseException):
+    pass
 
 class Worker:
     """A Worker manages the subscriptions which consume Google PubSub messages.
@@ -41,7 +61,7 @@ class Worker:
             default_ack_deadline,
             default_retry_policy,
         )
-        self._futures = {}
+        self._futures: Dict[str, Future] = {}
         self._subscriptions = subscriptions
         self.threads_per_subscription = threads_per_subscription
 
@@ -51,7 +71,6 @@ class Worker:
         If the subscription already exists, the subscription will not be
         re-created. Therefore, it is idempotent.
         """
-
         print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][start] start setup")
         for subscription in self._subscriptions:
             self._subscriber.update_or_create_subscription(subscription)
@@ -113,34 +132,46 @@ class Worker:
 
     def _boostrap_consumption(self, subscription):
         print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][_boostrap_consumption][0] subscription {subscription.name}")
-        if subscription in self._futures:  # if is_restart:
-            print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][_boostrap_consumption][1] subscription {subscription.name} future in [{self._futures[subscription]._state}] status [cancel] {self._futures[subscription].cancelled()}, [done] {self._futures[subscription].done()}, [exception] {self._futures[subscription].exception()}")
+
+        if subscription in self._futures:
+            print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][_boostrap_consumption][1] subscription {subscription.name} future in [{self._futures[subscription]._state}]")
             self._futures[subscription].cancel()
-            print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][_boostrap_consumption][2] subscription {subscription.name} future in [{self._futures[subscription]._state}] status [cancel] {self._futures[subscription].cancelled()}, [done] {self._futures[subscription].done()}, [exception] {self._futures[subscription].exception()}")
+            print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][_boostrap_consumption][2] subscription {subscription.name} future in [{self._futures[subscription]._state}]")
+            self._futures[subscription].result()
+            print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][_boostrap_consumption][3] subscription {subscription.name} future in [{self._futures[subscription]._state}]")
+
+        if not check_internet_connection():
+            print(f"Not internet connection when boostrap a consumption for {subscription}, Raising an exception")
+            raise NotConnectionError
 
         executor_kwargs = {"thread_name_prefix": "ThreadPoolExecutor-ThreadScheduler"}
         executor = futures.ThreadPoolExecutor(
             max_workers=self.threads_per_subscription, **executor_kwargs
         )
         scheduler = ThreadScheduler(executor=executor)
-        if subscription in self._futures:
-            print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][_boostrap_consumption][3] subscription {subscription.name} future in [{self._futures[subscription]._state}] status [cancel] {self._futures[subscription].cancelled()}, [done] {self._futures[subscription].done()}, [exception] {self._futures[subscription].exception()}")
 
         self._futures[subscription] = self._subscriber.consume(
             subscription_name=subscription.name,
             callback=Callback(subscription),
             scheduler=scheduler,
         )
-        print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][_boostrap_consumption][4] subscription {subscription.name} future in [{self._futures[subscription]._state}] status [cancel] {self._futures[subscription].cancelled()}, [done] {self._futures[subscription].done()}, [exception] {self._futures[subscription].exception()}")
+        print(f"{self._futures[subscription]._state}")
+        print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][_boostrap_consumption][3] subscription {subscription.name} future in [{self._futures[subscription]._state}]")
 
     def _wait_forever(self, sleep_interval):
         logger.info("Consuming subscriptions...")
         while True:
             print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][_wait_forever][0] sleep_interval {sleep_interval} {self._futures.items()}")
+
+            if datetime.now().timestamp() % 120 < 1 and not check_internet_connection():
+                print("Not internet connection, raising an exception")
+                time.sleep(50)
+                raise NotConnectionError
+
             for subscription, future in self._futures.items():
-                print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][_wait_forever][1] future in [{future._state}] status for subscription {subscription.name} [cancel] {future.cancelled()}, [done] {future.done()}, [exception] {future.exception()}")
+                print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][_wait_forever][1] future in [{future._state}]]")
                 if future.cancelled() or future.done():
-                    print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][_wait_forever][2] future in [{future._state}] status for subscription {subscription.name} [cancel] {future.cancelled()}, [done] {future.done()}, [exception] {future.exception()}")
+                    print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}][_wait_forever][2] future in [{future._state}]")
                     print(f"[{threading.get_ident()}][{threading.current_thread().name}][{datetime.now()}]Restarting consumption of {subscription.name}.")
                     logger.info(f"Restarting consumption of {subscription.name}.")
                     self._boostrap_consumption(subscription)
