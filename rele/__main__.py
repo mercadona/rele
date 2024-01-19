@@ -40,8 +40,8 @@ def main():
         run_worker(args.settings)
 
 
-def run_worker(settings):
-    settings, module_paths = discover.sub_modules(args.settings)
+def run_worker(settings, third_party_subscriptions):
+    settings, module_paths = discover.sub_modules(settings)
     configuration = config.setup(settings.RELE if settings else None)
     subs = config.load_subscriptions_from_paths(
         module_paths, configuration.sub_prefix, configuration.filter_by

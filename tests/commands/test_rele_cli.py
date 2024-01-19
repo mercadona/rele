@@ -4,6 +4,7 @@ from unittest.mock import patch, ANY
 import pytest
 
 from rele import Worker
+from rele.__main__ import run_worker
 
 
 class TestReleCli:
@@ -21,8 +22,7 @@ class TestReleCli:
             yield p
 
     def test_rele_cli_run(self, mock_worker):
-        subprocess.run(["rele-cli", "run", "--settings", "tests.settings", "--third-party-subscriptions", "sample_pypi_package.subs"])
+        run_worker("tests.settings", "sample_pypi_package.subs")
+        topic_names = [sub.name for sub in mock_worker.mock_calls[0].args[0]]
 
-        mock_worker.assert_called_with(
-            [], "rele-test", ANY, "europe-west1", 60, 2, None
-        )
+        assert 'topic-from-third-party-package' in topic_names
