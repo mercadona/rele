@@ -47,10 +47,12 @@ def mock_create_subscription():
     with patch.object(Subscriber, "update_or_create_subscription") as m:
         yield m
 
+
 @pytest.fixture(autouse=True)
 def mock_internet_connection():
     with patch.object(socket, "connect") as m:
         yield m
+
 
 class TestWorker:
     def test_start_subscribes_and_saves_futures_when_subscriptions_given(
@@ -122,19 +124,10 @@ class TestWorker:
         assert worker._subscriber._ack_deadline == custom_ack_deadline
         assert worker._subscriber._gc_project_id == "rele-test"
 
-    def test_raises_not_connection_error_during_start(self, worker, mock_internet_connection):
-        mock_internet_connection.side_effect = error
-        with pytest.raises(NotConnectionError):
-            worker.start()
-
     @freeze_time("2024-01-01 10:00:50Z")
-    def test_raises_not_connection_error_during_wait_forever_if_connection_is_down_every_50_seconds(self, worker, mock_internet_connection):
-        mock_internet_connection.side_effect = error
-        with pytest.raises(NotConnectionError):
-            worker._wait_forever(1)
-
-    @freeze_time("2024-01-01 10:00:50Z")
-    def test_wait_forever_if_we_have_connection_and_is_second_50(self, worker, mock_consume):
+    def test_wait_forever_if_we_have_connection_and_is_second_50(
+        self, worker, mock_consume
+    ):
         worker.start()
 
         mock_consume.assert_called_once_with(
@@ -142,6 +135,22 @@ class TestWorker:
             callback=ANY,
             scheduler=ANY,
         )
+
+    @freeze_time("2024-01-01 10:00:50Z")
+    def test_raises_not_connection_error_during_wait_forever_if_connection_is_down_every_50_seconds(  # noqa
+        self, worker, mock_internet_connection
+    ):
+        mock_internet_connection.side_effect = error
+
+        with pytest.raises(NotConnectionError):
+            worker._wait_forever(1)
+
+    def test_raises_not_connection_error_during_start(self, worker, mock_internet_connection):
+        mock_internet_connection.side_effect = error
+
+        with pytest.raises(NotConnectionError):
+            worker.start()
+
 
 @pytest.mark.usefixtures("mock_create_subscription")
 class TestRestartConsumer:
@@ -174,7 +183,7 @@ class TestRestartConsumer:
 
         assert len(mock_consume.call_args_list) == 2
 
-    def test_restarts_consumption_when_future_is_done(self, worker, mock_consume):
+    def test_restarts_consumption_when_future_is_done(self, worker, mock_consume, mock_sleep):
         mock_consume.return_value.set_result(True)
 
         with pytest.raises(ValueError):
