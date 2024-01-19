@@ -31,7 +31,7 @@ def _import_settings_from_path(path):
         return importlib.import_module(path)
 
 
-def sub_modules(settings_path=None, additional_packages=None):
+def sub_modules(settings_path=None, third_party_packages=None):
     """
     In the current python path, we can traverse all modules and determine if they
     have a settings.py or directory with a subs.py module. If either one of
@@ -54,8 +54,10 @@ def sub_modules(settings_path=None, additional_packages=None):
 
     settings = _import_settings_from_path(settings_path)
 
-    if additional_packages is not None:
-        additional_subscription_paths = _discover_subs_from_package(additional_packages)
+    if third_party_packages is not None:
+        additional_subscription_paths = _discover_subs_from_package(
+            third_party_packages
+        )
         module_paths = module_paths + additional_subscription_paths
 
     return settings, module_paths

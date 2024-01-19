@@ -35,19 +35,18 @@ def main():
         "If none is supplied, Relé will attempt to autodiscover in the root path.",
     )
     run_parser.add_argument(
-        "--additional-discoverable-packages",
+        "--third-party-discoverable-packages",
         default=None,
         required=False,
         nargs="+",
-        help="Specify the additional packages that are installed using pip "
-        "to discover the subscriptions. "
-        "Example --additional-discoverable-packages my_package another_package",
+        help="Specify the third-party packages to discover the subscriptions. "
+        "Example --third-party-discoverable-packages my_package another_package",
     )
     args = parser.parse_args()
 
     if args.command == "run":
         settings, module_paths = discover.sub_modules(
-            args.settings, additional_packages=args.additional_discoverable_packages
+            args.settings, third_party_packages=args.third_party_discoverable_packages
         )
         configuration = config.setup(settings.RELE if settings else None)
         subs = config.load_subscriptions_from_paths(
