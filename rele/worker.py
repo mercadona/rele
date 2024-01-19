@@ -144,6 +144,7 @@ class Worker:
                 f"[_boostrap_consumption][1] subscription {subscription.name} "
                 f"futures in [{self._futures[subscription]._state}]"
             )
+            breakpoint()
             self._futures[subscription].cancel()
             print(
                 f"[{datetime.now()}][{threading.get_ident()}]"
