@@ -34,14 +34,6 @@ def main():
         help="Settings file dot path. Ex. project.settings. "
         "If none is supplied, Relé will attempt to autodiscover in the root path.",
     )
-    run_parser.add_argument(
-        "--third-party-discoverable-packages",
-        default=None,
-        required=False,
-        nargs="+",
-        help="Specify the third-party packages to discover the subscriptions. "
-        "Example --third-party-discoverable-packages my_package another_package",
-    )
     args = parser.parse_args()
 
     if args.command == "run":

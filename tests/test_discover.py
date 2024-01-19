@@ -15,10 +15,10 @@ class TestDiscoverSubModules:
             "tests.more_subs.subs",
             "tests.sample_app.subs",
             "tests.sample_app.another_folder.subs",
-            "tests.sample_app.nested_package.subs",
+            "tests.sample_app.infrastructure.subs",
             "tests.sample_app_2.subs",
             "tests.sample_app_2.a_folder.subs",
-            "tests.sample_app_2.nested_package.subs",
+            "tests.sample_app_2.infrastructure.subs",
         ]
 
     def test_returns_empty_settings_when_no_settings_module_found(self):
@@ -30,10 +30,10 @@ class TestDiscoverSubModules:
             "tests.more_subs.subs",
             "tests.sample_app.subs",
             "tests.sample_app.another_folder.subs",
-            "tests.sample_app.nested_package.subs",
+            "tests.sample_app.infrastructure.subs",
             "tests.sample_app_2.subs",
             "tests.sample_app_2.a_folder.subs",
-            "tests.sample_app_2.nested_package.subs",
+            "tests.sample_app_2.infrastructure.subs",
         ]
 
     def test_raises_when_incorrect_path(self):

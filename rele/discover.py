@@ -1,8 +1,6 @@
 import importlib
 import logging
-import os
 import pkgutil
-import sys
 from importlib.util import find_spec as importlib_find
 
 logger = logging.getLogger(__name__)
@@ -33,7 +31,7 @@ def _import_settings_from_path(path):
 
 def sub_modules(settings_path=None):
     """
-    In the current python path, we can traverse all modules and determine if they
+    In the current PYTHONPATH, we can traverse all modules and determine if they
     have a settings.py or directory with a subs.py module. If either one of
     those exists, we import it, and return the settings module, and
     paths to the subs file.
@@ -42,7 +40,6 @@ def sub_modules(settings_path=None):
 
     :return: (settings module, List[string: subs module paths])
     """
-
     module_paths = []
     for f, package, is_package in pkgutil.walk_packages(path=["."]):
         if package == "settings":
@@ -53,5 +50,4 @@ def sub_modules(settings_path=None):
             print(" * Discovered subs module: %r" % module)
 
     settings = _import_settings_from_path(settings_path)
-
     return settings, module_paths

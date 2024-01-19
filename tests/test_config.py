@@ -56,7 +56,7 @@ class TestLoadSubscriptions:
             [
                 "tests.sample_app.subs",
                 "tests.sample_app.another_folder.subs",
-                "tests.sample_app.nested_package.subs",
+                "tests.sample_app.infrastructure.subs",
             ],
             sub_prefix="sub",
             filter_by=[lambda attrs: attrs.get("lang") == "en"],
