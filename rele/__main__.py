@@ -1,4 +1,5 @@
 import argparse
+import importlib
 import logging
 import os
 import sys
@@ -34,16 +35,49 @@ def main():
         help="Settings file dot path. Ex. project.settings. "
         "If none is supplied, Relé will attempt to autodiscover in the root path.",
     )
+    run_parser.add_argument(
+        "--third-party-subscriptions",
+        default=None,
+        required=False,
+        nargs="+",
+        help="Specify the third-party packages to discover the subscriptions. "
+             "Example --third-party-discoverable-packages my_package another_package",
+    )
     args = parser.parse_args()
 
     if args.command == "run":
-        run_worker(args.settings)
+        run_worker(args.settings, args.third_party_subscriptions)
 
 
-def run_worker(settings, third_party_subscriptions):
+def run_worker(settings, third_party_subs):
     settings, module_paths = discover.sub_modules(settings)
+
+    if third_party_subs:
+        validated_third_party_subs = _validated_third_party_subs(third_party_subs)
+        module_paths = module_paths + validated_third_party_subs
+
     configuration = config.setup(settings.RELE if settings else None)
     subs = config.load_subscriptions_from_paths(
         module_paths, configuration.sub_prefix, configuration.filter_by
     )
     create_and_run(subs, configuration)
+
+
+def _validated_third_party_subs(subs_import_path):
+    validated_subs = []
+    for sub_path in subs_import_path:
+        if _is_valid_module(sub_path):
+            validated_subs.append(sub_path)
+
+    return validated_subs
+
+
+def _is_valid_module(import_path):
+    is_valid = False
+    try:
+        importlib.import_module(import_path)
+        is_valid = True
+    except ModuleNotFoundError:
+        pass
+
+    return is_valid

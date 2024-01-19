@@ -22,7 +22,7 @@ class TestReleCli:
             yield p
 
     def test_rele_cli_run(self, mock_worker):
-        run_worker("tests.settings", "sample_pypi_package.subs")
+        run_worker("tests.settings", ["sample_pypi_package.subs"])
         topic_names = [sub.name for sub in mock_worker.mock_calls[0].args[0]]
 
-        assert 'topic-from-third-party-package' in topic_names
+        assert 'rele-topic-from-third-party-package' in topic_names
