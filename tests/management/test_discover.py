@@ -22,9 +22,9 @@ class TestDiscoverSubsModules:
         paths = discover_subs_modules()
 
         assert len(paths) == 6
-        assert "test_app.infrastructure.subs" in paths
+        assert "test_app.nested_package.subs" in paths
         assert "test_app.subs" in paths
         assert "test_app.another_folder.subs" in paths
-        assert "test_app_2.infrastructure.subs" in paths
+        assert "test_app_2.nested_package.subs" in paths
         assert "test_app_2.a_folder.subs" in paths
         assert "test_app_2.subs" in paths

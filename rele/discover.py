@@ -31,7 +31,7 @@ def _import_settings_from_path(path):
         return importlib.import_module(path)
 
 
-def sub_modules(settings_path=None, third_party_packages=None):
+def sub_modules(settings_path=None):
     """
     In the current python path, we can traverse all modules and determine if they
     have a settings.py or directory with a subs.py module. If either one of
@@ -54,37 +54,4 @@ def sub_modules(settings_path=None, third_party_packages=None):
 
     settings = _import_settings_from_path(settings_path)
 
-    if third_party_packages is not None:
-        additional_subscription_paths = _discover_subs_from_package(
-            third_party_packages
-        )
-        module_paths = module_paths + additional_subscription_paths
-
     return settings, module_paths
-
-
-def _discover_subs_from_package(packages):
-    discoverable_paths = []
-    for package_name in packages:
-        package_path = _get_package_path(package_name)
-        if package_path is not None:
-            discoverable_paths.append(package_path)
-
-    module_paths = []
-    for f, package, is_package in pkgutil.walk_packages(path=discoverable_paths):
-        if is_package and module_has_submodule(package, "subs"):
-            module = package + ".subs"
-            module_paths.append(module)
-            print(" * Discovered subs module: %r" % module)
-    return module_paths
-
-
-def _get_package_path(package_name):
-    module_path = None
-    try:
-        module = importlib.import_module(package_name)
-        module_path = os.path.dirname(module.__path__[0])
-    except ModuleNotFoundError:
-        pass
-
-    return module_path

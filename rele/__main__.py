@@ -45,9 +45,7 @@ def main():
     args = parser.parse_args()
 
     if args.command == "run":
-        settings, module_paths = discover.sub_modules(
-            args.settings, third_party_packages=args.third_party_discoverable_packages
-        )
+        settings, module_paths = discover.sub_modules(args.settings)
         configuration = config.setup(settings.RELE if settings else None)
         subs = config.load_subscriptions_from_paths(
             module_paths, configuration.sub_prefix, configuration.filter_by
