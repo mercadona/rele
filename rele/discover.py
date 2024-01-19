@@ -31,7 +31,7 @@ def _import_settings_from_path(path):
 
 def sub_modules(settings_path=None):
     """
-    In the current PYTHONPATH, we can traverse all modules and determine if they
+    In the current directory, we can traverse all modules and determine if they
     have a settings.py or directory with a subs.py module. If either one of
     those exists, we import it, and return the settings module, and
     paths to the subs file.
