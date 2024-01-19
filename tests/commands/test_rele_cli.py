@@ -1,14 +1,7 @@
-import subprocess
-from unittest.mock import ANY, patch
-
-import pytest
-
-from rele import Worker
 from rele.__main__ import run_worker
 
 
 class TestReleCli:
-
     def test_rele_cli_run(self, mock_worker):
         run_worker("tests.settings", ["sample_pypi_package.subs"])
         worker_subscriptions_argument = mock_worker.mock_calls[0].args[0]
