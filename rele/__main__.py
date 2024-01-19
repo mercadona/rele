@@ -37,9 +37,13 @@ def main():
     args = parser.parse_args()
 
     if args.command == "run":
-        settings, module_paths = discover.sub_modules(args.settings)
-        configuration = config.setup(settings.RELE if settings else None)
-        subs = config.load_subscriptions_from_paths(
-            module_paths, configuration.sub_prefix, configuration.filter_by
-        )
-        create_and_run(subs, configuration)
+        run_worker(args.settings)
+
+
+def run_worker(settings):
+    settings, module_paths = discover.sub_modules(args.settings)
+    configuration = config.setup(settings.RELE if settings else None)
+    subs = config.load_subscriptions_from_paths(
+        module_paths, configuration.sub_prefix, configuration.filter_by
+    )
+    create_and_run(subs, configuration)
