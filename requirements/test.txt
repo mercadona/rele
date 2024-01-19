@@ -6,4 +6,3 @@ codecov>=2.0.0
 black
 isort~=5.10.0
 -e tests/sample_pypi_package
-

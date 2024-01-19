@@ -32,6 +32,7 @@ RELE = {
         "rele.contrib.LoggingMiddleware",
         "rele.contrib.DjangoDBMiddleware",
     ],
+    "ADDITIONAL_DISCOVERABLE_PACKAGES": ['sample_pypi_package'],
 }
 
 logging_config.dictConfig(

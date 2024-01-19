@@ -36,6 +36,15 @@ class TestDiscoverSubModules:
             "tests.sample_app_2.infrastructure.subs",
         ]
 
+    def test_returns_packages_from_pypi_package_when_specified_in_additional_packages(
+        self
+    ):
+        discovered_settings, paths = discover.sub_modules(
+            additional_packages=['sample_pypi_package']
+        )
+
+        assert "sample_pypi_package.subs" in paths
+
     def test_raises_when_incorrect_path(self):
         incorrect_path = "tests.foo"
         with pytest.raises(ModuleNotFoundError):
