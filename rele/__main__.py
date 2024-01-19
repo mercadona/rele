@@ -40,8 +40,8 @@ def main():
         required=False,
         nargs="+",
         help="Specify the additional packages that are installed using pip "
-             "to discover the subscriptions. "
-             "Example --additional-discoverable-packages my_package another_package",
+        "to discover the subscriptions. "
+        "Example --additional-discoverable-packages my_package another_package",
     )
     args = parser.parse_args()
 

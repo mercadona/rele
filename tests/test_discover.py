@@ -37,17 +37,17 @@ class TestDiscoverSubModules:
         ]
 
     def test_returns_packages_from_pypi_package_when_specified_in_additional_packages(
-        self
+        self,
     ):
         discovered_settings, paths = discover.sub_modules(
-            additional_packages=['sample_pypi_package']
+            additional_packages=["sample_pypi_package"]
         )
 
         assert "sample_pypi_package.subs" in paths
 
     def test_do_not_discover_settings_from_additional_packages(self):
         discovered_settings, paths = discover.sub_modules(
-            additional_packages=['sample_pypi_package']
+            additional_packages=["sample_pypi_package"]
         )
 
         assert discovered_settings is None
