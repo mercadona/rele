@@ -40,8 +40,8 @@ def main():
         default=None,
         required=False,
         nargs="+",
-        help="Specify the third-party packages to discover the subscriptions. "
-             "Example --third-party-discoverable-packages my_package another_package",
+        help="Specify subscriptions from the third-party packages. "
+        "Example --third-party-subscriptions my_package.subs another_package.subs",
     )
     args = parser.parse_args()
 

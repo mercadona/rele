@@ -8,7 +8,6 @@ from rele.__main__ import run_worker
 
 
 class TestReleCli:
-
     @pytest.fixture
     def mock_worker(self):
         with patch("rele.worker.Worker", autospec=True) as p:
@@ -25,4 +24,4 @@ class TestReleCli:
         run_worker("tests.settings", ["sample_pypi_package.subs"])
         topic_names = [sub.name for sub in mock_worker.mock_calls[0].args[0]]
 
-        assert 'rele-topic-from-third-party-package' in topic_names
+        assert "rele-topic-from-third-party-package" in topic_names
