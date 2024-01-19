@@ -18,8 +18,6 @@ import socket
 logger = logging.getLogger(__name__)
 
 
-
-
 def check_internet_connection():
     print("Checking connection")
     remote_server = "www.google.com"
