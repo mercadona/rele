@@ -53,7 +53,8 @@ def mock_create_subscription():
 
 @pytest.fixture(autouse=True)
 def mock_internet_connection():
-    with patch.object(socket, "connect") as m:
+    with patch("rele.worker.check_internet_connection") as m:
+        m.return_value = True
         yield m
 
 
@@ -143,7 +144,7 @@ class TestWorker:
     def test_raises_not_connection_error_during_wait_forever_if_connection_is_down_every_50_seconds(  # noqa
         self, worker, mock_internet_connection
     ):
-        mock_internet_connection.side_effect = error
+        mock_internet_connection.return_value = False
 
         with pytest.raises(NotConnectionError):
             worker._wait_forever(1)
@@ -151,7 +152,7 @@ class TestWorker:
     def test_raises_not_connection_error_during_start(
         self, worker, mock_internet_connection
     ):
-        mock_internet_connection.side_effect = error
+        mock_internet_connection.return_value = False
 
         with pytest.raises(NotConnectionError):
             worker.start()
