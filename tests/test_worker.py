@@ -1,11 +1,11 @@
 import time
 from concurrent import futures
 from concurrent.futures._base import CANCELLED
-from unittest.mock import ANY, patch, create_autospec
-from socket import socket, error
-from freezegun import freeze_time
+from socket import error, socket
+from unittest.mock import ANY, create_autospec, patch
 
 import pytest
+from freezegun import freeze_time
 from google.api_core.exceptions import RetryError
 from google.cloud import pubsub_v1
 from google.cloud.pubsub_v1.subscriber.futures import StreamingPullFuture
@@ -15,7 +15,7 @@ from rele import Subscriber, Worker, sub
 from rele.middleware import register_middleware
 from rele.retry_policy import RetryPolicy
 from rele.subscription import Callback
-from rele.worker import create_and_run, NotConnectionError
+from rele.worker import NotConnectionError, create_and_run
 
 
 @sub(topic="some-cool-topic", prefix="rele")
