@@ -1,12 +1,10 @@
 import time
 from concurrent import futures
-from concurrent.futures._base import CANCELLED
-from socket import error, socket
+from concurrent.futures._base import FINISHED
 from unittest.mock import ANY, create_autospec, patch
 
 import pytest
 from freezegun import freeze_time
-from google.api_core.exceptions import RetryError
 from google.cloud import pubsub_v1
 from google.cloud.pubsub_v1.subscriber.futures import StreamingPullFuture
 from google.cloud.pubsub_v1.subscriber.scheduler import ThreadScheduler
@@ -168,15 +166,13 @@ class TestRestartConsumer:
                 spec=StreamingPullFuture, instance=True
             )
             mock_streaming_pull_future.cancelled.return_value = True
-            mock_streaming_pull_future._state = CANCELLED
-            mock_streaming_pull_future.result.side_effect = RetryError(
-                cause=Exception(),
-                message="Deadline of 60.0s exceeded while calling target function",
-            )
+            mock_streaming_pull_future._state = FINISHED
             m.return_value = mock_streaming_pull_future
 
-            with pytest.raises(RetryError):
+            with pytest.raises(ValueError):
                 worker.run_forever()
+
+        mock_streaming_pull_future.result.assert_called_once()
 
     def test_restarts_consumption_when_future_is_done(
         self, worker, mock_consume, mock_sleep
