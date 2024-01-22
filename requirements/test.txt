@@ -5,3 +5,4 @@ coverage>=4.4.0
 codecov>=2.0.0
 black
 isort~=5.10.0
+tests/sample_pypi_package

@@ -8,7 +8,7 @@ from google.cloud.pubsub_v1 import PublisherClient
 from google.cloud.pubsub_v1.exceptions import TimeoutError
 from google.protobuf import timestamp_pb2
 
-from rele import Publisher
+from rele import Publisher, Worker
 from rele.client import Subscriber
 from rele.config import Config
 from rele.middleware import register_middleware
@@ -45,6 +45,12 @@ def config_with_retry_policy(project_id):
             "DEFAULT_RETRY_POLICY": RetryPolicy(5, 30),
         }
     )
+
+
+@pytest.fixture
+def mock_worker():
+    with patch("rele.worker.Worker", autospec=True) as p:
+        yield p
 
 
 @pytest.fixture
