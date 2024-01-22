@@ -1,15 +1,13 @@
 import time
 from concurrent import futures
-from concurrent.futures._base import CANCELLED, PENDING
-from unittest.mock import ANY, patch, MagicMock, create_autospec
+from concurrent.futures._base import CANCELLED
+from unittest.mock import ANY, patch, create_autospec
 from socket import socket, error
 from freezegun import freeze_time
 
 import pytest
-from google.api_core.exceptions import RetryError, Unknown
+from google.api_core.exceptions import RetryError
 from google.cloud import pubsub_v1
-from google.cloud.pubsub_v1 import SubscriberClient
-from google.cloud.pubsub_v1.subscriber._protocol.streaming_pull_manager import StreamingPullManager
 from google.cloud.pubsub_v1.subscriber.futures import StreamingPullFuture
 from google.cloud.pubsub_v1.subscriber.scheduler import ThreadScheduler
 
@@ -150,7 +148,9 @@ class TestWorker:
         with pytest.raises(NotConnectionError):
             worker._wait_forever(1)
 
-    def test_raises_not_connection_error_during_start(self, worker, mock_internet_connection):
+    def test_raises_not_connection_error_during_start(
+        self, worker, mock_internet_connection
+    ):
         mock_internet_connection.side_effect = error
 
         with pytest.raises(NotConnectionError):
@@ -180,26 +180,33 @@ class TestRestartConsumer:
 
         assert len(mock_consume.call_args_list) == 2
 
-    def test_raises_future_error_when_future_with_exception_is_cancelled(self, worker, mock_create_subscription):
+    def test_raises_future_error_when_future_with_exception_is_cancelled(
+        self, worker, mock_create_subscription
+    ):
         with patch.object(Subscriber, "consume") as m:
-            mock_streaming_pull_future = create_autospec(spec=StreamingPullFuture, instance=True)
+            mock_streaming_pull_future = create_autospec(
+                spec=StreamingPullFuture, instance=True
+            )
             mock_streaming_pull_future.cancelled.return_value = True
             mock_streaming_pull_future._state = CANCELLED
-            mock_streaming_pull_future.result.side_effect = RetryError(cause=Exception(), message="Deadline of 60.0s exceeded while calling target function")
+            mock_streaming_pull_future.result.side_effect = RetryError(
+                cause=Exception(),
+                message="Deadline of 60.0s exceeded while calling target function",
+            )
             m.return_value = mock_streaming_pull_future
 
             with pytest.raises(RetryError):
                 worker.run_forever()
 
-    def test_restarts_consumption_when_future_is_done(self, worker, mock_consume, mock_sleep):
+    def test_restarts_consumption_when_future_is_done(
+        self, worker, mock_consume, mock_sleep
+    ):
         mock_consume.return_value.set_result(True)
 
         with pytest.raises(ValueError):
             worker.run_forever()
 
         assert len(mock_consume.call_args_list) == 2
-
-
 
 
 class TestCreateAndRun:
