@@ -128,27 +128,6 @@ class TestWorker:
         assert worker._subscriber._ack_deadline == custom_ack_deadline
         assert worker._subscriber._gc_project_id == "rele-test"
 
-    @freeze_time("2024-01-01 10:00:50Z")
-    def test_wait_forever_if_we_have_connection_and_is_second_50(
-        self, worker, mock_consume
-    ):
-        worker.start()
-
-        mock_consume.assert_called_once_with(
-            subscription_name="rele-some-cool-topic",
-            callback=ANY,
-            scheduler=ANY,
-        )
-
-    @freeze_time("2024-01-01 10:00:50Z")
-    def test_raises_not_connection_error_during_wait_forever_if_connection_is_down_every_50_seconds(  # noqa
-        self, worker, mock_internet_connection
-    ):
-        mock_internet_connection.return_value = False
-
-        with pytest.raises(NotConnectionError):
-            worker._wait_forever(1)
-
     def test_raises_not_connection_error_during_start(
         self, worker, mock_internet_connection
     ):
@@ -208,6 +187,37 @@ class TestRestartConsumer:
             worker.run_forever()
 
         assert len(mock_consume.call_args_list) == 2
+
+    @freeze_time("2024-01-01 10:00:50Z")
+    @pytest.mark.usefixtures("mock_consume")
+    def test_wait_forever_if_we_have_connection_and_timestamp_module_50(
+        self, worker, mock_internet_connection
+    ):
+
+        with pytest.raises(ValueError):
+            worker._wait_forever(1)
+
+        mock_internet_connection.assert_called_once()
+
+    @pytest.mark.usefixtures("mock_consume")
+    @pytest.mark.parametrize("timestamp_now", ["2024-01-01 10:00:49Z", "2024-01-01 10:00:51Z"])
+    def test_does_not_check_internet_connection_when_timestamp_is_not_module_50(
+        self, worker, mock_internet_connection, timestamp_now
+    ):
+        with freeze_time(timestamp_now):
+            with pytest.raises(ValueError):
+                worker._wait_forever(1)
+
+        mock_internet_connection.assert_not_called()
+
+    @freeze_time("2024-01-01 10:00:50Z")
+    def test_raises_not_connection_error_during_wait_forever_if_connection_is_down_every_50_seconds(  # noqa
+        self, worker, mock_internet_connection
+    ):
+        mock_internet_connection.return_value = False
+
+        with pytest.raises(NotConnectionError):
+            worker._wait_forever(1)
 
 
 class TestCreateAndRun:
