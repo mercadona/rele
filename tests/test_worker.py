@@ -189,14 +189,15 @@ class TestRestartConsumer:
     def test_wait_forever_if_we_have_connection_and_timestamp_module_50(
         self, worker, mock_internet_connection
     ):
-
         with pytest.raises(ValueError):
             worker._wait_forever(1)
 
         mock_internet_connection.assert_called_once()
 
     @pytest.mark.usefixtures("mock_consume")
-    @pytest.mark.parametrize("timestamp_now", ["2024-01-01 10:00:49Z", "2024-01-01 10:00:51Z"])
+    @pytest.mark.parametrize(
+        "timestamp_now", ["2024-01-01 10:00:49Z", "2024-01-01 10:00:51Z"]
+    )
     def test_does_not_check_internet_connection_when_timestamp_is_not_module_50(
         self, worker, mock_internet_connection, timestamp_now
     ):
