@@ -137,14 +137,10 @@ class Worker:
         sys.exit(0)
 
     def _boostrap_consumption(self, subscription):
-        logger.debug(
-            f"[_boostrap_consumption][0] "
-            f"subscription {subscription.name}"
-        )
+        logger.debug(f"[_boostrap_consumption][0] " f"subscription {subscription.name}")
 
         if subscription in self._futures:
             logger.debug(
-                f""
                 f"[_boostrap_consumption][1] subscription {subscription.name} "
                 f"futures in [{self._futures[subscription]._state}]"
             )
@@ -161,7 +157,7 @@ class Worker:
 
         if not check_internet_connection():
             logger.debug(
-                f" Not internet "
+                f"Not internet "
                 f"connection when boostrap a consumption for {subscription}"
             )
             raise NotConnectionError
@@ -186,22 +182,15 @@ class Worker:
     def _wait_forever(self, sleep_interval):
         logger.info("Consuming subscriptions...")
         while True:
-            logger.debug(
-                f""
-                f"[_wait_forever][0] Futures: {self._futures.values()}"
-            )
+            logger.debug(f"[_wait_forever][0] Futures: {self._futures.values()}")
 
             if datetime.now().timestamp() % 50 < 1 and not check_internet_connection():
-                logger.debug(
-                    f" "
-                    "Not internet connection, raising an Exception"
-                )
+                logger.debug("Not internet connection, raising an Exception")
                 raise NotConnectionError
 
             for subscription, future in self._futures.items():
                 if future.cancelled() or future.done():
                     logger.debug(
-                        f""
                         "[_wait_forever][1] Restarting consumption "
                         f"of {subscription.name}."
                     )
@@ -240,10 +229,7 @@ def create_and_run(subs, config):
     :param subs: List :class:`~rele.subscription.Subscription`
     :param config: :class:`~rele.config.Config`
     """
-    logger.debug(
-        f""
-        f"Configuring worker with {len(subs)} subscription(s)..."
-    )
+    logger.debug(f"" f"Configuring worker with {len(subs)} subscription(s)...")
     for sub in subs:
         logger.debug(f"  {sub}")
     worker = Worker(
