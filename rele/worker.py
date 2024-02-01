@@ -226,7 +226,7 @@ def create_and_run(subs, config):
     """
     logger.debug(f"" f"Configuring worker with {len(subs)} subscription(s)...")
     for sub in subs:
-        logger.debug(f"  {sub}")
+        print(f"Subscription: {sub}")
     worker = Worker(
         subs,
         config.gc_project_id,
