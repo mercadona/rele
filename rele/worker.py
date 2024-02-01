@@ -2,7 +2,6 @@ import logging
 import signal
 import socket
 import sys
-import threading
 import time
 from concurrent import futures
 from datetime import datetime
