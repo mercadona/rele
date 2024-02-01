@@ -37,10 +37,6 @@ def check_internet_connection():
         sock.close()
 
 
-def header_for_print():
-    return f"[{datetime.now()}][{threading.get_ident()}]"
-
-
 class Worker:
     """A Worker manages the subscriptions which consume Google PubSub messages.
 
