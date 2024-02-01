@@ -37,7 +37,7 @@ coverage: ## generates codecov report
 	coverage report -m
 
 release: clean install-deploy-requirements sdist ## package and upload a release
-	twine upload -u mercadonatech dist/*
+	twine upload -u __token__ dist/*
 
 sdist: clean ## package
 	python setup.py sdist
