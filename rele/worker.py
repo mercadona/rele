@@ -194,7 +194,6 @@ class Worker:
                     self._boostrap_consumption(subscription)
 
             logger.debug(
-                f""
                 f"[_wait_forever][2] Sleep {sleep_interval} "
                 f"second(s) with futures: {self._futures.values()}"
             )
