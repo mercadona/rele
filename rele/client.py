@@ -6,6 +6,7 @@ from concurrent.futures import TimeoutError
 
 import google.auth
 from google.api_core import exceptions
+from google.api_core.client_options import ClientOptions
 from google.cloud import pubsub_v1
 from google.cloud.pubsub_v1.types import FieldMask
 from google.protobuf import duration_pb2
@@ -55,7 +56,9 @@ class Subscriber:
         self._ack_deadline = default_ack_deadline or DEFAULT_ACK_DEADLINE
         self.credentials = credentials if not USE_EMULATOR else None
         self._message_storage_policy = message_storage_policy
-        self._client = pubsub_v1.SubscriberClient(credentials=credentials)
+        API_ENDPOINT = os.environ.get('PUBSUB_API_ENDPOINT', 'pubsub.googleapis.com')
+        options = ClientOptions(api_endpoint=API_ENDPOINT)
+        self._client = pubsub_v1.SubscriberClient(credentials=credentials, client_options=options)
         self._retry_policy = default_retry_policy
 
     def update_or_create_subscription(self, subscription):
@@ -190,7 +193,12 @@ class Publisher:
         if USE_EMULATOR:
             self._client = pubsub_v1.PublisherClient()
         else:
-            self._client = pubsub_v1.PublisherClient(credentials=credentials)
+            API_ENDPOINT = os.environ.get('PUBSUB_API_ENDPOINT',
+                                          'pubsub.googleapis.com')
+            options = ClientOptions(api_endpoint=API_ENDPOINT)
+            self._client = pubsub_v1.PublisherClient(
+                credentials=credentials, client_options=options
+            )
 
     def publish(
         self, topic, data, blocking=None, timeout=None, raise_exception=True, **attrs
