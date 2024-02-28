@@ -48,6 +48,7 @@ class Subscriber:
         gc_project_id,
         credentials,
         message_storage_policy,
+        client_options,
         default_ack_deadline=None,
         default_retry_policy=None,
     ):

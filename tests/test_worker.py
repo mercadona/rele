@@ -252,21 +252,13 @@ class TestCreateAndRun:
 
     def test_creates_subscriber_with_correct_arguments(self, mock_subscriber, config):
         subscriptions = (sub_stub,)
-        Worker(
-            subscriptions,
-            config.gc_project_id,
-            config.credentials,
-            config.gc_storage_region,
-            default_ack_deadline=60,
-            threads_per_subscription=10,
-            default_retry_policy=config.retry_policy,
-        )
+        create_and_run(subscriptions, config)
 
         mock_subscriber.assert_called_with(
             'rele-test',
             ANY,
             'some-region',
+            {"api_endpoint": "custom-api.interconnect.example.com"},
             60,
             None,
-            {"api_endpoint": "custom-api.interconnect.example.com"}
         )
