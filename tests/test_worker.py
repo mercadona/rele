@@ -135,6 +135,16 @@ class TestWorker:
 
         with pytest.raises(NotConnectionError):
             worker.start()
+        mock_internet_connection.assert_called_once_with()
+
+    def test_check_internet_connection_uses_api_endpoint_setting_when_present(
+        self, worker, mock_internet_connection
+    ):
+        mock_internet_connection.return_value = False
+
+        with pytest.raises(NotConnectionError):
+            worker.start()
+        mock_internet_connection.assert_called_once_with(remote_server="custom-api.interconnect.example.com")
 
 
 @pytest.mark.usefixtures("mock_create_subscription")

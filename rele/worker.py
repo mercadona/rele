@@ -21,9 +21,8 @@ class NotConnectionError(BaseException):
     pass
 
 
-def check_internet_connection():
+def check_internet_connection(remote_server="www.google.com"):
     logger.debug("Checking connection")
-    remote_server = "www.google.com"
     port = 80
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(5)
