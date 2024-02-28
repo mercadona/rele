@@ -56,7 +56,9 @@ class Subscriber:
         self._ack_deadline = default_ack_deadline or DEFAULT_ACK_DEADLINE
         self.credentials = credentials if not USE_EMULATOR else None
         self._message_storage_policy = message_storage_policy
-        self._client = pubsub_v1.SubscriberClient(credentials=credentials, client_options=client_options)
+        self._client = pubsub_v1.SubscriberClient(
+            credentials=credentials, client_options=client_options
+        )
         self._retry_policy = default_retry_policy
 
     def update_or_create_subscription(self, subscription):
@@ -183,7 +185,15 @@ class Publisher:
     :param blocking: boolean, default None falls back to :ref:`settings_publisher_blocking`
     """
 
-    def __init__(self, gc_project_id, credentials, encoder, timeout, client_options, blocking=None):
+    def __init__(
+        self,
+        gc_project_id,
+        credentials,
+        encoder,
+        timeout,
+        client_options,
+        blocking=None,
+    ):
         self._gc_project_id = gc_project_id
         self._timeout = timeout
         self._blocking = blocking
@@ -191,7 +201,9 @@ class Publisher:
         if USE_EMULATOR:
             self._client = pubsub_v1.PublisherClient()
         else:
-            self._client = pubsub_v1.PublisherClient(credentials=credentials, client_options=client_options)
+            self._client = pubsub_v1.PublisherClient(
+                credentials=credentials, client_options=client_options
+            )
 
     def publish(
         self, topic, data, blocking=None, timeout=None, raise_exception=True, **attrs

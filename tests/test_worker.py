@@ -258,9 +258,9 @@ class TestCreateAndRun:
         create_and_run(subscriptions, config)
 
         mock_subscriber.assert_called_with(
-            'rele-test',
+            "rele-test",
             ANY,
-            'some-region',
+            "some-region",
             {"api_endpoint": "custom-api.interconnect.example.com"},
             60,
             None,

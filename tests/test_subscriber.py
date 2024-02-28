@@ -1,4 +1,4 @@
-from unittest.mock import patch, ANY
+from unittest.mock import ANY, patch
 
 import pytest
 from google.api_core import exceptions
@@ -22,7 +22,9 @@ class TestSubscriber:
             yield mock
 
     @patch("rele.client.pubsub_v1.SubscriberClient", autospec=True)
-    def test_creates_subscriber_client_with_client_options(self, mock_subscriber_client, config):
+    def test_creates_subscriber_client_with_client_options(
+        self, mock_subscriber_client, config
+    ):
         Subscriber(
             gc_project_id=config.gc_project_id,
             credentials=config.credentials,
@@ -33,7 +35,7 @@ class TestSubscriber:
 
         mock_subscriber_client.assert_called_with(
             credentials=ANY,
-            client_options={"api_endpoint": "custom-api.interconnect.example.com"}
+            client_options={"api_endpoint": "custom-api.interconnect.example.com"},
         )
 
     @patch.object(SubscriberClient, "create_subscription")

@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch, Mock, ANY
+from unittest.mock import ANY, MagicMock, Mock, patch
 
 import pytest
 
@@ -52,9 +52,7 @@ class TestInitGlobalPublisher:
         assert id(publishing._publisher) == publisher_id
 
     @patch("rele.publishing.Publisher", autospec=True)
-    def test_creates_publisher_with_api_endpoint_option(
-        self, mock_publisher, config
-    ):
+    def test_creates_publisher_with_api_endpoint_option(self, mock_publisher, config):
         publishing._publisher = None
         mock_publisher.return_value = MagicMock(spec=Publisher)
         publishing.init_global_publisher(config)
@@ -63,7 +61,7 @@ class TestInitGlobalPublisher:
         publishing.publish(topic="order-cancelled", data=message, myattr="hello")
 
         mock_publisher.assert_called_with(
-            gc_project_id='rele-test',
+            gc_project_id="rele-test",
             credentials=ANY,
             encoder=ANY,
             timeout=3.0,
