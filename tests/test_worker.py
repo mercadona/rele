@@ -67,7 +67,7 @@ def mock_create_subscription():
 
 @pytest.fixture(autouse=True)
 def mock_internet_connection():
-    with patch("rele.worker.check_internet_connection") as m:
+    with patch("rele.worker.check_internet_connection", autospec=True) as m:
         m.return_value = True
         yield m
 

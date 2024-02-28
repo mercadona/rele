@@ -181,7 +181,7 @@ class Worker:
         while True:
             logger.debug(f"[_wait_forever][0] Futures: {self._futures.values()}")
 
-            if datetime.now().timestamp() % 50 < 1 and not check_internet_connection():
+            if datetime.now().timestamp() % 50 < 1 and not check_internet_connection(self.internet_check_endpoint):
                 logger.debug("Not internet connection, raising an Exception")
                 raise NotConnectionError
 
