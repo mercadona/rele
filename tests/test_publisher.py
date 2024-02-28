@@ -11,21 +11,21 @@ from rele import Publisher
 
 @pytest.mark.usefixtures("publisher", "time_mock")
 class TestPublisher:
-    def test_initialises_with_correct_parameters(self, config):
-        with patch("rele.client.pubsub_v1.PublisherClient") as mock:
-            Publisher(
-                gc_project_id=config.gc_project_id,
-                credentials=config.credentials,
-                encoder=config.encoder,
-                timeout=config.publisher_timeout,
-                blocking=config.publisher_blocking,
-                client_options=config.client_options,
-            )
+    @patch("rele.client.pubsub_v1.PublisherClient", autospec=True)
+    def test_initialises_with_correct_parameters(self, mock_publisher_client, config):
+        Publisher(
+            gc_project_id=config.gc_project_id,
+            credentials=config.credentials,
+            encoder=config.encoder,
+            timeout=config.publisher_timeout,
+            blocking=config.publisher_blocking,
+            client_options=config.client_options,
+        )
 
-            mock.assert_called_with(
-                credentials=ANY,
-                client_options={"api_endpoint": "custom-api.interconnect.example.com"},
-            )
+        mock_publisher_client.assert_called_with(
+            credentials=ANY,
+            client_options={"api_endpoint": "custom-api.interconnect.example.com"},
+        )
 
     def test_returns_future_when_published_called(self, published_at, publisher):
         message = {"foo": "bar"}
