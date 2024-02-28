@@ -182,7 +182,7 @@ class Publisher:
     :param blocking: boolean, default None falls back to :ref:`settings_publisher_blocking`
     """
 
-    def __init__(self, gc_project_id, credentials, encoder, timeout, blocking=None):
+    def __init__(self, gc_project_id, credentials, encoder, timeout, client_options, blocking=None):
         self._gc_project_id = gc_project_id
         self._timeout = timeout
         self._blocking = blocking

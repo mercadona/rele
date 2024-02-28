@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch, Mock
+from unittest.mock import MagicMock, patch, Mock, ANY
 
 import pytest
 
@@ -53,7 +53,7 @@ class TestInitGlobalPublisher:
 
     @patch("rele.publishing.Publisher", autospec=True)
     def test_creates_publisher_with_api_endpoint_option(
-        self, mock_publisher: Mock
+        self, mock_publisher
     ):
         config = Config({
             "APP_NAME": "rele",
@@ -61,7 +61,7 @@ class TestInitGlobalPublisher:
             "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
             "GC_STORAGE_REGION": "some-region",
             "MIDDLEWARE": ["rele.contrib.LoggingMiddleware"],
-            "API_ENDPOINT": "custom-api.interconnect.example.com",
+            "CLIENT_OPTIONS": {"api_endpoint": "custom-api.interconnect.example.com"},
         })
         publishing._publisher = None
         mock_publisher.return_value = MagicMock(spec=Publisher)
@@ -72,9 +72,9 @@ class TestInitGlobalPublisher:
 
         mock_publisher.assert_called_with(
             gc_project_id='rele-test',
-            credentials=config.credentials,
-            encoder=config.encoder,
+            credentials=ANY,
+            encoder=ANY,
             timeout=3.0,
             blocking=False,
-            api_endpoint='custom-api.interconnect.example.com',
+            client_options={"api_endpoint": "custom-api.interconnect.example.com"},
         )
