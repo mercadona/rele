@@ -29,6 +29,7 @@ def config(project_id):
             "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
             "GC_STORAGE_REGION": "some-region",
             "MIDDLEWARE": ["rele.contrib.LoggingMiddleware"],
+            "CLIENT_OPTIONS": {"api_endpoint": "custom-api.interconnect.example.com"},
         }
     )
 
@@ -56,7 +57,11 @@ def mock_worker():
 @pytest.fixture
 def subscriber(project_id, config):
     return Subscriber(
-        config.gc_project_id, config.credentials, config.gc_storage_region, 60
+        config.gc_project_id,
+        config.credentials,
+        config.gc_storage_region,
+        config.client_options,
+        60,
     )
 
 
@@ -73,6 +78,7 @@ def publisher(config, mock_future):
         encoder=config.encoder,
         timeout=config.publisher_timeout,
         blocking=config.publisher_blocking,
+        client_options=config.client_options,
     )
     publisher._client = MagicMock(spec=PublisherClient)
     publisher._client.publish.return_value = mock_future

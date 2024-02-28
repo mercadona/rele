@@ -14,6 +14,7 @@ def init_global_publisher(config):
             encoder=config.encoder,
             timeout=config.publisher_timeout,
             blocking=config.publisher_blocking,
+            client_options=config.client_options,
         )
     return _publisher
 

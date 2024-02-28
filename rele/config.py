@@ -43,6 +43,7 @@ class Config:
         self.filter_by = setting.get("FILTER_SUBS_BY")
         self._credentials = None
         self.retry_policy = setting.get("DEFAULT_RETRY_POLICY")
+        self.client_options = setting.get("CLIENT_OPTIONS")
 
     @property
     def encoder(self):

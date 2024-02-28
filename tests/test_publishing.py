@@ -1,8 +1,9 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import ANY, MagicMock, Mock, patch
 
 import pytest
 
 from rele import Publisher, publishing
+from rele.config import Config
 from tests import settings
 
 
@@ -49,3 +50,21 @@ class TestInitGlobalPublisher:
         mock_publisher.return_value = MagicMock(spec=Publisher)
         publishing.publish(topic="order-cancelled", data=message, myattr="hello")
         assert id(publishing._publisher) == publisher_id
+
+    @patch("rele.publishing.Publisher", autospec=True)
+    def test_creates_publisher_with_api_endpoint_option(self, mock_publisher, config):
+        publishing._publisher = None
+        mock_publisher.return_value = MagicMock(spec=Publisher)
+        publishing.init_global_publisher(config)
+
+        message = {"foo": "bar"}
+        publishing.publish(topic="order-cancelled", data=message, myattr="hello")
+
+        mock_publisher.assert_called_with(
+            gc_project_id="rele-test",
+            credentials=ANY,
+            encoder=ANY,
+            timeout=3.0,
+            blocking=False,
+            client_options={"api_endpoint": "custom-api.interconnect.example.com"},
+        )

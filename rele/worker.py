@@ -48,6 +48,7 @@ class Worker:
     def __init__(
         self,
         subscriptions,
+        client_options,
         gc_project_id=None,
         credentials=None,
         gc_storage_region=None,
@@ -59,6 +60,7 @@ class Worker:
             gc_project_id,
             credentials,
             gc_storage_region,
+            client_options,
             default_ack_deadline,
             default_retry_policy,
         )
@@ -228,6 +230,7 @@ def create_and_run(subs, config):
         print(f"Subscription: {sub}")
     worker = Worker(
         subs,
+        config.client_options,
         config.gc_project_id,
         config.credentials,
         config.gc_storage_region,
