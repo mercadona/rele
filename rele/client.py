@@ -190,7 +190,7 @@ class Publisher:
         if USE_EMULATOR:
             self._client = pubsub_v1.PublisherClient()
         else:
-            self._client = pubsub_v1.PublisherClient(credentials=credentials)
+            self._client = pubsub_v1.PublisherClient(credentials=credentials, client_options=client_options)
 
     def publish(
         self, topic, data, blocking=None, timeout=None, raise_exception=True, **attrs
