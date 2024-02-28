@@ -53,16 +53,8 @@ class TestInitGlobalPublisher:
 
     @patch("rele.publishing.Publisher", autospec=True)
     def test_creates_publisher_with_api_endpoint_option(
-        self, mock_publisher
+        self, mock_publisher, config
     ):
-        config = Config({
-            "APP_NAME": "rele",
-            "SUB_PREFIX": "rele",
-            "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
-            "GC_STORAGE_REGION": "some-region",
-            "MIDDLEWARE": ["rele.contrib.LoggingMiddleware"],
-            "CLIENT_OPTIONS": {"api_endpoint": "custom-api.interconnect.example.com"},
-        })
         publishing._publisher = None
         mock_publisher.return_value = MagicMock(spec=Publisher)
         publishing.init_global_publisher(config)
