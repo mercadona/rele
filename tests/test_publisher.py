@@ -2,13 +2,31 @@ import concurrent
 import decimal
 import logging
 from concurrent.futures import TimeoutError
-from unittest.mock import ANY
+from unittest.mock import ANY, patch
 
 import pytest
+
+from rele import Publisher
 
 
 @pytest.mark.usefixtures("publisher", "time_mock")
 class TestPublisher:
+    def test_initialises_with_correct_parameters(self, config ):
+        with patch("rele.client.pubsub_v1.PublisherClient") as mock:
+            Publisher(
+                gc_project_id=config.gc_project_id,
+                credentials=config.credentials,
+                encoder=config.encoder,
+                timeout=config.publisher_timeout,
+                blocking=config.publisher_blocking,
+                client_options=config.client_options
+            )
+
+            mock.assert_called_with(
+                credentials=ANY,
+                client_options={"api_endpoint": "custom-api.interconnect.example.com"}
+            )
+
     def test_returns_future_when_published_called(self, published_at, publisher):
         message = {"foo": "bar"}
         result = publisher.publish(

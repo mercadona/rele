@@ -29,6 +29,7 @@ def config(project_id):
             "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
             "GC_STORAGE_REGION": "some-region",
             "MIDDLEWARE": ["rele.contrib.LoggingMiddleware"],
+            "CLIENT_OPTIONS": {"api_endpoint": "custom-api.interconnect.example.com"},
         }
     )
 
