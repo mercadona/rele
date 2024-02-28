@@ -37,6 +37,21 @@ def worker(config):
 
 
 @pytest.fixture
+def worker_without_client_options(config):
+    subscriptions = (sub_stub,)
+    return Worker(
+        subscriptions,
+        None,
+        config.gc_project_id,
+        config.credentials,
+        config.gc_storage_region,
+        default_ack_deadline=60,
+        threads_per_subscription=10,
+        default_retry_policy=config.retry_policy,
+    )
+
+
+@pytest.fixture
 def mock_consume(config):
     with patch.object(Subscriber, "consume") as m:
         client = pubsub_v1.SubscriberClient(credentials=config.credentials)
@@ -129,12 +144,12 @@ class TestWorker:
         assert worker._subscriber._gc_project_id == "rele-test"
 
     def test_raises_not_connection_error_during_start(
-        self, worker, mock_internet_connection
+        self, worker_without_client_options, mock_internet_connection
     ):
         mock_internet_connection.return_value = False
 
         with pytest.raises(NotConnectionError):
-            worker.start()
+            worker_without_client_options.start()
         mock_internet_connection.assert_called_once_with("www.google.com")
 
     def test_check_internet_connection_uses_api_endpoint_setting_when_present(
