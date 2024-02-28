@@ -66,7 +66,12 @@ class Worker:
         self._futures: Dict[str, Future] = {}
         self._subscriptions = subscriptions
         self.threads_per_subscription = threads_per_subscription
-        self.internet_check_endpoint = client_options.get("api_endpoint") if client_options is not None and client_options.get("api_endpoint") is not None else "www.google.com"
+        self.internet_check_endpoint = self._get_internet_check_endpoint(client_options)
+
+    def _get_internet_check_endpoint(self, client_options):
+        if client_options is not None and client_options.get("api_endpoint") is not None:
+            return client_options.get("api_endpoint")
+        return "www.google.com"
 
     def setup(self):
         """Create the subscriptions on a Google PubSub topic.
