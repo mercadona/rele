@@ -228,6 +228,11 @@ class TestCreateAndRun:
         with patch("rele.worker.Worker", autospec=True) as p:
             yield p
 
+    @pytest.fixture
+    def mock_subscriber(self):
+        with patch("rele.worker.Subscriber", autospec=True) as p:
+            yield p
+
     def test_waits_forever_when_called_with_config_and_subs(
         self, config_with_retry_policy, mock_worker
     ):
@@ -244,3 +249,24 @@ class TestCreateAndRun:
             RetryPolicy(5, 30),
         )
         mock_worker.return_value.run_forever.assert_called_once_with()
+
+    def test_creates_subscriber_with_correct_arguments(self, mock_subscriber, config):
+        subscriptions = (sub_stub,)
+        Worker(
+            subscriptions,
+            config.gc_project_id,
+            config.credentials,
+            config.gc_storage_region,
+            default_ack_deadline=60,
+            threads_per_subscription=10,
+            default_retry_policy=config.retry_policy,
+        )
+
+        mock_subscriber.assert_called_with(
+            'rele-test',
+            ANY,
+            'some-region',
+            60,
+            None,
+            {"api_endpoint": "custom-api.interconnect.example.com"}
+        )
