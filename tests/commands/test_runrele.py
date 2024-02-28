@@ -18,7 +18,7 @@ class TestRunReleCommand:
         call_command("runrele")
 
         mock_worker.assert_called_with(
-            [], "rele-test", ANY, "europe-west1", 60, 2, None
+            [], None, "rele-test", ANY, "europe-west1", 60, 2, None
         )
         mock_worker.return_value.run_forever.assert_called_once_with()
 
@@ -35,6 +35,6 @@ class TestRunReleCommand:
             "be exhausted." in err
         )
         mock_worker.assert_called_with(
-            [], "rele-test", ANY, "europe-west1", 60, 2, None
+            [], None, "rele-test", ANY, "europe-west1", 60, 2, None
         )
         mock_worker.return_value.run_forever.assert_called_once_with()

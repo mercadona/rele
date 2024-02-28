@@ -57,7 +57,7 @@ def mock_worker():
 @pytest.fixture
 def subscriber(project_id, config):
     return Subscriber(
-        config.gc_project_id, config.credentials, config.gc_storage_region, 60
+        config.gc_project_id, config.credentials, config.gc_storage_region, config.client_options, 60
     )
 
 

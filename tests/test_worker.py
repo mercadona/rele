@@ -26,6 +26,7 @@ def worker(config):
     subscriptions = (sub_stub,)
     return Worker(
         subscriptions,
+        config.client_options,
         config.gc_project_id,
         config.credentials,
         config.gc_storage_region,
@@ -115,6 +116,7 @@ class TestWorker:
         custom_ack_deadline = 234
         worker = Worker(
             subscriptions,
+            config.client_options,
             config.gc_project_id,
             config.gc_storage_region,
             config.credentials,
@@ -241,6 +243,7 @@ class TestCreateAndRun:
 
         mock_worker.assert_called_with(
             subscriptions,
+            None,
             "rele-test",
             ANY,
             "some-region",

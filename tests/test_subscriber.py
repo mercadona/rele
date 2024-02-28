@@ -212,6 +212,7 @@ class TestSubscriber:
             config_with_retry_policy.gc_project_id,
             config_with_retry_policy.credentials,
             config_with_retry_policy.gc_storage_region,
+            config_with_retry_policy.client_options,
             60,
             config_with_retry_policy.retry_policy,
         )

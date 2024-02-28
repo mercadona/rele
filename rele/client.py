@@ -56,7 +56,7 @@ class Subscriber:
         self._ack_deadline = default_ack_deadline or DEFAULT_ACK_DEADLINE
         self.credentials = credentials if not USE_EMULATOR else None
         self._message_storage_policy = message_storage_policy
-        self._client = pubsub_v1.SubscriberClient(credentials=credentials)
+        self._client = pubsub_v1.SubscriberClient(credentials=credentials, client_options=client_options)
         self._retry_policy = default_retry_policy
 
     def update_or_create_subscription(self, subscription):
