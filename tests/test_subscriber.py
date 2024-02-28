@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import patch, ANY
 
 import pytest
 from google.api_core import exceptions
@@ -20,6 +20,21 @@ class TestSubscriber:
             PublisherClient, "create_topic", return_values={"name": "test-topic"}
         ) as mock:
             yield mock
+
+    @patch("rele.client.pubsub_v1.SubscriberClient", autospec=True)
+    def test_creates_subscriber_client_with_client_options(self, mock_subscriber_client, config):
+        Subscriber(
+            gc_project_id=config.gc_project_id,
+            credentials=config.credentials,
+            message_storage_policy=config.gc_storage_region,
+            client_options={"api_endpoint": "custom-api.interconnect.example.com"},
+            default_ack_deadline=60,
+        )
+
+        mock_subscriber_client.assert_called_with(
+            credentials=ANY,
+            client_options={"api_endpoint": "custom-api.interconnect.example.com"}
+        )
 
     @patch.object(SubscriberClient, "create_subscription")
     @patch.object(SubscriberClient, "update_subscription")
