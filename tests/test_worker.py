@@ -152,7 +152,7 @@ class TestWorker:
             worker_without_client_options.start()
         mock_internet_connection.assert_called_once_with("www.google.com")
 
-    def test_check_internet_connection_with_defult_endpoint_if_client_options_do_not_have_api_endpoint(
+    def test_check_internet_connection_with_default_endpoint_if_client_options_do_not_have_api_endpoint(
         self, config, mock_internet_connection
     ):
         mock_internet_connection.return_value = False
@@ -171,7 +171,6 @@ class TestWorker:
         with pytest.raises(NotConnectionError):
             worker.start()
         mock_internet_connection.assert_called_once_with("www.google.com")
-
 
     def test_check_internet_connection_uses_api_endpoint_setting_when_present(
         self, worker, mock_internet_connection
