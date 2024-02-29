@@ -69,7 +69,10 @@ class Worker:
         self.internet_check_endpoint = self._get_internet_check_endpoint(client_options)
 
     def _get_internet_check_endpoint(self, client_options):
-        if client_options is not None and client_options.get("api_endpoint") is not None:
+        if (
+            client_options is not None
+            and client_options.get("api_endpoint") is not None
+        ):
             return client_options.get("api_endpoint")
         return "www.google.com"
 
@@ -186,7 +189,9 @@ class Worker:
         while True:
             logger.debug(f"[_wait_forever][0] Futures: {self._futures.values()}")
 
-            if datetime.now().timestamp() % 50 < 1 and not check_internet_connection(self.internet_check_endpoint):
+            if datetime.now().timestamp() % 50 < 1 and not check_internet_connection(
+                self.internet_check_endpoint
+            ):
                 logger.debug("Not internet connection, raising an Exception")
                 raise NotConnectionError
 
