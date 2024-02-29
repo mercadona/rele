@@ -66,9 +66,8 @@ class Subscriber:
         if the subscription contains any parameter that allows it.
 
         This makes it easier to deploy a worker and forget about the
-        subscription side of things. The subscription must
-        have a topic to subscribe to. Which means that the topic must be
-        created manually before the worker is started.
+        subscription side of things. If the topic of the subscription
+        do not exist, it will be created automatically.
 
         :param subscription: obj :class:`~rele.subscription.Subscription`.
         """
