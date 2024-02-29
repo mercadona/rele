@@ -21,9 +21,8 @@ class NotConnectionError(BaseException):
     pass
 
 
-def check_internet_connection():
+def check_internet_connection(remote_server):
     logger.debug("Checking connection")
-    remote_server = "www.google.com"
     port = 80
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(5)
@@ -67,6 +66,15 @@ class Worker:
         self._futures: Dict[str, Future] = {}
         self._subscriptions = subscriptions
         self.threads_per_subscription = threads_per_subscription
+        self.internet_check_endpoint = self._get_internet_check_endpoint(client_options)
+
+    def _get_internet_check_endpoint(self, client_options):
+        if (
+            client_options is not None
+            and client_options.get("api_endpoint") is not None
+        ):
+            return client_options.get("api_endpoint")
+        return "www.google.com"
 
     def setup(self):
         """Create the subscriptions on a Google PubSub topic.
@@ -152,7 +160,7 @@ class Worker:
                 "future cancelled and result"
             )
 
-        if not check_internet_connection():
+        if not check_internet_connection(self.internet_check_endpoint):
             logger.debug(
                 f"Not internet "
                 f"connection when boostrap a consumption for {subscription}"
@@ -181,7 +189,9 @@ class Worker:
         while True:
             logger.debug(f"[_wait_forever][0] Futures: {self._futures.values()}")
 
-            if datetime.now().timestamp() % 50 < 1 and not check_internet_connection():
+            if datetime.now().timestamp() % 50 < 1 and not check_internet_connection(
+                self.internet_check_endpoint
+            ):
                 logger.debug("Not internet connection, raising an Exception")
                 raise NotConnectionError
 
