@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 USE_EMULATOR = True if os.environ.get("PUBSUB_EMULATOR_HOST") else False
 DEFAULT_ENCODER_PATH = "json.JSONEncoder"
 DEFAULT_ACK_DEADLINE = 60
-DEFAULT_MESSAGE_RETENTION_DURATION = "7d"
+DEFAULT_MESSAGE_RETENTION_DURATION = "86400s"
 DEFAULT_BLOCKING = False
 
 
@@ -125,20 +125,27 @@ class Subscriber:
 
     def _update_subscription(self, subscription_path, topic_path, subscription):
         retry_policy = subscription.retry_policy or self._retry_policy
+        message_retention_duration = self._message_retention_duration
 
-        if not retry_policy:
-            return
+        mask_fields = ["message_retention_duration"]
 
-        update_mask = FieldMask(paths=["retry_policy"])
+        if retry_policy:
+            mask_fields.append("retry_policy")
+            client_retry_policy = self._build_gcloud_retry_policy(retry_policy)
+            subscription = pubsub_v1.types.Subscription(
+                name=subscription_path,
+                topic=topic_path,
+                retry_policy=client_retry_policy,
+                message_retention_duration=message_retention_duration,
+            )
+        else:
+            subscription = pubsub_v1.types.Subscription(
+                name=subscription_path,
+                topic=topic_path,
+                message_retention_duration=message_retention_duration,
+            )
 
-        client_retry_policy = self._build_gcloud_retry_policy(retry_policy)
-
-        subscription = pubsub_v1.types.Subscription(
-            name=subscription_path,
-            topic=topic_path,
-            retry_policy=client_retry_policy,
-        )
-
+        update_mask = FieldMask(paths=mask_fields)
         self._client.update_subscription(
             request={"subscription": subscription, "update_mask": update_mask}
         )

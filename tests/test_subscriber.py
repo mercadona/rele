@@ -60,7 +60,7 @@ class TestSubscriber:
                 "ack_deadline_seconds": 60,
                 "name": expected_subscription,
                 "topic": expected_topic,
-                "message_retention_duration": "7d",
+                "message_retention_duration": "86400s",
             }
         )
         assert subscriber._gc_project_id == "rele-test"
@@ -114,7 +114,7 @@ class TestSubscriber:
                 "ack_deadline_seconds": 60,
                 "name": expected_subscription,
                 "topic": expected_topic,
-                "message_retention_duration": "7d",
+                "message_retention_duration": "86400s",
             }
         )
         assert subscriber._gc_project_id == "rele-test"
@@ -142,7 +142,7 @@ class TestSubscriber:
                 "ack_deadline_seconds": 100,
                 "name": expected_subscription,
                 "topic": expected_topic,
-                "message_retention_duration": "7d",
+                "message_retention_duration": "86400s",
             }
         )
 
@@ -174,7 +174,7 @@ class TestSubscriber:
                 "name": expected_subscription,
                 "topic": expected_topic,
                 "filter": backend_filter_by,
-                "message_retention_duration": "7d",
+                "message_retention_duration": "86400s",
             }
         )
 
@@ -220,7 +220,7 @@ class TestSubscriber:
                 "name": expected_subscription,
                 "topic": expected_topic,
                 "filter": backend_filter_by,
-                "message_retention_duration": "7d",
+                "message_retention_duration": "86400s",
             }
         )
 
@@ -256,7 +256,7 @@ class TestSubscriber:
                 "name": expected_subscription,
                 "topic": expected_topic,
                 "retry_policy": expected_retry_policy,
-                "message_retention_duration": "7d",
+                "message_retention_duration": "86400s",
             }
         )
 
@@ -299,7 +299,7 @@ class TestSubscriber:
                 "name": expected_subscription,
                 "topic": expected_topic,
                 "retry_policy": expected_retry_policy,
-                "message_retention_duration": "7d",
+                "message_retention_duration": "86400s",
             }
         )
 
@@ -329,9 +329,10 @@ class TestSubscriber:
             name=subscription_path,
             topic=topic_path,
             retry_policy=retry_policy,
+            message_retention_duration="86400s",
         )
 
-        update_mask = FieldMask(paths=["retry_policy"])
+        update_mask = FieldMask(paths=["message_retention_duration", "retry_policy"])
 
         subscriber.update_or_create_subscription(
             Subscription(
@@ -344,21 +345,58 @@ class TestSubscriber:
             request={"subscription": subscription, "update_mask": update_mask}
         )
 
+    # @patch.object(
+    #     SubscriberClient,
+    #     "create_subscription",
+    #     side_effect=exceptions.AlreadyExists("Subscription already exists"),
+    # )
+    # @patch.object(SubscriberClient, "update_subscription")
+    # def test_subscription_is_not_updated_when_exists_and_retry_policy_not_provided(
+    #     self,
+    #     client_update_subscription,
+    #     client_create_subscription,
+    #     project_id,
+    #     subscriber,
+    # ):
+    #     subscriber.update_or_create_subscription(
+    #         Subscription(None, topic=f"{project_id}-test-topic")
+    #     )
+
+    #     client_update_subscription.assert_not_called()
+
     @patch.object(
         SubscriberClient,
         "create_subscription",
         side_effect=exceptions.AlreadyExists("Subscription already exists"),
     )
     @patch.object(SubscriberClient, "update_subscription")
-    def test_subscription_is_not_updated_when_exists_and_retry_policy_not_provided(
+    def test_subscription_is_updated_with_message_retention_duration_when_already_exists(
         self,
         client_update_subscription,
         client_create_subscription,
         project_id,
         subscriber,
     ):
-        subscriber.update_or_create_subscription(
-            Subscription(None, topic=f"{project_id}-test-topic")
+        subscription_path = (
+            f"projects/{project_id}/subscriptions/" f"{project_id}-test-topic"
+        )
+        topic_path = f"projects/{project_id}/topics/" f"{project_id}-test-topic"
+
+        subscription = pubsub_v1.types.Subscription(
+            name=subscription_path,
+            topic=topic_path,
+            message_retention_duration="86400s",
         )
 
-        client_update_subscription.assert_not_called()
+        update_mask = FieldMask(paths=["message_retention_duration"])
+
+        subscriber.update_or_create_subscription(
+            Subscription(
+                None,
+                topic=f"{project_id}-test-topic",
+            )
+        )
+
+        client_update_subscription.assert_called_once_with(
+            request={"subscription": subscription, "update_mask": update_mask}
+        )
