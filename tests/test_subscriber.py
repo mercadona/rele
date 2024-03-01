@@ -87,6 +87,7 @@ class TestSubscriber:
                 "ack_deadline_seconds": 60,
                 "name": expected_subscription,
                 "topic": expected_topic,
+                "message_retention_duration": "7d",
             }
         )
         assert subscriber._gc_project_id == "rele-test"
@@ -114,6 +115,7 @@ class TestSubscriber:
                 "ack_deadline_seconds": 100,
                 "name": expected_subscription,
                 "topic": expected_topic,
+                "message_retention_duration": "7d",
             }
         )
 
@@ -145,6 +147,7 @@ class TestSubscriber:
                 "name": expected_subscription,
                 "topic": expected_topic,
                 "filter": backend_filter_by,
+                "message_retention_duration": "7d",
             }
         )
 
@@ -190,6 +193,7 @@ class TestSubscriber:
                 "name": expected_subscription,
                 "topic": expected_topic,
                 "filter": backend_filter_by,
+                "message_retention_duration": "7d",
             }
         )
 
@@ -225,6 +229,7 @@ class TestSubscriber:
                 "name": expected_subscription,
                 "topic": expected_topic,
                 "retry_policy": expected_retry_policy,
+                "message_retention_duration": "7d",
             }
         )
 
@@ -267,6 +272,7 @@ class TestSubscriber:
                 "name": expected_subscription,
                 "topic": expected_topic,
                 "retry_policy": expected_retry_policy,
+                "message_retention_duration": "7d",
             }
         )
 

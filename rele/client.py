@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 USE_EMULATOR = True if os.environ.get("PUBSUB_EMULATOR_HOST") else False
 DEFAULT_ENCODER_PATH = "json.JSONEncoder"
 DEFAULT_ACK_DEADLINE = 60
+DEFAULT_MESSAGE_RETENTION_DURATION = "7d"
 DEFAULT_BLOCKING = False
 
 
@@ -51,9 +52,13 @@ class Subscriber:
         client_options,
         default_ack_deadline=None,
         default_retry_policy=None,
+        default_message_retention_duration=None,
     ):
         self._gc_project_id = gc_project_id
         self._ack_deadline = default_ack_deadline or DEFAULT_ACK_DEADLINE
+        self._message_retention_duration = (
+            default_message_retention_duration or DEFAULT_MESSAGE_RETENTION_DURATION
+        )
         self.credentials = credentials if not USE_EMULATOR else None
         self._message_storage_policy = message_storage_policy
         self._client = pubsub_v1.SubscriberClient(
@@ -105,6 +110,7 @@ class Subscriber:
             "name": subscription_path,
             "topic": topic_path,
             "ack_deadline_seconds": self._ack_deadline,
+            "message_retention_duration": self._message_retention_duration,
         }
 
         if subscription.backend_filter_by:
