@@ -1,6 +1,16 @@
 Changelog
 =========
 
+1.15.0 (2024-02-29)
+-------------------
+* [Added] Add a setting CLIENT_OPTIONS for Pub/Sub clients (#274)
+* [Changed] Use api_endpoint from CLIENT_OPTIONS to check loss of network connectivity(#275)
+
+1.14.0 (2024-02-01)
+-------------------
+* [Fixed] Restart worker when get in an inconsistent status due a loss of network connectivity (#267)
+* [Added] Allow --third-party-subscriptions argument in rele-cli run command for stand alone workers (#269)
+
 1.13.0 (2023-09-04)
 -------------------
 * [Added] Add verbosity to `VerboseLoggingMiddleware`'s hooks (#240)

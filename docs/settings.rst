@@ -32,6 +32,7 @@ Example::
         'FILTER_SUBS_BY': boolean_function,
         'DEFAULT_RETRY_POLICY': RetryPolicy(10, 50),
         'GC_STORAGE_REGION': 'europe-west1',
+        'CLIENT_OPTIONS': {'api_endpoint': 'custom-api.interconnect.example.com'}
     }
 
 ``GC_PROJECT_ID``
@@ -195,3 +196,16 @@ RetryPolicy will be triggered on NACKs or acknowledgement deadline exceeded even
 **Optional**
 
 Set the Google Cloud's region for storing the messages. By default is `europe-west1`
+
+``CLIENT_OPTIONS``
+----------------------------
+
+**Optional**
+
+Provide custom options for publisher and subscriber client. Following are three of the options.
+
+1. The `api_endpoint` property can be used to override the default endpoint provided by the client when transport is not explicitly provided.
+2. The `client_cert_source` property can be used to provide a client certificate for mTLS transport. If not provided, the default SSL client certificate will be used if present.
+3. The `universe_domain` property can be used to override the default "googleapis.com" universe. Note that the api_endpoint property still takes precedence; and universe_domain is currently not supported for mTLS.
+
+For more information about the client options, please see `Publisher Client <https://cloud.google.com/python/docs/reference/pubsub/latest/google.cloud.pubsub_v1.publisher.client.Client>`_ and `Subscriber Client <https://cloud.google.com/python/docs/reference/pubsub/latest/google.cloud.pubsub_v1.subscriber.client.Client>`_.
