@@ -345,25 +345,6 @@ class TestSubscriber:
             request={"subscription": subscription, "update_mask": update_mask}
         )
 
-    # @patch.object(
-    #     SubscriberClient,
-    #     "create_subscription",
-    #     side_effect=exceptions.AlreadyExists("Subscription already exists"),
-    # )
-    # @patch.object(SubscriberClient, "update_subscription")
-    # def test_subscription_is_not_updated_when_exists_and_retry_policy_not_provided(
-    #     self,
-    #     client_update_subscription,
-    #     client_create_subscription,
-    #     project_id,
-    #     subscriber,
-    # ):
-    #     subscriber.update_or_create_subscription(
-    #         Subscription(None, topic=f"{project_id}-test-topic")
-    #     )
-
-    #     client_update_subscription.assert_not_called()
-
     @patch.object(
         SubscriberClient,
         "create_subscription",

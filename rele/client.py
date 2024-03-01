@@ -127,23 +127,20 @@ class Subscriber:
         retry_policy = subscription.retry_policy or self._retry_policy
         message_retention_duration = self._message_retention_duration
 
+        subscription_parameters = {
+            "name": subscription_path,
+            "topic": topic_path,
+            "message_retention_duration": message_retention_duration,
+        }
+
         mask_fields = ["message_retention_duration"]
 
         if retry_policy:
             mask_fields.append("retry_policy")
             client_retry_policy = self._build_gcloud_retry_policy(retry_policy)
-            subscription = pubsub_v1.types.Subscription(
-                name=subscription_path,
-                topic=topic_path,
-                retry_policy=client_retry_policy,
-                message_retention_duration=message_retention_duration,
-            )
-        else:
-            subscription = pubsub_v1.types.Subscription(
-                name=subscription_path,
-                topic=topic_path,
-                message_retention_duration=message_retention_duration,
-            )
+            subscription_parameters["retry_policy"] = client_retry_policy
+
+        subscription = pubsub_v1.types.Subscription(subscription_parameters)
 
         update_mask = FieldMask(paths=mask_fields)
         self._client.update_subscription(
