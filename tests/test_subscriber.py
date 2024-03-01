@@ -67,6 +67,33 @@ class TestSubscriber:
 
     @patch.object(SubscriberClient, "create_subscription")
     @patch.object(SubscriberClient, "update_subscription")
+    def test_creates_subscription_with_default_message_retention_duration_when_provided(
+        self,
+        client_update_subscription,
+        client_create_subscription,
+        project_id,
+        subscriber,
+    ):
+        expected_subscription = (
+            f"projects/{project_id}/subscriptions/" f"{project_id}-test-topic"
+        )
+        expected_topic = f"projects/{project_id}/topics/" f"{project_id}-test-topic"
+        subscriber._message_retention_duration = "3d"
+        subscriber.update_or_create_subscription(
+            Subscription(None, topic=f"{project_id}-test-topic")
+        )
+        client_create_subscription.assert_called_once_with(
+            request={
+                "ack_deadline_seconds": 60,
+                "name": expected_subscription,
+                "topic": expected_topic,
+                "message_retention_duration": "3d",
+            }
+        )
+        assert subscriber._gc_project_id == "rele-test"
+
+    @patch.object(SubscriberClient, "create_subscription")
+    @patch.object(SubscriberClient, "update_subscription")
     def test_creates_subscription_with_default_ack_deadline_when_none_provided(
         self,
         client_update_subscription,
