@@ -143,6 +143,7 @@ class Callback:
                 start_time,
                 message,
             )
+            message.nack()
         else:
             message.ack()
             run_middleware_hook(
