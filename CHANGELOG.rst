@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.15.1 (2024-04-10)
+-------------------
+* [Changed] Require at least google-cloud-pubsub>=2.7.1 (#281)
+
 1.15.0 (2024-02-29)
 -------------------
 * [Added] Add a setting CLIENT_OPTIONS for Pub/Sub clients (#274)
