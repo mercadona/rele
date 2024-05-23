@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.15.2 (2024-05-23)
+-------------------
+* [Changed] Manage all Google Cloud Pub/Sub library connection exceptions (#283)
+
 1.15.1 (2024-04-10)
 -------------------
 * [Changed] Require at least google-cloud-pubsub>=2.7.1 (#281)
