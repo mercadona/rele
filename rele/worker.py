@@ -26,13 +26,16 @@ def check_internet_connection(remote_server):
     port = 80
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(5)
+
+    result = False
     try:
         sock.connect((remote_server, port))
-        return True
-    except socket.error:
-        return False
+        result = True
+    except (socket.error, socket.herror, socket.gaierror, socket.timeout) as error:
+        logger.exception("Check internet connection error", error)
     finally:
         sock.close()
+        return result
 
 
 class Worker:
