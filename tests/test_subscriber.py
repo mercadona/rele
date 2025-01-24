@@ -166,6 +166,51 @@ class TestSubscriber:
             }
         )
 
+    @patch.object(
+        SubscriberClient,
+        "create_subscription",
+        side_effect=[exceptions.NotFound("Subscription topic does not exist"), True],
+    )
+    @patch.object(SubscriberClient, "update_subscription")
+    def test_creates_topic_when_subscription_topic_does_not_exist_in_multiple_regions(
+        self,
+        client_update_subscription,
+        client_create_subscription,
+        project_id,
+        subscriber_with_multiple_storage_regions,
+        mock_create_topic,
+    ):
+        expected_subscription = (
+            f"projects/{project_id}/subscriptions/" f"{project_id}-test-topic"
+        )
+        expected_topic = f"projects/{project_id}/topics/" f"{project_id}-test-topic"
+        backend_filter_by = "attributes:domain"
+        subscriber_with_multiple_storage_regions.update_or_create_subscription(
+            Subscription(
+                None,
+                topic=f"{project_id}-test-topic",
+                backend_filter_by=backend_filter_by,
+            )
+        )
+
+        mock_create_topic.assert_called_with(
+            request={
+                "name": f"projects/rele-test/topics/{project_id}-test-topic",
+                "message_storage_policy": MessageStoragePolicy(
+                    {"allowed_persistence_regions": ["some-region", "another-region"]}
+                ),
+            }
+        )
+
+        client_create_subscription.assert_called_with(
+            request={
+                "ack_deadline_seconds": 60,
+                "name": expected_subscription,
+                "topic": expected_topic,
+                "filter": backend_filter_by,
+            }
+        )
+
     @patch.object(SubscriberClient, "create_subscription")
     @patch.object(SubscriberClient, "update_subscription")
     def test_creates_subscription_with_retry_policy_when_provided(

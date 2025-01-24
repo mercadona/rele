@@ -133,8 +133,8 @@ class TestWorker:
             subscriptions,
             config.client_options,
             config.gc_project_id,
-            config.gc_storage_region,
             config.credentials,
+            config.gc_storage_region,
             custom_ack_deadline,
             threads_per_subscription=10,
         )
