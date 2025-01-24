@@ -55,7 +55,9 @@ class Subscriber:
         self._gc_project_id = gc_project_id
         self._ack_deadline = default_ack_deadline or DEFAULT_ACK_DEADLINE
         self.credentials = credentials if not USE_EMULATOR else None
-        self._message_storage_policy = self._normalize_storage_policy(message_storage_policy)
+        self._message_storage_policy = self._normalize_storage_policy(
+            message_storage_policy
+        )
         self._client = pubsub_v1.SubscriberClient(
             credentials=credentials, client_options=client_options
         )
@@ -108,7 +110,9 @@ class Subscriber:
 
         if isinstance(policy, str):
             # Warning log for future compatibility
-            print("Warning: `message_storage_policy` as a string is deprecated. Use a list of regions instead.")
+            print(
+                "Warning: `message_storage_policy` as a string is deprecated. Use a list of regions instead."
+            )
             return [policy]
         if isinstance(policy, list):
             if not policy:
@@ -116,7 +120,9 @@ class Subscriber:
             return policy
         if policy is None:
             return policy
-        raise TypeError("`message_storage_policy` must be None or either a string or a list of regions.")
+        raise TypeError(
+            "`message_storage_policy` must be None or either a string or a list of regions."
+        )
 
     def _create_subscription(self, subscription_path, topic_path, subscription):
         request = {
