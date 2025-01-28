@@ -110,8 +110,9 @@ class Subscriber:
 
         if isinstance(policy, str):
             # Warning log for future compatibility
-            print(
-                "Warning: `message_storage_policy` as a string is deprecated. Use a list of regions instead."
+            warnings.warn(
+                "`message_storage_policy` as a string is deprecated. Use a list of regions instead.",
+                DeprecationWarning,
             )
             return [policy]
         if isinstance(policy, list):
