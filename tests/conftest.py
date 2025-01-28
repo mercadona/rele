@@ -35,6 +35,20 @@ def config(project_id):
 
 
 @pytest.fixture
+def config_with_multiple_regions(project_id):
+    return Config(
+        {
+            "APP_NAME": "rele",
+            "SUB_PREFIX": "rele",
+            "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
+            "GC_STORAGE_REGION": ["some-region", "another-region"],
+            "MIDDLEWARE": ["rele.contrib.LoggingMiddleware"],
+            "CLIENT_OPTIONS": {"api_endpoint": "custom-api.interconnect.example.com"},
+        }
+    )
+
+
+@pytest.fixture
 def config_with_retry_policy(project_id):
     return Config(
         {
@@ -61,6 +75,17 @@ def subscriber(project_id, config):
         config.credentials,
         config.gc_storage_region,
         config.client_options,
+        60,
+    )
+
+
+@pytest.fixture
+def subscriber_with_multiple_storage_regions(project_id, config_with_multiple_regions):
+    return Subscriber(
+        config_with_multiple_regions.gc_project_id,
+        config_with_multiple_regions.credentials,
+        config_with_multiple_regions.gc_storage_region,
+        config_with_multiple_regions.client_options,
         60,
     )
 

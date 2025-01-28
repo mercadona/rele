@@ -31,7 +31,7 @@ Example::
         'PUBLISHER_TIMEOUT': 3.0,
         'FILTER_SUBS_BY': boolean_function,
         'DEFAULT_RETRY_POLICY': RetryPolicy(10, 50),
-        'GC_STORAGE_REGION': 'europe-west1',
+        'GC_STORAGE_REGION': ["europe-southwest1", "europe-west1", "europe-west8", "europe-west9"],
         'CLIENT_OPTIONS': {'api_endpoint': 'custom-api.interconnect.example.com'}
     }
 
@@ -195,7 +195,7 @@ RetryPolicy will be triggered on NACKs or acknowledgement deadline exceeded even
 
 **Optional**
 
-Set the Google Cloud's region for storing the messages. By default is `europe-west1`
+Set the Google Cloud's region for storing the messages. By default is `["europe-southwest1", "europe-west1", "europe-west8", "europe-west9"]`
 
 ``CLIENT_OPTIONS``
 ----------------------------
