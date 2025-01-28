@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import time
+import warnings
 from concurrent.futures import TimeoutError
 
 import google.auth
