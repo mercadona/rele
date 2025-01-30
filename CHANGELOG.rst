@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.15.3 (2025-01-30)
+-------------------
+* [Added] Allow create topics on multiple Google Pub/Sub regions  (#287)
+
 1.15.2 (2024-05-23)
 -------------------
 * [Changed] Manage all Google Cloud Pub/Sub library connection exceptions (#283)
