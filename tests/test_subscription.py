@@ -167,6 +167,7 @@ class TestCallback:
             request_queue=queue.Queue(),
         )
         message.ack = MagicMock(autospec=True)
+        message.nack = MagicMock(autospec=True)
         return message
 
     @pytest.fixture
@@ -273,6 +274,8 @@ class TestCallback:
 
         assert res is None
         message_wrapper.ack.assert_not_called()
+        message_wrapper.nack.assert_called_once()
+
         failed_log = caplog.records[-1]
         assert failed_log.message == (
             "Exception raised while processing "
