@@ -140,6 +140,7 @@ class Worker:
         run_middleware_hook("pre_worker_stop", self._subscriptions)
         for future in self._futures.values():
             future.cancel()
+            future.result()
 
         run_middleware_hook("post_worker_stop")
         sys.exit(0)
