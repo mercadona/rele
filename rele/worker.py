@@ -142,7 +142,7 @@ class Worker:
         for future in self._futures.values():
             future.cancel()
             future.result()
-        
+
         logger.debug(f"[stop] close subscriber")
         self._subscriber.close()
 

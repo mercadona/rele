@@ -121,7 +121,7 @@ class TestWorker:
 
         with pytest.raises(SystemExit):
             worker.stop()
-        
+
         assert worker._futures[sub_stub]._state == FINISHED
         assert worker._subscriber._client._closed is True
 
