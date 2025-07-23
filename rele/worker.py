@@ -125,7 +125,7 @@ class Worker:
 
         This function has two purposes:
 
-            1. Cancel all the futures created.
+            1. Cancel all the futures created and terminate the subscriber.
             2. And close all the database connections
                opened by Django. Even though we cancel the connections
                for every execution of the callback, we want to be sure
@@ -138,9 +138,13 @@ class Worker:
         :param frame: Needed for `signal.signal <https://docs.python.org/3/library/signal.html#signal.signal>`_  # noqa
         """
         run_middleware_hook("pre_worker_stop", self._subscriptions)
+        logger.debug(f"[stop] cancel all futures")
         for future in self._futures.values():
             future.cancel()
             future.result()
+        
+        logger.debug(f"[stop] close subscriber")
+        self._subscriber.close()
 
         run_middleware_hook("post_worker_stop")
         sys.exit(0)

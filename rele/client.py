@@ -190,6 +190,10 @@ class Subscriber:
             subscription_path, callback=callback, scheduler=scheduler
         )
 
+    def close(self):
+        """Close the SubscriberClient."""
+        self._client.close()
+
 
 class Publisher:
     """The Publisher Class
