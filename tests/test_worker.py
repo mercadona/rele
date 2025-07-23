@@ -113,6 +113,18 @@ class TestWorker:
 
         mock_wait_forever.assert_called_once()
 
+    @patch.object(Worker, "_wait_forever")
+    def test_stop_cancels_futures_and_closes_subscriber(
+        self, mock_wait_forever, mock_consume, mock_create_subscription, worker
+    ):
+        worker.run_forever()
+
+        with pytest.raises(SystemExit):
+            worker.stop()
+
+        assert worker._futures[sub_stub]._state == FINISHED
+        assert worker._subscriber._client._closed is True
+
     @patch("rele.contrib.django_db_middleware.db.connections.close_all")
     def test_stop_closes_db_connections(self, mock_db_close_all, config, worker):
         config.middleware = ["rele.contrib.DjangoDBMiddleware"]
