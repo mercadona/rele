@@ -35,7 +35,7 @@ def check_internet_connection(remote_server):
         logger.exception("Check internet connection error", error)
     finally:
         sock.close()
-        return result
+    return result
 
 
 class Worker:
