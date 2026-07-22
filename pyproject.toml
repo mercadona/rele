@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=61"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "rele"
@@ -10,7 +10,8 @@ readme = "README.md"
 authors = [
     { name = "Mercadona Tech", email = "software.online@mercadona.es" },
 ]
-license = { text = "Apache Software License 2.0" }
+license = "Apache-2.0"
+license-files = ["LICENSE", "AUTHORS.md"]
 requires-python = ">=3.10"
 keywords = ["rele"]
 classifiers = [
@@ -20,7 +21,6 @@ classifiers = [
     "Framework :: Django :: 4.2",
     "Framework :: Django :: 5.2",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
     "Natural Language :: English",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
@@ -46,11 +46,11 @@ Homepage = "https://github.com/mercadona/rele"
 Documentation = "https://mercadonarele.readthedocs.io"
 Changelog = "https://github.com/mercadona/rele/blob/master/CHANGELOG.rst"
 
-[tool.setuptools.dynamic]
-version = { attr = "rele.__version__" }
+[tool.hatch.version]
+path = "rele/__init__.py"
 
-[tool.setuptools.packages.find]
-include = ["rele*"]
+[tool.hatch.build.targets.wheel]
+packages = ["rele"]
 
 [tool.black]
 line-length = 88
