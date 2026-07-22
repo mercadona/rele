@@ -131,11 +131,12 @@ def load_subscriptions_from_paths(sub_module_paths, sub_prefix=None, filter_by=N
                 continue
 
             if subscription.name in subscriptions:
-                found_subscription = subscriptions[subscription.name]
+                found_func = subscriptions[subscription.name]._func
+                func = subscription._func
                 raise RuntimeError(
-                    f"Duplicate subscription name found: {subscription.name}. Subs "
-                    f"{subscription._func.__module__}.{subscription._func.__name__} and "
-                    f"{found_subscription._func.__module__}.{found_subscription._func.__name__} collide."
+                    f"Duplicate subscription name found: {subscription.name}. "
+                    f"Subs {func.__module__}.{func.__name__} and "
+                    f"{found_func.__module__}.{found_func.__name__} collide."
                 )
 
             subscriptions[subscription.name] = subscription

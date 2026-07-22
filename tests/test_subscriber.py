@@ -48,9 +48,9 @@ class TestSubscriber:
         subscriber,
     ):
         expected_subscription = (
-            f"projects/{project_id}/subscriptions/" f"{project_id}-test-topic"
+            f"projects/{project_id}/subscriptions/{project_id}-test-topic"
         )
-        expected_topic = f"projects/{project_id}/topics/" f"{project_id}-test-topic"
+        expected_topic = f"projects/{project_id}/topics/{project_id}-test-topic"
 
         subscriber.update_or_create_subscription(
             Subscription(None, topic=f"{project_id}-test-topic")
@@ -74,9 +74,9 @@ class TestSubscriber:
         subscriber,
     ):
         expected_subscription = (
-            f"projects/{project_id}/subscriptions/" f"{project_id}-test-topic"
+            f"projects/{project_id}/subscriptions/{project_id}-test-topic"
         )
-        expected_topic = f"projects/{project_id}/topics/" f"{project_id}-test-topic"
+        expected_topic = f"projects/{project_id}/topics/{project_id}-test-topic"
         subscriber._ack_deadline = 100
         subscriber.update_or_create_subscription(
             Subscription(None, topic=f"{project_id}-test-topic")
@@ -100,9 +100,9 @@ class TestSubscriber:
         subscriber,
     ):
         expected_subscription = (
-            f"projects/{project_id}/subscriptions/" f"{project_id}-test-topic"
+            f"projects/{project_id}/subscriptions/{project_id}-test-topic"
         )
-        expected_topic = f"projects/{project_id}/topics/" f"{project_id}-test-topic"
+        expected_topic = f"projects/{project_id}/topics/{project_id}-test-topic"
         backend_filter_by = "attributes:domain"
         subscriber.update_or_create_subscription(
             Subscription(
@@ -136,9 +136,9 @@ class TestSubscriber:
         mock_create_topic,
     ):
         expected_subscription = (
-            f"projects/{project_id}/subscriptions/" f"{project_id}-test-topic"
+            f"projects/{project_id}/subscriptions/{project_id}-test-topic"
         )
-        expected_topic = f"projects/{project_id}/topics/" f"{project_id}-test-topic"
+        expected_topic = f"projects/{project_id}/topics/{project_id}-test-topic"
         backend_filter_by = "attributes:domain"
         subscriber.update_or_create_subscription(
             Subscription(
@@ -181,9 +181,9 @@ class TestSubscriber:
         mock_create_topic,
     ):
         expected_subscription = (
-            f"projects/{project_id}/subscriptions/" f"{project_id}-test-topic"
+            f"projects/{project_id}/subscriptions/{project_id}-test-topic"
         )
-        expected_topic = f"projects/{project_id}/topics/" f"{project_id}-test-topic"
+        expected_topic = f"projects/{project_id}/topics/{project_id}-test-topic"
         backend_filter_by = "attributes:domain"
         subscriber_with_multiple_storage_regions.update_or_create_subscription(
             Subscription(
@@ -221,9 +221,9 @@ class TestSubscriber:
         subscriber,
     ):
         expected_subscription = (
-            f"projects/{project_id}/subscriptions/" f"{project_id}-test-topic"
+            f"projects/{project_id}/subscriptions/{project_id}-test-topic"
         )
-        expected_topic = f"projects/{project_id}/topics/" f"{project_id}-test-topic"
+        expected_topic = f"projects/{project_id}/topics/{project_id}-test-topic"
         expected_retry_policy = pubsub_v1.types.RetryPolicy(
             minimum_backoff=duration_pb2.Duration(seconds=10),
             maximum_backoff=duration_pb2.Duration(seconds=50),
@@ -264,9 +264,9 @@ class TestSubscriber:
             config_with_retry_policy.retry_policy,
         )
         expected_subscription = (
-            f"projects/{project_id}/subscriptions/" f"{project_id}-test-topic"
+            f"projects/{project_id}/subscriptions/{project_id}-test-topic"
         )
-        expected_topic = f"projects/{project_id}/topics/" f"{project_id}-test-topic"
+        expected_topic = f"projects/{project_id}/topics/{project_id}-test-topic"
         expected_retry_policy = pubsub_v1.types.RetryPolicy(
             minimum_backoff=duration_pb2.Duration(seconds=5),
             maximum_backoff=duration_pb2.Duration(seconds=30),
@@ -302,9 +302,9 @@ class TestSubscriber:
         subscriber,
     ):
         subscription_path = (
-            f"projects/{project_id}/subscriptions/" f"{project_id}-test-topic"
+            f"projects/{project_id}/subscriptions/{project_id}-test-topic"
         )
-        topic_path = f"projects/{project_id}/topics/" f"{project_id}-test-topic"
+        topic_path = f"projects/{project_id}/topics/{project_id}-test-topic"
         retry_policy = pubsub_v1.types.RetryPolicy(
             minimum_backoff=duration_pb2.Duration(seconds=10),
             maximum_backoff=duration_pb2.Duration(seconds=50),

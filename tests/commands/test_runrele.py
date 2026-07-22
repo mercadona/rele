@@ -35,7 +35,7 @@ class TestRunReleCommand:
         settings.DATABASES = {"default": {"CONN_MAX_AGE": 1}}
         call_command("runrele")
 
-        out, err = capsys.readouterr()
+        _, err = capsys.readouterr()
         assert (
             "WARNING: settings.CONN_MAX_AGE is not set to 0. "
             "This may result in slots for database connections to "

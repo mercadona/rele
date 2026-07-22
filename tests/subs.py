@@ -17,7 +17,7 @@ class ClassBasedSub(Subscription):
         return data["id"]
 
 
-class CustomException(Exception):
+class CustomError(Exception):
     pass
 
 

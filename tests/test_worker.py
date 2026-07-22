@@ -269,7 +269,7 @@ class TestRestartConsumer:
         mock_internet_connection.assert_not_called()
 
     @freeze_time("2024-01-01 10:00:50Z")
-    def test_raises_not_connection_error_during_wait_forever_if_connection_is_down_every_50_seconds(  # noqa
+    def test_raises_not_connection_error_during_wait_forever_if_connection_is_down_every_50_seconds(
         self, worker, mock_internet_connection
     ):
         mock_internet_connection.return_value = False

@@ -28,7 +28,7 @@ def expected_message_data_log_with_decimal():
 @pytest.fixture
 def message_wrapper(published_at, publish_time):
     rele_message = pubsub_v1.types.PubsubMessage(
-        data='{"foo": "bar"}'.encode("utf-8"),
+        data=b'{"foo": "bar"}',
         attributes={"lang": "es", "published_at": str(published_at)},
         message_id="1",
         publish_time=publish_time,
@@ -130,6 +130,6 @@ class TestLoggingMiddleware:
         post_publish_failure_message_log = caplog.records[0].subscription_message
         post_process_message_message_log = caplog.records[1].subscription_message
 
-        assert type(post_publish_failure_message_log) == type(
+        assert type(post_publish_failure_message_log) is type(
             post_process_message_message_log
         )

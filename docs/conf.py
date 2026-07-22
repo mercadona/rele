@@ -15,7 +15,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath(".."))
 
-import rele  # noqa
+import rele
 
 # -- Project information -----------------------------------------------------
 
@@ -51,7 +51,7 @@ html_theme_options = {
     "font_family": "Heebo",
     "logo_name": False,
     "code_font_family": (
-        '"SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier,' " monospace"
+        '"SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace'
     ),
     "code_font_size": "0.8em",
     "show_related": False,

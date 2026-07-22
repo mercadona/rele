@@ -16,22 +16,22 @@ logger = logging.getLogger(__name__)
 
 @sub(topic="some-cool-topic", prefix="rele")
 def sub_stub(data, **kwargs):
-    logger.info(f'I am a task doing stuff with ID {data["id"]} ' f'({kwargs["lang"]})')
+    logger.info(f"I am a task doing stuff with ID {data['id']} ({kwargs['lang']})")
     return data["id"]
 
 
 @sub(topic="some-fancy-topic")
 def sub_fancy_stub(data, **kwargs):
     logger.info(
-        f'I used to have a prefix, but not anymore, only {data["id"]}'
-        f'id {kwargs["lang"]}'
+        f"I used to have a prefix, but not anymore, only {data['id']}"
+        f"id {kwargs['lang']}"
     )
     return data["id"]
 
 
 @sub(topic="published-time-type")
 def sub_published_time_type(data, **kwargs):
-    logger.info(f'{type(kwargs["published_at"])}')
+    logger.info(f"{type(kwargs['published_at'])}")
 
 
 def landscape_filter(kwargs):
@@ -44,12 +44,12 @@ def gif_filter(kwargs):
 
 @sub(topic="photo-updated", filter_by=landscape_filter)
 def sub_process_landscape_photos(data, **kwargs):
-    return f'Received a photo of type {kwargs.get("type")}'
+    return f"Received a photo of type {kwargs.get('type')}"
 
 
 @sub(topic="photo-updated", filter_by=[landscape_filter, gif_filter])
 def sub_process_landscape_gif_photos(data, **kwargs):
-    return f'Received a {kwargs.get("format")} photo of type {kwargs.get("type")}'
+    return f"Received a {kwargs.get('format')} photo of type {kwargs.get('type')}"
 
 
 class TestSubscription:
@@ -137,7 +137,7 @@ class TestCallback:
     @pytest.fixture(autouse=True)
     def mock_close_old_connections(self):
         with patch(
-            "rele.contrib.django_db_middleware.db." "close_old_connections"
+            "rele.contrib.django_db_middleware.db.close_old_connections"
         ) as mock_old_connections:
             yield mock_old_connections
 
@@ -207,7 +207,7 @@ class TestCallback:
         assert res == 123
         log1 = caplog.records[0]
         assert log1.message == (
-            "Start processing message for " "rele-some-cool-topic - sub_stub"
+            "Start processing message for rele-some-cool-topic - sub_stub"
         )
         assert log1.metrics == {
             "name": "subscriptions",
@@ -233,7 +233,7 @@ class TestCallback:
         assert len(caplog.records) == 3
         message_wrapper_log = caplog.records[1]
         assert message_wrapper_log.message == (
-            "I am a task doing " "stuff with ID 123 (es)"
+            "I am a task doing stuff with ID 123 (es)"
         )
 
     def test_log_when_execution_is_succesful(
@@ -244,7 +244,7 @@ class TestCallback:
 
         success_log = caplog.records[-1]
         assert success_log.message == (
-            "Successfully processed message for " "rele-some-cool-topic - sub_stub"
+            "Successfully processed message for rele-some-cool-topic - sub_stub"
         )
         assert success_log.metrics == {
             "name": "subscriptions",

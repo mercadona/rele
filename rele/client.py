@@ -112,8 +112,10 @@ class Subscriber:
         if isinstance(policy, str):
             # Warning log for future compatibility
             warnings.warn(
-                "`message_storage_policy` as a string is deprecated. Use a list of regions instead.",
+                "`message_storage_policy` as a string is deprecated. "
+                "Use a list of regions instead.",
                 DeprecationWarning,
+                stacklevel=2,
             )
             return [policy]
         if isinstance(policy, list):
@@ -123,7 +125,8 @@ class Subscriber:
         if policy is None:
             return policy
         raise TypeError(
-            "`message_storage_policy` must be None or either a string or a list of regions."
+            "`message_storage_policy` must be None or either a string "
+            "or a list of regions."
         )
 
     def _create_subscription(self, subscription_path, topic_path, subscription):
@@ -180,8 +183,13 @@ class Subscriber:
 
         :param subscription_name: str Subscription name
         :param callback: Function which act on a topic message
-        :param scheduler: `Thread pool-based scheduler. <https://googleapis.dev/python/pubsub/latest/subscriber/api/scheduler.html?highlight=threadscheduler#google.cloud.pubsub_v1.subscriber.scheduler.ThreadScheduler>`_  # noqa
-        :return: `Future <https://googleapis.github.io/google-cloud-python/latest/pubsub/subscriber/api/futures.html>`_  # noqa
+        :param scheduler: `Thread pool-based scheduler`_
+        :return: `Future`_
+
+        .. _Thread pool-based scheduler:
+           https://googleapis.dev/python/pubsub/latest/subscriber/api/scheduler.html
+        .. _Future:
+           https://googleapis.dev/python/pubsub/latest/subscriber/api/futures.html
         """
         subscription_path = self._client.subscription_path(
             self._gc_project_id, subscription_name
@@ -209,9 +217,11 @@ class Publisher:
 
     :param gc_project_id: string Google Cloud Project ID.
     :param credentials: string Google Cloud Credentials.
-    :param encoder: A valid `json.encoder.JSONEncoder subclass <https://docs.python.org/3/library/json.html#json.JSONEncoder>`_  # noqa
+    :param encoder: A valid `json.encoder.JSONEncoder subclass
+        <https://docs.python.org/3/library/json.html#json.JSONEncoder>`_
     :param timeout: float, default :ref:`settings_publisher_timeout`
-    :param blocking: boolean, default None falls back to :ref:`settings_publisher_blocking`
+    :param blocking: boolean, default None falls back to
+        :ref:`settings_publisher_blocking`
     """
 
     def __init__(
@@ -253,7 +263,9 @@ class Publisher:
         Usage::
 
             publisher = Publisher()
-            future = publisher.publish('topic_name', {'foo': 'bar'}, blocking=True, timeout=10.0) # noqa
+            future = publisher.publish(
+                'topic_name', {'foo': 'bar'}, blocking=True, timeout=10.0
+            )
 
         However, it should be noted that using `blocking=True` may incur a
         significant performance hit.
@@ -264,11 +276,17 @@ class Publisher:
 
         :param topic: string topic to publish the data.
         :param data: dict with the content of the message.
-        :param blocking: boolean, default None falls back to :ref:`settings_publisher_blocking`
-        :param timeout: float, default None falls back to :ref:`settings_publisher_timeout`
-        :param raise_exception: boolean. If True, exceptions coming from PubSub will be raised
+        :param blocking: boolean, default None falls back to
+            :ref:`settings_publisher_blocking`
+        :param timeout: float, default None falls back to
+            :ref:`settings_publisher_timeout`
+        :param raise_exception: boolean. If True, exceptions coming from
+            PubSub will be raised
         :param attrs: additional string parameters to be published.
-        :return: `Future <https://googleapis.github.io/google-cloud-python/latest/pubsub/subscriber/api/futures.html>`_  # noqa
+        :return: `Future`_
+
+        .. _Future:
+           https://googleapis.dev/python/pubsub/latest/subscriber/api/futures.html
         """
         if blocking is None:
             blocking = self._blocking

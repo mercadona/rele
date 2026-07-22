@@ -53,8 +53,7 @@ test = [
     "pytest-django>=4.5",
     "coverage>=4.4.0",
     "codecov>=2.0.0",
-    "black==26.5.1",
-    "isort~=6.1.0",
+    "ruff==0.15.22",
     "freezegun==1.5.5",
     "django",
     "tabulate",
@@ -75,19 +74,18 @@ path = "rele/__init__.py"
 [tool.hatch.build.targets.wheel]
 packages = ["rele"]
 
-[tool.black]
+[tool.ruff]
 line-length = 88
-target-version = ["py310", "py311", "py312", "py313", "py314"]
-include = '\.pyi?$'
+exclude = [".git", "__pycache__"]
 
-[tool.isort]
-line_length = 90
-default_section = "THIRDPARTY"
-known_first_party = ["rele"]
-multi_line_output = 3
-use_parentheses = true
-include_trailing_comma = true
-skip = ["docs", ".venv"]
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "C4", "C90", "UP", "B", "N", "RUF"]
+ignore = []
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.lint.extend-per-file-ignores]
+"tests/*" = ["E501"]
 
 [tool.coverage.run]
 include = ["*"]

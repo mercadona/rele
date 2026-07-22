@@ -1,7 +1,7 @@
 from rele.middleware import BaseMiddleware
 
 
-class UnrecoverableException(Exception):
+class UnrecoverableException(Exception):  # noqa: N818 -- renaming would break the public API
     pass
 
 

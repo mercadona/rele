@@ -36,6 +36,7 @@ class WarnDeprecatedHooks(type):
                     "and will be removed in future versions. Please substitute it with "
                     "the post_publish_success hook instead.",
                     DeprecationWarning,
+                    stacklevel=2,
                 )
         return x
 

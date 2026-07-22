@@ -1,9 +1,8 @@
-from unittest.mock import ANY, MagicMock, Mock, patch
+from unittest.mock import ANY, MagicMock, patch
 
 import pytest
 
 from rele import Publisher, publishing
-from rele.config import Config
 from tests import settings
 
 

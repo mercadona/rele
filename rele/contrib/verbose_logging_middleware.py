@@ -49,7 +49,7 @@ class _VerboseMessage:
         self.attributes = message.attributes
 
     def __repr__(self):
-        _MESSAGE_REPR = """\
+        message_repr = """\
 Message {{
   data: {!r}
   ordering_key: {!r}
@@ -60,7 +60,7 @@ Message {{
         attrs = self._message_attrs_repr()
         ordering_key = str(self._message.ordering_key)
 
-        return _MESSAGE_REPR.format(data, ordering_key, attrs)
+        return message_repr.format(data, ordering_key, attrs)
 
     def _message_attrs_repr(self):
         message_attrs = json.dumps(
