@@ -36,6 +36,16 @@ class TestLoadSubscriptions:
         assert func_sub.name == "rele-test-topic"
         assert func_sub({"id": 4}, lang="en") == 4
 
+    def test_applies_filter_when_filter_by_is_a_single_callable(self):
+        subscriptions = load_subscriptions_from_paths(
+            ["tests.subs"],
+            sub_prefix="test",
+            filter_by=lambda attrs: attrs.get("lang") == "en",
+        )
+
+        assert subscriptions[0]({"id": 4}, lang="en") == 4
+        assert subscriptions[0]({"id": 4}, lang="es") is None
+
     def test_loads_subscriptions_when_they_are_class_based(self):
         subscriptions = load_subscriptions_from_paths(
             ["tests.subs"],
