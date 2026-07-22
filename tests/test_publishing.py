@@ -12,6 +12,7 @@ class TestPublish:
     def test_instantiates_publisher_and_publishes_when_does_not_exist(
         self, mock_publisher
     ):
+        publishing._publisher = None
         with patch("rele.publishing.discover") as mock_discover:
             mock_discover.sub_modules.return_value = settings, []
 
