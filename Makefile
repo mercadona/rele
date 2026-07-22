@@ -25,12 +25,12 @@ install: ## install the project and every dependency group
 	uv sync --all-groups --all-extras
 
 lint: ## check for coding style issues
-	uv run black . --check --diff
-	uv run isort . --check-only
+	uv run ruff check .
+	uv run ruff format --check .
 
 lint-fix: ## try to automagically fix coding style issues
-	uv run black .
-	uv run isort .
+	uv run ruff check --fix .
+	uv run ruff format .
 
 test: ## run tests quickly with the default Python
 	uv run python runtests.py tests
