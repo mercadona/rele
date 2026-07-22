@@ -3,7 +3,9 @@ import logging
 import os
 import time
 import warnings
+from collections.abc import Callable
 from concurrent.futures import TimeoutError
+from typing import Any
 
 import google.auth
 from google.api_core import exceptions
@@ -14,6 +16,8 @@ from google.pubsub_v1 import MessageStoragePolicy
 from google.pubsub_v1 import RetryPolicy as GCloudRetryPolicy
 
 from rele.middleware import run_middleware_hook
+from rele.retry_policy import RetryPolicy
+from rele.subscription import Subscription
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +27,7 @@ DEFAULT_ACK_DEADLINE = 60
 DEFAULT_BLOCKING = False
 
 
-def get_google_defaults():
+def get_google_defaults() -> tuple[Any, Any]:
     try:
         credentials, project = google.auth.default()
         return credentials, project
@@ -46,13 +50,13 @@ class Subscriber:
 
     def __init__(
         self,
-        gc_project_id,
-        credentials,
-        message_storage_policy,
-        client_options,
-        default_ack_deadline=None,
-        default_retry_policy=None,
-    ):
+        gc_project_id: str | None,
+        credentials: Any,
+        message_storage_policy: str | list[str] | None,
+        client_options: dict[str, Any] | None,
+        default_ack_deadline: int | None = None,
+        default_retry_policy: RetryPolicy | None = None,
+    ) -> None:
         self._gc_project_id = gc_project_id
         self._ack_deadline = default_ack_deadline or DEFAULT_ACK_DEADLINE
         self.credentials = credentials if not USE_EMULATOR else None
@@ -64,7 +68,7 @@ class Subscriber:
         )
         self._retry_policy = default_retry_policy
 
-    def update_or_create_subscription(self, subscription):
+    def update_or_create_subscription(self, subscription: Subscription) -> None:
         """Handles creating the subscription when it does not exists or updates it
         if the subscription contains any parameter that allows it.
 
@@ -92,7 +96,7 @@ class Subscriber:
         except exceptions.AlreadyExists:
             self._update_subscription(subscription_path, topic_path, subscription)
 
-    def _create_topic(self, topic_path):
+    def _create_topic(self, topic_path: str) -> Any:
         publisher_client = pubsub_v1.PublisherClient(credentials=self.credentials)
         return publisher_client.create_topic(
             request={
@@ -103,7 +107,9 @@ class Subscriber:
             }
         )
 
-    def _normalize_storage_policy(self, policy):
+    def _normalize_storage_policy(
+        self, policy: str | list[str] | None
+    ) -> list[str] | None:
         """
         Normalizes the storage policy to accept either a string or a list.
         If it is a string, it converts it into a list with a single element.
@@ -129,8 +135,10 @@ class Subscriber:
             "or a list of regions."
         )
 
-    def _create_subscription(self, subscription_path, topic_path, subscription):
-        request = {
+    def _create_subscription(
+        self, subscription_path: str, topic_path: str, subscription: Subscription
+    ) -> None:
+        request: dict[str, Any] = {
             "name": subscription_path,
             "topic": topic_path,
             "ack_deadline_seconds": self._ack_deadline,
@@ -146,7 +154,9 @@ class Subscriber:
 
         self._client.create_subscription(request=request)
 
-    def _update_subscription(self, subscription_path, topic_path, subscription):
+    def _update_subscription(
+        self, subscription_path: str, topic_path: str, subscription: Subscription
+    ) -> None:
         retry_policy = subscription.retry_policy or self._retry_policy
 
         if not retry_policy:
@@ -156,17 +166,19 @@ class Subscriber:
 
         client_retry_policy = self._build_gcloud_retry_policy(retry_policy)
 
-        subscription = pubsub_v1.types.Subscription(
+        gcloud_subscription = pubsub_v1.types.Subscription(
             name=subscription_path,
             topic=topic_path,
             retry_policy=client_retry_policy,
         )
 
         self._client.update_subscription(
-            request={"subscription": subscription, "update_mask": update_mask}
+            request={"subscription": gcloud_subscription, "update_mask": update_mask}
         )
 
-    def _build_gcloud_retry_policy(self, rele_retry_policy):
+    def _build_gcloud_retry_policy(
+        self, rele_retry_policy: RetryPolicy
+    ) -> GCloudRetryPolicy:
         minimum_backoff = duration_pb2.Duration(
             seconds=rele_retry_policy.minimum_backoff
         )
@@ -178,7 +190,9 @@ class Subscriber:
             minimum_backoff=minimum_backoff, maximum_backoff=maximum_backoff
         )
 
-    def consume(self, subscription_name, callback, scheduler):
+    def consume(
+        self, subscription_name: str, callback: Callable[[Any], Any], scheduler: Any
+    ) -> Any:
         """Begin listening to topic from the SubscriberClient.
 
         :param subscription_name: str Subscription name
@@ -198,7 +212,7 @@ class Subscriber:
             subscription_path, callback=callback, scheduler=scheduler
         )
 
-    def close(self):
+    def close(self) -> None:
         """Close the SubscriberClient."""
         self._client.close()
 
@@ -226,13 +240,13 @@ class Publisher:
 
     def __init__(
         self,
-        gc_project_id,
-        credentials,
-        encoder,
-        timeout,
-        client_options,
-        blocking=None,
-    ):
+        gc_project_id: str | None,
+        credentials: Any,
+        encoder: type[json.JSONEncoder],
+        timeout: float,
+        client_options: dict[str, Any] | None,
+        blocking: bool | None = None,
+    ) -> None:
         self._gc_project_id = gc_project_id
         self._timeout = timeout
         self._blocking = blocking
@@ -245,8 +259,14 @@ class Publisher:
             )
 
     def publish(
-        self, topic, data, blocking=None, timeout=None, raise_exception=True, **attrs
-    ):
+        self,
+        topic: str,
+        data: Any,
+        blocking: bool | None = None,
+        timeout: float | None = None,
+        raise_exception: bool = True,
+        **attrs: Any,
+    ) -> Any:
         """Publishes message to Google PubSub topic.
 
         Usage::

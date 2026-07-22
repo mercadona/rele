@@ -54,6 +54,7 @@ test = [
     "coverage>=4.4.0",
     "codecov>=2.0.0",
     "ruff==0.15.22",
+    "mypy==2.3.0",
     "freezegun==1.5.5",
     "django",
     "tabulate",
@@ -86,6 +87,37 @@ unfixable = []
 
 [tool.ruff.lint.extend-per-file-ignores]
 "tests/*" = ["E501"]
+
+[tool.mypy]
+# see https://mypy.readthedocs.io/en/stable/config_file.html#the-mypy-configuration-file
+files = ["rele"]
+
+# this makes things more strict and enforces checking non-annotated code
+strict = true
+
+# to keep things clean
+warn_redundant_casts = true
+warn_unused_ignores = true
+
+# Workaround for bug in MyPy
+disallow_subclassing_any = false
+
+# enable these for even more strictness
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+
+# this will enable checks even for non-annotated methods
+check_untyped_defs = true
+warn_return_any = true
+no_implicit_optional = true
+strict_optional = true
+
+# this helps when working with untyped libraries
+ignore_missing_imports = true
+
+# depends on the project
+namespace_packages = false
+explicit_package_bases = false
 
 [tool.coverage.run]
 include = ["*"]

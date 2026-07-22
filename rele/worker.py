@@ -3,15 +3,22 @@ import signal
 import socket
 import sys
 import time
+from collections.abc import Iterable
 from concurrent import futures
 from datetime import datetime
+from types import FrameType
+from typing import TYPE_CHECKING, Any, NoReturn
 
 from google.cloud.pubsub_v1.futures import Future
 from google.cloud.pubsub_v1.subscriber.scheduler import ThreadScheduler
 
 from .client import Subscriber
 from .middleware import run_middleware_hook
-from .subscription import Callback
+from .retry_policy import RetryPolicy
+from .subscription import Callback, Subscription
+
+if TYPE_CHECKING:
+    from rele.config import Config
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +27,7 @@ class NotConnectionError(BaseException):
     pass
 
 
-def check_internet_connection(remote_server):
+def check_internet_connection(remote_server: str) -> bool:
     logger.debug("Checking connection")
     port = 80
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -48,15 +55,15 @@ class Worker:
 
     def __init__(
         self,
-        subscriptions,
-        client_options,
-        gc_project_id=None,
-        credentials=None,
-        gc_storage_region=None,
-        default_ack_deadline=None,
-        threads_per_subscription=None,
-        default_retry_policy=None,
-    ):
+        subscriptions: Iterable[Subscription],
+        client_options: dict[str, Any] | None,
+        gc_project_id: str | None = None,
+        credentials: Any = None,
+        gc_storage_region: str | list[str] | None = None,
+        default_ack_deadline: int | None = None,
+        threads_per_subscription: int | None = None,
+        default_retry_policy: RetryPolicy | None = None,
+    ) -> None:
         self._subscriber = Subscriber(
             gc_project_id,
             credentials,
@@ -65,20 +72,22 @@ class Worker:
             default_ack_deadline,
             default_retry_policy,
         )
-        self._futures: dict[str, Future] = {}
+        self._futures: dict[Subscription, Future] = {}
         self._subscriptions = subscriptions
         self.threads_per_subscription = threads_per_subscription
         self.internet_check_endpoint = self._get_internet_check_endpoint(client_options)
 
-    def _get_internet_check_endpoint(self, client_options):
+    def _get_internet_check_endpoint(
+        self, client_options: dict[str, Any] | None
+    ) -> str:
         if (
             client_options is not None
             and client_options.get("api_endpoint") is not None
         ):
-            return client_options.get("api_endpoint")
+            return str(client_options["api_endpoint"])
         return "www.google.com"
 
-    def setup(self):
+    def setup(self) -> None:
         """Create the subscriptions on a Google PubSub topic.
 
         If the subscription already exists, the subscription will not be
@@ -89,7 +98,7 @@ class Worker:
             self._subscriber.update_or_create_subscription(subscription)
         logger.debug("[setup] end setup")
 
-    def start(self):
+    def start(self) -> None:
         """Begin consuming all subscriptions.
 
         When consuming a subscription, a ``StreamingPullFuture`` is returned from
@@ -106,7 +115,7 @@ class Worker:
         run_middleware_hook("post_worker_start")
         logger.debug("[start] end start")
 
-    def run_forever(self, sleep_interval=1):
+    def run_forever(self, sleep_interval: float = 1) -> None:
         """Shortcut for calling setup, start, and _wait_forever.
 
         :param sleep_interval: Number of seconds to sleep in the ``while True`` loop
@@ -119,7 +128,9 @@ class Worker:
         self._wait_forever(sleep_interval=sleep_interval)
         logger.debug("[run_forever] finish")
 
-    def stop(self, signal=None, frame=None):
+    def stop(
+        self, signal: int | None = None, frame: FrameType | None = None
+    ) -> NoReturn:
         """Manage the shutdown process of the worker.
 
         This function has two purposes:
@@ -150,7 +161,7 @@ class Worker:
         run_middleware_hook("post_worker_stop")
         sys.exit(0)
 
-    def _boostrap_consumption(self, subscription):
+    def _boostrap_consumption(self, subscription: Subscription) -> None:
         logger.debug(f"[_boostrap_consumption][0] subscription {subscription.name}")
 
         if subscription in self._futures:
@@ -176,9 +187,9 @@ class Worker:
             )
             raise NotConnectionError
 
-        executor_kwargs = {"thread_name_prefix": "ThreadPoolExecutor-ThreadScheduler"}
         executor = futures.ThreadPoolExecutor(
-            max_workers=self.threads_per_subscription, **executor_kwargs
+            max_workers=self.threads_per_subscription,
+            thread_name_prefix="ThreadPoolExecutor-ThreadScheduler",
         )
         scheduler = ThreadScheduler(executor=executor)
 
@@ -193,7 +204,7 @@ class Worker:
             f"[{self._futures[subscription]._state}]"
         )
 
-    def _wait_forever(self, sleep_interval):
+    def _wait_forever(self, sleep_interval: float) -> None:
         logger.info("Consuming subscriptions...")
         while True:
             logger.debug(f"[_wait_forever][0] Futures: {self._futures.values()}")
@@ -220,7 +231,7 @@ class Worker:
             time.sleep(sleep_interval)
 
 
-def _get_stop_signal():
+def _get_stop_signal() -> signal.Signals:
     """
     Get stop signal for worker.
     Returns `SIGBREAK` on windows because `SIGSTP` doesn't exist on it
@@ -232,7 +243,7 @@ def _get_stop_signal():
     return signal.SIGTSTP
 
 
-def create_and_run(subs, config):
+def create_and_run(subs: list[Subscription], config: "Config") -> None:
     """
     Create and run a worker from a list of Subscription objects and a config
     while waiting forever, until the process is stopped.

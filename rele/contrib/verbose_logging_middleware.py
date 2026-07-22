@@ -1,14 +1,21 @@
 import json
+from typing import TYPE_CHECKING, Any
 
 from rele.contrib.logging_middleware import LoggingMiddleware
 
+if TYPE_CHECKING:
+    from rele.config import Config
+    from rele.subscription import Subscription
+
 
 class VerboseLoggingMiddleware(LoggingMiddleware):
-    def setup(self, config, **kwargs):
+    def setup(self, config: "Config", **kwargs: Any) -> None:
         super().setup(config, **kwargs)
         self._encoder = config.encoder
 
-    def post_publish_success(self, topic, message_data, message_attributes):
+    def post_publish_success(
+        self, topic: str, message_data: Any, message_attributes: dict[str, Any]
+    ) -> None:
         self._logger.info(
             f"Successfully published to {topic}",
             extra={
@@ -21,7 +28,9 @@ class VerboseLoggingMiddleware(LoggingMiddleware):
             },
         )
 
-    def post_process_message_success(self, subscription, start_time, message):
+    def post_process_message_success(
+        self, subscription: "Subscription", start_time: float, message: Any
+    ) -> None:
         self._logger.info(
             f"Successfully processed message for {subscription}",
             extra={
@@ -36,19 +45,23 @@ class VerboseLoggingMiddleware(LoggingMiddleware):
         )
 
     def post_process_message_failure(
-        self, subscription, exception, start_time, message
-    ):
+        self,
+        subscription: "Subscription",
+        exception: Exception,
+        start_time: float,
+        message: Any,
+    ) -> None:
         super().post_process_message_failure(
             subscription, exception, start_time, _VerboseMessage(message)
         )
 
 
 class _VerboseMessage:
-    def __init__(self, message):
+    def __init__(self, message: Any) -> None:
         self._message = message
         self.attributes = message.attributes
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         message_repr = """\
 Message {{
   data: {!r}
@@ -62,7 +75,7 @@ Message {{
 
         return message_repr.format(data, ordering_key, attrs)
 
-    def _message_attrs_repr(self):
+    def _message_attrs_repr(self) -> str:
         message_attrs = json.dumps(
             dict(self.attributes), indent=2, separators=(",", ": "), sort_keys=True
         )

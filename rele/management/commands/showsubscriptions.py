@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.core.management import BaseCommand
 from tabulate import tabulate
 
@@ -8,7 +10,7 @@ from rele.management.discover import discover_subs_modules
 class Command(BaseCommand):
     help = "List information about Pub/Sub subscriptions registered using Relé."
 
-    def handle(self, *args, **options):
+    def handle(self, *args: Any, **options: Any) -> None:
         headers = ["Topic", "Subscriber(s)", "Sub"]
 
         subscription_paths = discover_subs_modules()

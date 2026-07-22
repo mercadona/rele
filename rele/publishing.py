@@ -1,11 +1,16 @@
+from typing import TYPE_CHECKING, Any
+
 from rele import config, discover
 
 from .client import Publisher
 
-_publisher = None
+if TYPE_CHECKING:
+    from rele.config import Config
+
+_publisher: Publisher | None = None
 
 
-def init_global_publisher(config):
+def init_global_publisher(config: "Config") -> Publisher:
     global _publisher
     if not _publisher:
         _publisher = Publisher(
@@ -19,7 +24,7 @@ def init_global_publisher(config):
     return _publisher
 
 
-def publish(topic, data, **kwargs):
+def publish(topic: str, data: Any, **kwargs: Any) -> None:
     """Shortcut method to publishing data to PubSub.
 
     This is a shortcut method that instantiates the Publisher if not already
@@ -46,9 +51,10 @@ def publish(topic, data, **kwargs):
     """
     if not _publisher:
         settings, _ = discover.sub_modules()
-        if not hasattr(settings, "RELE"):
+        if settings is None or not hasattr(settings, "RELE"):
             raise ValueError("Config setup not called and settings module not found.")
 
         config.setup(settings.RELE)
 
+    assert _publisher is not None
     _publisher.publish(topic, data, **kwargs)

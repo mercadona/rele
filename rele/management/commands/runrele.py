@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 from django.conf import settings
 from django.core.management import BaseCommand
@@ -14,7 +15,7 @@ class Command(BaseCommand):
     help = "Start subscriber threads to consume messages from Relé topics."
     config = config.Config(settings.RELE)
 
-    def handle(self, *args, **options):
+    def handle(self, *args: Any, **options: Any) -> None:
         if all(x.get("CONN_MAX_AGE") for x in settings.DATABASES.values()):
             self.stderr.write(
                 self.style.WARNING(

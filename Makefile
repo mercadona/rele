@@ -28,6 +28,9 @@ lint: ## check for coding style issues
 	uv run ruff check .
 	uv run ruff format --check .
 
+typecheck: ## check type annotations with mypy
+	uv run mypy
+
 lint-fix: ## try to automagically fix coding style issues
 	uv run ruff check --fix .
 	uv run ruff format .
