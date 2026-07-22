@@ -39,8 +39,8 @@ coverage: ## generates codecov report
 release: clean install-deploy-requirements sdist ## package and upload a release
 	twine upload -u __token__ dist/*
 
-sdist: clean ## package
-	python setup.py sdist
+sdist: clean install-deploy-requirements ## package
+	python -m build
 	ls -l dist
 
 install-requirements: ## install package requirements
