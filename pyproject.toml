@@ -1,4 +1,74 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rele"
+dynamic = ["version"]
+description = "Relé makes integration with Google PubSub easier."
+readme = "README.md"
+authors = [
+    { name = "Mercadona Tech", email = "software.online@mercadona.es" },
+]
+license = { text = "Apache Software License 2.0" }
+requires-python = ">=3.8"
+keywords = ["rele"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Framework :: Django",
+    "Framework :: Django :: 3.2",
+    "Framework :: Django :: 4.2",
+    "Framework :: Django :: 5.2",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "google-auth",
+    "google-cloud-pubsub>=2.7.1,!=2.31.0",
+]
+
+[project.optional-dependencies]
+django = ["django", "tabulate"]
+flask = ["flask"]
+
+[project.scripts]
+rele-cli = "rele.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/mercadona/rele"
+Documentation = "https://mercadonarele.readthedocs.io"
+Changelog = "https://github.com/mercadona/rele/blob/master/CHANGELOG.rst"
+
+[tool.setuptools.dynamic]
+version = { attr = "rele.__version__" }
+
+[tool.setuptools.packages.find]
+include = ["rele*"]
+
 [tool.black]
 line-length = 88
 target_version = ['py36']
 include = '\.pyi?$'
+
+[tool.isort]
+line_length = 90
+default_section = "THIRDPARTY"
+known_first_party = ["rele"]
+multi_line_output = 3
+use_parentheses = true
+include_trailing_comma = true
+skip = ["docs"]
+
+[tool.coverage.run]
+include = ["*"]
+omit = ["*/__init__.py"]
+
+[tool.pytest.ini_options]
+filterwarnings = ["ignore::UserWarning"]
