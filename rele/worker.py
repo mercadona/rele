@@ -5,7 +5,6 @@ import sys
 import time
 from concurrent import futures
 from datetime import datetime
-from typing import Dict
 
 from google.cloud.pubsub_v1.futures import Future
 from google.cloud.pubsub_v1.subscriber.scheduler import ThreadScheduler
@@ -31,7 +30,7 @@ def check_internet_connection(remote_server):
     try:
         sock.connect((remote_server, port))
         result = True
-    except (socket.error, socket.herror, socket.gaierror, socket.timeout) as error:
+    except (TimeoutError, OSError, socket.herror, socket.gaierror) as error:
         logger.exception("Check internet connection error", error)
     finally:
         sock.close()
@@ -66,7 +65,7 @@ class Worker:
             default_ack_deadline,
             default_retry_policy,
         )
-        self._futures: Dict[str, Future] = {}
+        self._futures: dict[str, Future] = {}
         self._subscriptions = subscriptions
         self.threads_per_subscription = threads_per_subscription
         self.internet_check_endpoint = self._get_internet_check_endpoint(client_options)
@@ -85,10 +84,10 @@ class Worker:
         If the subscription already exists, the subscription will not be
         re-created. Therefore, it is idempotent.
         """
-        logger.debug(f"[start] start setup")
+        logger.debug("[start] start setup")
         for subscription in self._subscriptions:
             self._subscriber.update_or_create_subscription(subscription)
-        logger.debug(f"[setup] end setup")
+        logger.debug("[setup] end setup")
 
     def start(self):
         """Begin consuming all subscriptions.
@@ -100,25 +99,25 @@ class Worker:
         The futures are stored so that they can be cancelled later on
         for a graceful shutdown of the worker.
         """
-        logger.debug(f"[start] start start")
+        logger.debug("[start] start start")
         run_middleware_hook("pre_worker_start")
         for subscription in self._subscriptions:
             self._boostrap_consumption(subscription)
         run_middleware_hook("post_worker_start")
-        logger.debug(f"[start] end start")
+        logger.debug("[start] end start")
 
     def run_forever(self, sleep_interval=1):
         """Shortcut for calling setup, start, and _wait_forever.
 
         :param sleep_interval: Number of seconds to sleep in the ``while True`` loop
         """
-        logger.debug(f"[run_forever] setup")
+        logger.debug("[run_forever] setup")
         self.setup()
-        logger.debug(f"[run_forever] start")
+        logger.debug("[run_forever] start")
         self.start()
-        logger.debug(f"[run_forever] wait for ever")
+        logger.debug("[run_forever] wait for ever")
         self._wait_forever(sleep_interval=sleep_interval)
-        logger.debug(f"[run_forever] finish")
+        logger.debug("[run_forever] finish")
 
     def stop(self, signal=None, frame=None):
         """Manage the shutdown process of the worker.
@@ -134,23 +133,25 @@ class Worker:
 
         Exits with code 0 for a clean exit.
 
-        :param signal: Needed for `signal.signal <https://docs.python.org/3/library/signal.html#signal.signal>`_  # noqa
-        :param frame: Needed for `signal.signal <https://docs.python.org/3/library/signal.html#signal.signal>`_  # noqa
+        :param signal: Needed for `signal.signal
+            <https://docs.python.org/3/library/signal.html#signal.signal>`_
+        :param frame: Needed for `signal.signal
+            <https://docs.python.org/3/library/signal.html#signal.signal>`_
         """
         run_middleware_hook("pre_worker_stop", self._subscriptions)
-        logger.debug(f"[stop] cancel all futures")
+        logger.debug("[stop] cancel all futures")
         for future in self._futures.values():
             future.cancel()
             future.result()
 
-        logger.debug(f"[stop] close subscriber")
+        logger.debug("[stop] close subscriber")
         self._subscriber.close()
 
         run_middleware_hook("post_worker_stop")
         sys.exit(0)
 
     def _boostrap_consumption(self, subscription):
-        logger.debug(f"[_boostrap_consumption][0] " f"subscription {subscription.name}")
+        logger.debug(f"[_boostrap_consumption][0] subscription {subscription.name}")
 
         if subscription in self._futures:
             logger.debug(
@@ -243,7 +244,7 @@ def create_and_run(subs, config):
     :param subs: List :class:`~rele.subscription.Subscription`
     :param config: :class:`~rele.config.Config`
     """
-    logger.debug(f"" f"Configuring worker with {len(subs)} subscription(s)...")
+    logger.debug(f"Configuring worker with {len(subs)} subscription(s)...")
     for sub in subs:
         print(f"Subscription: {sub}")
     worker = Worker(

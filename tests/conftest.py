@@ -8,7 +8,7 @@ from google.cloud.pubsub_v1 import PublisherClient
 from google.cloud.pubsub_v1.exceptions import TimeoutError
 from google.protobuf import timestamp_pb2
 
-from rele import Publisher, Worker
+from rele import Publisher
 from rele.client import Subscriber
 from rele.config import Config
 from rele.middleware import register_middleware

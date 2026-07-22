@@ -34,7 +34,7 @@ def long_message_wrapper(published_at, publish_time):
 @pytest.fixture
 def message_wrapper(published_at, publish_time):
     rele_message = pubsub_v1.types.PubsubMessage(
-        data="ABCDE".encode("utf-8"),
+        data=b"ABCDE",
         attributes={"lang": "es", "published_at": str(published_at)},
         message_id="1",
         publish_time=publish_time,
@@ -57,7 +57,7 @@ def expected_message_log():
 
 class TestVerboseLoggingMiddleware:
     @pytest.fixture
-    def config(project_id):
+    def config(self):
         return Config(
             {
                 "APP_NAME": "rele",

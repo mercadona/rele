@@ -1,1 +1,1 @@
-from .a_sub_file import sub_inside_infra_module
+from .a_sub_file import sub_inside_infra_module as sub_inside_infra_module
