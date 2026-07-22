@@ -21,47 +21,33 @@ clean-tests: ## remove pytest artifacts
 	rm -fr .pytest_cache/
 	rm -fr htmlcov/
 
+install: ## install the project and every dependency group
+	uv sync --all-groups --all-extras
+
 lint: ## check for coding style issues
-	black . --check --diff
-	isort . --check-only
+	uv run black . --check --diff
+	uv run isort . --check-only
 
 lint-fix: ## try to automagically fix coding style issues
-	black . --diff
-	isort .
+	uv run black .
+	uv run isort .
 
 test: ## run tests quickly with the default Python
-	python runtests.py tests
+	uv run python runtests.py tests
 
 coverage: ## generates codecov report
-	coverage run --source rele runtests.py tests
-	coverage report -m
+	uv run coverage run --source rele runtests.py tests
+	uv run coverage report -m
 
-release: clean install-deploy-requirements sdist ## package and upload a release
-	twine upload -u __token__ dist/*
+release: clean sdist ## package and upload a release
+	uv run --group deploy twine upload -u __token__ dist/*
 
-sdist: clean install-deploy-requirements ## package
-	python -m build
+sdist: clean ## package
+	uv build
 	ls -l dist
 
-install-requirements: ## install package requirements
-	pip install -r requirements/base.txt
-
-install-test-requirements: ## install requirements for testing
-	pip install -r requirements/test.txt
-
-install-deploy-requirements:  ## install requirements for deployment
-	pip install -r requirements/deploy.txt
-
-install-docs-requirements:  ## install requirements for documentation
-	pip install -r requirements/docs.txt
-
-install-django-requirements: ## install django requirements
-	pip install -r requirements/django.txt
-
-install-dev-requirements: install-requirements install-test-requirements install-docs-requirements install-django-requirements
-
 build-html-doc: ## builds the project documentation in HTML format
-	DJANGO_SETTINGS_MODULE=tests.settings make html -C docs
+	DJANGO_SETTINGS_MODULE=tests.settings uv run --group docs make html -C docs
 	open docs/_build/html/index.html
 
 docker-build:

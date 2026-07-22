@@ -46,6 +46,29 @@ Homepage = "https://github.com/mercadona/rele"
 Documentation = "https://mercadonarele.readthedocs.io"
 Changelog = "https://github.com/mercadona/rele/blob/master/CHANGELOG.rst"
 
+[dependency-groups]
+test = [
+    "pytest==8.4.2",
+    "pytest-cov>=2.7.0",
+    "pytest-django>=4.5",
+    "coverage>=4.4.0",
+    "codecov>=2.0.0",
+    "black==26.5.1",
+    "isort~=6.1.0",
+    "freezegun==1.5.5",
+    "django",
+    "tabulate",
+    "sample-pypi-package",
+]
+docs = ["Sphinx"]
+deploy = ["twine"]
+
+[tool.uv]
+default-groups = ["test"]
+
+[tool.uv.sources]
+sample-pypi-package = { path = "tests/sample_pypi_package" }
+
 [tool.hatch.version]
 path = "rele/__init__.py"
 
@@ -64,7 +87,7 @@ known_first_party = ["rele"]
 multi_line_output = 3
 use_parentheses = true
 include_trailing_comma = true
-skip = ["docs"]
+skip = ["docs", ".venv"]
 
 [tool.coverage.run]
 include = ["*"]
