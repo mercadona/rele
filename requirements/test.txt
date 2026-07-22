@@ -3,7 +3,7 @@ pytest-cov>=2.7.0
 pytest-django>=3.5
 coverage>=4.4.0
 codecov>=2.0.0
-black
+black==24.8.0
 isort~=5.10.0
 freezegun==1.4.0
 tests/sample_pypi_package
