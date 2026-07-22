@@ -12,16 +12,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - name: Set up uv with Python ${{ matrix.python-version }}
+        uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
+          enable-cache: true
 
       - name: Install dependencies
-        run: |
-          make install-requirements
-          make install-django-requirements
-          make install-test-requirements
+        run: uv sync --locked
 
       - name: Linting
         run: make lint
@@ -29,6 +27,6 @@ jobs:
       - name: Coverage
         run: |
           make coverage
-          codecov
+          uv run codecov
 
 

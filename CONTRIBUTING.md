@@ -18,6 +18,20 @@ discuss the contribution to the project.
 
 It is always best to have community input before proposing changes that may later be rejected.
 
+### Development setup
+
+The project uses [uv](https://docs.astral.sh/uv/) to manage its environment.
+Dependencies are declared in `pyproject.toml` (the `test`, `docs` and `deploy`
+dependency groups) and locked in `uv.lock`. After
+[installing uv](https://docs.astral.sh/uv/getting-started/installation/), run:
+
+```console
+$ make install
+```
+
+The Makefile targets (`make test`, `make lint`, ...) run through `uv run`, so
+they keep the environment in sync automatically.
+
 ### Pull Requests
 
 * Make sure any code changes are covered by tests by running `make test`.
