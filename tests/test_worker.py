@@ -54,7 +54,14 @@ def worker_without_client_options(config):
 @pytest.fixture
 def mock_consume(config):
     with patch.object(Subscriber, "consume") as m:
-        client = pubsub_v1.SubscriberClient(credentials=config.credentials)
+        # Point the client at a non-routable endpoint so the streaming pull
+        # never reaches Google: a real request answered with a terminal error
+        # (e.g. 401) would be re-raised by future.result() and make any test
+        # that stops the worker fail depending on network timing.
+        client = pubsub_v1.SubscriberClient(
+            credentials=config.credentials,
+            client_options={"api_endpoint": "localhost:1"},
+        )
         m.return_value = client.subscribe("dummy-subscription", Callback(sub_stub))
         yield m
 
