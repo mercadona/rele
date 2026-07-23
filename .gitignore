@@ -18,5 +18,8 @@ docs/_build
 !.gitignore
 !.travis.yml
 !.editorconfig
+!.release-please-manifest.json
+!.readthedocs.yml
+!.github/
 !.github
 !.codecov.yml
