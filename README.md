@@ -9,8 +9,8 @@
 </p>
 
 <p align="center">
-    <a href="https://travis-ci.org/mercadona/rele">
-        <img src="https://travis-ci.org/mercadona/rele.svg?branch=master"
+    <a href="https://github.com/mercadona/rele/actions/workflows/pr.yml">
+        <img src="https://github.com/mercadona/rele/actions/workflows/pr.yml/badge.svg"
              alt="Build Status">
     </a>
     <a href="https://mercadonarele.readthedocs.io/en/latest/?badge=latest">
@@ -70,7 +70,7 @@ telephone, electricity transmission, and transistors.
 
 ## Install
 
-Relé supports Python 3.6+ and installing via ``pip``
+Relé supports Python 3.10+ and installing via ``pip``
 
 `pip install rele`
 
