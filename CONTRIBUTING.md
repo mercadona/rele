@@ -32,6 +32,27 @@ $ make install
 The Makefile targets (`make test`, `make lint`, ...) run through `uv run`, so
 they keep the environment in sync automatically.
 
+### Commit messages
+
+Releases are automated with
+[release-please](https://github.com/googleapis/release-please), which decides
+the next version and writes the changelog from
+[Conventional Commits](https://www.conventionalcommits.org/). PR titles (and
+squash-merge commits) must follow that format:
+
+* `fix: ...` — bug fix, triggers a patch release.
+* `feat: ...` — new feature, triggers a minor release.
+* `feat!: ...` or a `BREAKING CHANGE:` footer — triggers a major release.
+* `chore:`, `docs:`, `refactor:`, `test:`, `ci:` — no release.
+
+### Releases
+
+On every push to `master`, release-please maintains a release PR that
+accumulates the pending changelog and version bump. Merging that PR creates
+the tag and GitHub release, and the `release-please.yml` workflow builds the
+package with `uv build` and publishes it to PyPI via trusted publishing —
+no manual steps and no long-lived tokens.
+
 ### Pull Requests
 
 * Make sure any code changes are covered by tests by running `make test`.

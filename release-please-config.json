@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "bootstrap-sha": "5879fee5f58ce253244d70e397c86e0aa163a468",
+  "packages": {
+    ".": {
+      "release-type": "python",
+      "package-name": "rele",
+      "changelog-path": "CHANGELOG.md",
+      "include-v-in-tag": true,
+      "extra-files": ["rele/__init__.py"]
+    }
+  }
+}

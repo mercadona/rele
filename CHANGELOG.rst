@@ -1,6 +1,11 @@
 Changelog
 =========
 
+.. note::
+   From version 1.16.0 onwards, releases are managed by release-please and
+   the changelog lives in `CHANGELOG.md <CHANGELOG.md>`_. This file is kept
+   for historical reference.
+
 1.15.3 (2025-01-30)
 -------------------
 * [Added] Allow create topics on multiple Google Pub/Sub regions  (#287)

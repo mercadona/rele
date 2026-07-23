@@ -61,7 +61,6 @@ test = [
     "sample-pypi-package",
 ]
 docs = ["Sphinx"]
-deploy = ["twine"]
 
 [tool.uv]
 default-groups = ["test"]
