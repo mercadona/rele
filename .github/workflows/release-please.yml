@@ -3,6 +3,9 @@ name: Release Please
 on:
   push:
     branches: [master]
+  # Manual escape hatch: builds the selected ref and publishes it to PyPI
+  # through the same trusted-publishing environment. Used for pre-releases.
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -10,6 +13,7 @@ permissions:
 
 jobs:
   release-please:
+    if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
@@ -19,12 +23,16 @@ jobs:
         id: release
 
   publish:
-    # Runs only when the release PR is merged and the GitHub release created.
+    # Runs when the release PR is merged and the GitHub release created, or
+    # when the workflow is dispatched manually (pre-releases).
     # Publishing uses PyPI trusted publishing (OIDC): the "pypi" environment
     # and the trusted publisher for this repo/workflow must be configured on
     # https://pypi.org/manage/project/rele/settings/publishing/
     needs: release-please
-    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    if: >-
+      ${{ always() &&
+          (github.event_name == 'workflow_dispatch' ||
+           needs.release-please.outputs.release_created == 'true') }}
     runs-on: ubuntu-latest
     environment: pypi
     permissions:
@@ -32,7 +40,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ needs.release-please.outputs.tag_name }}
+          ref: ${{ needs.release-please.outputs.tag_name || github.ref }}
 
       - name: Set up uv
         uses: astral-sh/setup-uv@v7
