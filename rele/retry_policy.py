@@ -15,13 +15,15 @@ class RetryPolicy:
     minimum_backoff: int
     maximum_backoff: int
 
-    def __init__(self, minimum_backoff, maximum_backoff):
+    def __init__(self, minimum_backoff: int, maximum_backoff: int) -> None:
         self._guard_against_wrong_parameters(minimum_backoff, maximum_backoff)
 
         self.minimum_backoff = minimum_backoff
         self.maximum_backoff = maximum_backoff
 
-    def _guard_against_wrong_parameters(self, minimum_backoff, maximum_backoff):
+    def _guard_against_wrong_parameters(
+        self, minimum_backoff: int, maximum_backoff: int
+    ) -> None:
         if minimum_backoff == 0:
             raise ValueError("minimum_backoff must be greater than 0")
 

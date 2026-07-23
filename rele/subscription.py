@@ -1,10 +1,14 @@
 import json
 import logging
 import time
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from inspect import getfullargspec, getmodule
+from typing import Any
 
 from .middleware import run_middleware_hook
+from .retry_policy import RetryPolicy
+
+FilterBy = Callable[..., bool]
 
 logger = logging.getLogger(__name__)
 
@@ -36,14 +40,14 @@ class Subscription:
 
     def __init__(
         self,
-        func,
-        topic,
-        prefix="",
-        suffix="",
-        filter_by=None,
-        backend_filter_by=None,
-        retry_policy=None,
-    ):
+        func: Callable[..., Any],
+        topic: str,
+        prefix: str | None = "",
+        suffix: str | None = "",
+        filter_by: FilterBy | Iterable[FilterBy] | None = None,
+        backend_filter_by: str | None = None,
+        retry_policy: RetryPolicy | None = None,
+    ) -> None:
         self._validate_filter_by(filter_by)
 
         self._func = func
@@ -54,7 +58,9 @@ class Subscription:
         self.backend_filter_by = backend_filter_by
         self.retry_policy = retry_policy
 
-    def _validate_filter_by(self, filter_by):
+    def _validate_filter_by(
+        self, filter_by: FilterBy | Iterable[FilterBy] | None
+    ) -> None:
         if filter_by and not (
             callable(filter_by)
             or (
@@ -64,7 +70,9 @@ class Subscription:
         ):
             raise ValueError("Filter_by must be a callable or a list of callables.")
 
-    def _init_filters(self, filter_by):
+    def _init_filters(
+        self, filter_by: FilterBy | Iterable[FilterBy] | None
+    ) -> Iterable[FilterBy] | None:
         if isinstance(filter_by, Iterable):
             return filter_by
         elif filter_by:
@@ -73,25 +81,25 @@ class Subscription:
         return None
 
     @property
-    def name(self):
+    def name(self) -> str:
         name_parts = [self._prefix, self.topic, self._suffix]
-        return "-".join(filter(lambda x: x, name_parts))
+        return "-".join(filter(None, name_parts))
 
     @property
-    def prefix(self):
+    def prefix(self) -> str | None:
         return self._prefix
 
-    def set_prefix(self, prefix):
+    def set_prefix(self, prefix: str) -> None:
         self._prefix = prefix
 
     @property
-    def filter_by(self):
+    def filter_by(self) -> Iterable[FilterBy] | None:
         return self._filters
 
-    def set_filters(self, filter_by):
-        self._filters = filter_by
+    def set_filters(self, filter_by: FilterBy | Iterable[FilterBy]) -> None:
+        self._filters = self._init_filters(filter_by)
 
-    def __call__(self, data, **kwargs):
+    def __call__(self, data: Any, **kwargs: Any) -> Any:
         if "published_at" in kwargs:
             kwargs["published_at"] = float(kwargs["published_at"])
 
@@ -100,10 +108,10 @@ class Subscription:
 
         return self._func(data, **kwargs)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.name} - {self._func.__name__}"
 
-    def _any_filter_returns_false(self, kwargs):
+    def _any_filter_returns_false(self, kwargs: dict[str, Any]) -> bool:
         if not self._filters:
             return False
 
@@ -111,11 +119,11 @@ class Subscription:
 
 
 class Callback:
-    def __init__(self, subscription, suffix=None):
+    def __init__(self, subscription: Subscription, suffix: str | None = None) -> None:
         self._subscription = subscription
         self._suffix = suffix
 
-    def __call__(self, message):
+    def __call__(self, message: Any) -> Any:
         run_middleware_hook("pre_process_message", self._subscription, message)
         start_time = time.time()
 
@@ -157,13 +165,13 @@ class Callback:
 
 
 def sub(
-    topic,
-    prefix=None,
-    suffix=None,
-    filter_by=None,
-    backend_filter_by=None,
-    retry_policy=None,
-):
+    topic: str,
+    prefix: str | None = None,
+    suffix: str | None = None,
+    filter_by: FilterBy | Iterable[FilterBy] | None = None,
+    backend_filter_by: str | None = None,
+    retry_policy: RetryPolicy | None = None,
+) -> Callable[[Callable[..., Any]], Subscription]:
     """Decorator function that makes declaring a PubSub Subscription simple.
 
     The Subscriber returned will automatically create and name
@@ -212,7 +220,7 @@ def sub(
     :return: :class:`~rele.subscription.Subscription`
     """
 
-    def decorator(func):
+    def decorator(func: Callable[..., Any]) -> Subscription:
         args_spec = getfullargspec(func)
         if len(args_spec.args) != 1 or not args_spec.varkw:
             raise RuntimeError(
@@ -221,7 +229,9 @@ def sub(
                 "accept keyword arguments."
             )
 
-        if getmodule(func).__name__.split(".")[-1] != "subs":
+        module = getmodule(func)
+        module_name = module.__name__ if module else ""
+        if module_name.split(".")[-1] != "subs":
             logger.warning(
                 f"Subscription function {func.__module__}.{func.__name__} is "
                 "outside a subs module that will not be discovered."

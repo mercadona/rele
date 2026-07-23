@@ -1,17 +1,20 @@
 import logging
 import os
 import re
+from typing import Any
 
 from django.apps import apps
 
 logger = logging.getLogger(__name__)
 
 
-def is_subs_module(file):
+def is_subs_module(file: str) -> re.Match[str] | None:
     return re.match(r"^(subs|subs\.py)$", file)
 
 
-def collect_subs_from_path(folder_path, subfiles, module_name, subs_paths):
+def collect_subs_from_path(
+    folder_path: str, subfiles: list[str], module_name: str, subs_paths: list[str]
+) -> list[str]:
     if not subfiles:
         return subs_paths
 
@@ -37,7 +40,7 @@ def collect_subs_from_path(folder_path, subfiles, module_name, subs_paths):
     return collect_subs_from_path(folder_path, subfiles, module_name, subs_paths)
 
 
-def collect_subs_from_app(app_config):
+def collect_subs_from_app(app_config: Any) -> list[str]:
     return collect_subs_from_path(
         folder_path=app_config.path,
         subfiles=os.listdir(app_config.path),
@@ -46,10 +49,10 @@ def collect_subs_from_app(app_config):
     )
 
 
-def discover_subs_modules():
+def discover_subs_modules() -> list[str]:
     logger.debug("Autodiscovering subs...")
     app_configs = apps.get_app_configs()
-    subs_modules = []
+    subs_modules: list[str] = []
 
     for app in app_configs:
         subs_modules += collect_subs_from_app(app)

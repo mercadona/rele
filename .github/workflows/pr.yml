@@ -24,6 +24,9 @@ jobs:
       - name: Linting
         run: make lint
 
+      - name: Type checking
+        run: make typecheck
+
       - name: Coverage
         run: |
           make coverage

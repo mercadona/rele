@@ -7,5 +7,5 @@ import rele.config
 class ReleConfig(AppConfig):
     name = "rele"
 
-    def ready(self):
+    def ready(self) -> None:
         rele.config.setup(settings.RELE)
