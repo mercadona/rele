@@ -1,4 +1,4 @@
-.PHONY: clean-pyc clean-build release docs help
+.PHONY: clean-pyc clean-build docs help
 .PHONY: lint test coverage test-codecov
 .DEFAULT_GOAL := help
 
@@ -41,9 +41,6 @@ test: ## run tests quickly with the default Python
 coverage: ## generates codecov report
 	uv run coverage run --source rele runtests.py tests
 	uv run coverage report -m
-
-release: clean sdist ## package and upload a release
-	uv run --group deploy twine upload -u __token__ dist/*
 
 sdist: clean ## package
 	uv build
