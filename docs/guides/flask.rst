@@ -35,7 +35,7 @@ Subscribing
 ____________
 
 Now that that the middleware is setup our subscriptions will automatically have
-`Flask's app context <https://flask.palletsprojects.com/en/1.0.x/appcontext/>`_ pushed
+`Flask's app context <https://flask.palletsprojects.com/en/stable/appcontext/>`_ pushed
 when they are invoked so you will have access to the database connection pool and all
 other app dependent utilities.
 

@@ -108,18 +108,21 @@ the LoggingMiddleware and Prometheus integration.
 
 **Optional**
 
-Default: `rest_framework.utils.encoders.JSONEncoder <https://github.com/encode/django-rest-framework/blob/master/rest_framework/utils/encoders.py#L17>`_
+Default: ``json.JSONEncoder``
 
 `Encoder class path <https://docs.python.org/3/library/json.html#json.JSONEncoder>`_ to use for
 serializing your Python data structure to a json object when publishing.
 
-.. note:: The default encoder class is subject to change in an upcoming release.
-    It is advised that you use this setting explicitly.
+.. note:: Django projects often set this to
+    ``rest_framework.utils.encoders.JSONEncoder`` to serialize datetimes,
+    UUIDs and Decimals out of the box.
 
 ``ACK_DEADLINE``
 ------------------
 
 **Optional**
+
+Default: 60 seconds
 
 Ack deadline for all subscribers in seconds.
 
@@ -132,7 +135,7 @@ Ack deadline for all subscribers in seconds.
 .. _settings_publisher_blocking:
 
 ``PUBLISHER_BLOCKING``
----------------------
+----------------------
 
 **Optional**
 
@@ -141,7 +144,7 @@ Default: False
 Wait synchronously for the publishing result
 
 `See Google PubSub documentation for more info
-<https://googleapis.dev/python/pubsub/1.1.0/publisher/api/futures.html?highlight=result#google.cloud.pubsub_v1.publisher.futures.Future.result>`_
+<https://cloud.google.com/python/docs/reference/pubsub/latest/google.cloud.pubsub_v1.publisher.futures.Future>`_
 
 .. _settings_publisher_timeout:
 
@@ -155,7 +158,7 @@ Default: 3.0 seconds
 Timeout that the publishing result will wait on the future to publish successfully while blocking.
 
 `See Google PubSub documentation for more info
-<https://googleapis.dev/python/pubsub/1.1.0/publisher/api/futures.html?highlight=result#google.cloud.pubsub_v1.publisher.futures.Future.result>`_
+<https://cloud.google.com/python/docs/reference/pubsub/latest/google.cloud.pubsub_v1.publisher.futures.Future>`_
 
 ``THREADS_PER_SUBSCRIPTION``
 ----------------------------
@@ -186,8 +189,8 @@ For more information, please see `Filtering Messages section <https://mercadonar
 
 A RetryPolicy object which must be instantiated with `minimum_backoff` and `maximum_backoff`, that specifies in seconds how Pub/Sub retries message delivery for all the subscriptions.
 
-If not set, the default retry policy is applied, meaning a minimum backoff of 10 seconds and a maximum backoff of 60 seconds.
-This generally implies that messages will be retried as soon as possible for healthy subscribers.
+If not set, no retry policy is configured on the subscription and Pub/Sub
+redelivers messages as soon as possible.
 RetryPolicy will be triggered on NACKs or acknowledgement deadline exceeded events for a given message.
 
 ``GC_STORAGE_REGION``

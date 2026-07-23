@@ -14,10 +14,9 @@ First make sure the middleware is included in your Relé config.
 
     # settings.py
     import rele
-    from google.oauth2 import service_account
 
     RELE = {
-        'GC_CREDENTIALSGC_CREDENTIALS_PATH': 'credentials.json',
+        'GC_CREDENTIALS_PATH': 'credentials.json',
         'MIDDLEWARE': ['rele.contrib.UnrecoverableMiddleWare']
     }
     config = rele.config.setup(RELE)

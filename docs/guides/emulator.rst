@@ -51,4 +51,4 @@ In case it's necessary to create a topic manually we can add it using the django
 
     publisher_client = pubsub_v1.PublisherClient()
     topic_path = publisher_client.topic_path(settings.RELE.get('GC_PROJECT_ID'), 'topic_name')
-    publisher_client.create_topic(topic_path)
+    publisher_client.create_topic(name=topic_path)
