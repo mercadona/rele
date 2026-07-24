@@ -329,6 +329,57 @@ class TestSubscriber:
             request={"subscription": subscription, "update_mask": update_mask}
         )
 
+    @patch.object(SubscriberClient, "create_subscription")
+    @patch.object(SubscriberClient, "update_subscription")
+    def test_updates_subscription_when_create_raises_permission_denied(
+        self,
+        client_update_subscription,
+        client_create_subscription,
+        project_id,
+        subscriber,
+    ):
+        subscription_path = (
+            f"projects/{project_id}/subscriptions/{project_id}-test-topic"
+        )
+        topic_path = f"projects/{project_id}/topics/{project_id}-test-topic"
+        retry_policy = pubsub_v1.types.RetryPolicy(
+            minimum_backoff=duration_pb2.Duration(seconds=10),
+            maximum_backoff=duration_pb2.Duration(seconds=50),
+        )
+        update_mask = FieldMask(paths=["retry_policy"])
+        client_create_subscription.side_effect = exceptions.PermissionDenied(
+            message="Permission denied to create subscription"
+        )
+
+        expected_subscription = pubsub_v1.types.Subscription(
+            name=subscription_path,
+            topic=topic_path,
+            retry_policy=retry_policy,
+        )
+
+        subscriber.update_or_create_subscription(
+            Subscription(
+                None,
+                topic=f"{project_id}-test-topic",
+                retry_policy=RetryPolicy(10, 50),
+            )
+        )
+
+        client_create_subscription.assert_called_once_with(
+            request={
+                "name": subscription_path,
+                "topic": topic_path,
+                "ack_deadline_seconds": 60,
+                "retry_policy": retry_policy,
+            }
+        )
+        client_update_subscription.assert_called_once_with(
+            request={
+                "subscription": expected_subscription,
+                "update_mask": update_mask,
+            }
+        )
+
     @patch.object(
         SubscriberClient,
         "create_subscription",
