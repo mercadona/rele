@@ -25,6 +25,35 @@ packaging, CI, linting or the worker.
   ruff ignores them — long URLs in docstrings go in RST link-target blocks
   instead.
 
+## Releases
+
+Full flow in `release-process.md`; these are the traps that actually bit.
+
+- **Reset `rele/__init__.py` right after every manual pre-release.** Leaving a
+  PEP 440 pre-release string there silently breaks the next release PR:
+  release-please's generic updater matches the semver prefix `1.17.0` *inside*
+  `1.17.0b1` and rewrites it with the same `1.17.0`, so the `b1` suffix
+  survives and the file shows **no diff**. hatchling then builds the
+  pre-release version under the new tag and PyPI rejects it as already
+  existing — tag burned, nothing published (broke the 1.17.0 release,
+  PRs #325–#327).
+- **release-please won't refresh a release PR** whose target version and
+  changelog are unchanged — it compares those, not the file tree. A release PR
+  branched off an older master keeps stale contents forever. Force it: close
+  the PR, delete its branch, re-run the workflow.
+- **Check the release PR's diff includes the `rele/__init__.py` bump** before
+  merging it. That one line is what the wheel version comes from; the manifest
+  and changelog changes are cosmetic by comparison.
+- **`release-as` is one-shot.** Remove it as soon as the version it forced has
+  shipped, or the next push targets an already-tagged version.
+- Commits that aren't Conventional Commits are invisible to release-please —
+  no changelog entry *and* no version bump. The pre-2026-07 history uses
+  `[Added]`/`[Changed]`/`[Fixed]`, which is why 1.17.0 needed both a forced
+  version and a hand-written changelog. This bites regardless of
+  `bootstrap-sha`: release-please anchors on the newest prior release tag when
+  there is one, and drops non-conforming commits inside that range on their
+  titles alone.
+
 ## Code
 
 - `FILTER_SUBS_BY` accepts a single callable **or** an iterable; both

@@ -7,10 +7,10 @@ the same code as the `1.17.0b1` pre-release plus the two documentation changes
 below.
 
 > Every entry except the Documentation ones was **backfilled by hand**. The
-> modernization work landed before this repo adopted Conventional Commits (it
-> used the legacy `[Added]`/`[Changed]`/`[Fixed]` prefixes) and predates
-> `bootstrap-sha`, so release-please could not derive it from the commit
-> history and generated a documentation-only changelog.
+> modernization work landed before this repo adopted Conventional Commits — it
+> used the legacy `[Added]`/`[Changed]`/`[Fixed]` prefixes, which release-please
+> skips entirely — so it saw only the two `docs:` commits and generated a
+> documentation-only changelog.
 
 ### ⚠ BREAKING CHANGES
 
