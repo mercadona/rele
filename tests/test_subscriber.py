@@ -1,3 +1,6 @@
+import importlib.util
+import os
+import re
 from unittest.mock import ANY, MagicMock, patch
 
 import pytest
@@ -8,9 +11,28 @@ from google.cloud.pubsub_v1.types import FieldMask
 from google.protobuf import duration_pb2
 from google.pubsub_v1 import MessageStoragePolicy
 
+import rele.client
 from rele import Subscriber
 from rele.retry_policy import RetryPolicy
 from rele.subscription import Subscription
+
+
+def _load_client_module_with_env(env):
+    """Import a private copy of ``rele.client`` under a patched environment.
+
+    ``rele.client.USE_EMULATOR`` is evaluated once, at import time, so the
+    emulator branches can only be reached by importing the module again with
+    ``PUBSUB_EMULATOR_HOST`` set. The copy is never registered in
+    ``sys.modules``, which leaves the real ``rele.client`` (and the classes
+    every other test holds a reference to) untouched.
+    """
+    spec = importlib.util.spec_from_file_location(
+        "rele_client_with_emulator", rele.client.__file__
+    )
+    module = importlib.util.module_from_spec(spec)
+    with patch.dict(os.environ, env):
+        spec.loader.exec_module(module)
+    return module
 
 
 class TestSubscriber:
@@ -20,6 +42,16 @@ class TestSubscriber:
             PublisherClient, "create_topic", return_values={"name": "test-topic"}
         ) as mock:
             yield mock
+
+    @pytest.fixture
+    def subscriber_without_storage_policy(self, config):
+        return Subscriber(
+            config.gc_project_id,
+            config.credentials,
+            None,
+            config.client_options,
+            60,
+        )
 
     @patch("rele.client.pubsub_v1.SubscriberClient", autospec=True)
     def test_creates_subscriber_client_with_client_options(
@@ -37,6 +69,86 @@ class TestSubscriber:
             credentials=ANY,
             client_options={"api_endpoint": "custom-api.interconnect.example.com"},
         )
+
+    @patch("rele.client.pubsub_v1.SubscriberClient", autospec=True)
+    def test_raises_type_error_when_message_storage_policy_is_neither_a_string_nor_a_list(
+        self, mock_subscriber_client, config
+    ):
+        with pytest.raises(
+            TypeError,
+            match=re.escape(
+                "`message_storage_policy` must be None or either a string "
+                "or a list of regions."
+            ),
+        ):
+            Subscriber(
+                gc_project_id=config.gc_project_id,
+                credentials=config.credentials,
+                message_storage_policy={"allowed_persistence_regions": "some-region"},
+                client_options=config.client_options,
+                default_ack_deadline=60,
+            )
+
+    @patch.object(
+        SubscriberClient,
+        "create_subscription",
+        side_effect=[exceptions.NotFound("Subscription topic does not exist"), True],
+    )
+    @patch.object(SubscriberClient, "update_subscription")
+    def test_creates_topic_without_persistence_regions_when_storage_policy_is_none(
+        self,
+        client_update_subscription,
+        client_create_subscription,
+        project_id,
+        subscriber_without_storage_policy,
+        mock_create_topic,
+    ):
+        assert subscriber_without_storage_policy._message_storage_policy is None
+
+        subscriber_without_storage_policy.update_or_create_subscription(
+            Subscription(None, topic=f"{project_id}-test-topic")
+        )
+
+        mock_create_topic.assert_called_once_with(
+            request={
+                "name": f"projects/{project_id}/topics/{project_id}-test-topic",
+                "message_storage_policy": MessageStoragePolicy(
+                    {"allowed_persistence_regions": None}
+                ),
+            }
+        )
+
+    def test_creates_topic_without_credentials_when_emulator_host_is_set(self, config):
+        client_module = _load_client_module_with_env(
+            {"PUBSUB_EMULATOR_HOST": "localhost:8085"}
+        )
+        assert client_module.USE_EMULATOR is True
+
+        with (
+            patch(
+                "rele.client.pubsub_v1.SubscriberClient", autospec=True
+            ) as mock_subscriber_client,
+            patch("rele.client.pubsub_v1.PublisherClient") as mock_publisher_client,
+        ):
+            mock_subscriber_client.return_value.create_subscription.side_effect = [
+                exceptions.NotFound("Subscription topic does not exist"),
+                True,
+            ]
+            subscriber = client_module.Subscriber(
+                gc_project_id=config.gc_project_id,
+                credentials=config.credentials,
+                message_storage_policy=config.gc_storage_region,
+                client_options=config.client_options,
+                default_ack_deadline=60,
+            )
+
+            assert subscriber.credentials is None
+
+            subscriber.update_or_create_subscription(
+                Subscription(None, topic="rele-test-topic")
+            )
+
+        mock_publisher_client.assert_called_once_with(credentials=None)
 
     @patch.object(SubscriberClient, "create_subscription")
     @patch.object(SubscriberClient, "update_subscription")

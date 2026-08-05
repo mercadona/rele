@@ -113,6 +113,44 @@ class TestLoggingMiddleware:
 
         assert message_log == expected_message_log
 
+    def test_duration_seconds_is_rounded_to_three_decimals_on_post_process_message_success(
+        self,
+        logging_middleware,
+        caplog,
+        message_wrapper,
+        time_mock,
+    ):
+        # time.time() is frozen at 1560244246.863829, so the duration is
+        # 0.8638288974761963: 0.864 at 3 decimals, 0.8638 at 4, 0.86 at 2.
+        start_time = 1560244246.0
+
+        logging_middleware.post_process_message_success(
+            sub_stub, start_time, message_wrapper
+        )
+
+        duration_seconds = caplog.records[0].metrics["data"]["duration_seconds"]
+
+        assert duration_seconds == 0.864
+
+    def test_duration_seconds_is_rounded_to_three_decimals_on_post_process_message_failure(
+        self,
+        logging_middleware,
+        caplog,
+        message_wrapper,
+        time_mock,
+    ):
+        # time.time() is frozen at 1560244246.863829, so the duration is
+        # 0.8638288974761963: 0.864 at 3 decimals, 0.8638 at 4, 0.86 at 2.
+        start_time = 1560244246.0
+
+        logging_middleware.post_process_message_failure(
+            sub_stub, RuntimeError("💩"), start_time, message_wrapper
+        )
+
+        duration_seconds = caplog.records[0].metrics["data"]["duration_seconds"]
+
+        assert duration_seconds == 0.864
+
     def test_post_publish_failure_message_payload_format_matches_post_process_message_failure_payload_type(
         self,
         logging_middleware,
