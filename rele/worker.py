@@ -38,7 +38,7 @@ def check_internet_connection(remote_server: str) -> bool:
         sock.connect((remote_server, port))
         result = True
     except (TimeoutError, OSError, socket.herror, socket.gaierror) as error:
-        logger.exception("Check internet connection error", error)
+        logger.exception("Check internet connection error: %s", error)
     finally:
         sock.close()
     return result

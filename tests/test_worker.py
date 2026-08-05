@@ -1,3 +1,4 @@
+import socket
 import time
 from concurrent import futures
 from concurrent.futures._base import FINISHED
@@ -13,7 +14,7 @@ from rele import Subscriber, Worker, sub
 from rele.middleware import register_middleware
 from rele.retry_policy import RetryPolicy
 from rele.subscription import Callback
-from rele.worker import NotConnectionError, create_and_run
+from rele.worker import NotConnectionError, check_internet_connection, create_and_run
 
 
 @sub(topic="some-cool-topic", prefix="rele")
@@ -201,6 +202,27 @@ class TestWorker:
         mock_internet_connection.assert_called_once_with(
             "custom-api.interconnect.example.com"
         )
+
+
+class TestCheckInternetConnection:
+    @patch("rele.worker.socket.socket")
+    def test_closes_socket_after_success(self, mock_socket):
+        sock = mock_socket.return_value
+
+        assert check_internet_connection("example.com") is True
+
+        sock.settimeout.assert_called_once_with(5)
+        sock.connect.assert_called_once_with(("example.com", 80))
+        sock.close.assert_called_once_with()
+
+    @patch("rele.worker.socket.socket")
+    def test_closes_socket_after_connection_error(self, mock_socket):
+        sock = mock_socket.return_value
+        sock.connect.side_effect = socket.error
+
+        assert check_internet_connection("example.com") is False
+
+        sock.close.assert_called_once_with()
 
 
 @pytest.mark.usefixtures("mock_create_subscription")
