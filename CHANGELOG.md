@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.17.1](https://github.com/mercadona/rele/compare/v1.17.0...v1.17.1) (2026-08-05)
+
+
+### Bug Fixes
+
+* emit the connection-check error log instead of losing it ([#330](https://github.com/mercadona/rele/issues/330)) ([ab50375](https://github.com/mercadona/rele/commit/ab50375ab3e455e392e5e9d514e2fd1326687487))
+
+
+### Documentation
+
+* document the release-please pre-release trap ([#328](https://github.com/mercadona/rele/issues/328)) ([e5e3207](https://github.com/mercadona/rele/commit/e5e3207adb96c9a8da3eb8b5407da8b7d21b928e))
+
 ## [1.17.0](https://github.com/mercadona/rele/compare/1.16.0...v1.17.0) (2026-08-05)
 
 First fully automated release, and the first since 1.16.0 (2025-07-25). Ships
