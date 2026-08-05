@@ -1,4 +1,4 @@
-from unittest.mock import ANY, patch
+from unittest.mock import ANY, MagicMock, patch
 
 import pytest
 from google.api_core import exceptions
@@ -347,3 +347,86 @@ class TestSubscriber:
         )
 
         client_update_subscription.assert_not_called()
+
+
+class TestSubscriberConsume:
+    @pytest.fixture
+    def callback(self):
+        return MagicMock(name="callback")
+
+    @pytest.fixture
+    def scheduler(self):
+        return MagicMock(name="scheduler")
+
+    @patch.object(SubscriberClient, "subscribe")
+    def test_subscribes_to_the_subscription_path_of_the_project(
+        self, client_subscribe, project_id, subscriber, callback, scheduler
+    ):
+        expected_subscription = (
+            f"projects/{project_id}/subscriptions/{project_id}-test-topic"
+        )
+
+        subscriber.consume(
+            subscription_name=f"{project_id}-test-topic",
+            callback=callback,
+            scheduler=scheduler,
+        )
+
+        client_subscribe.assert_called_once_with(
+            expected_subscription, callback=callback, scheduler=scheduler
+        )
+
+    @patch.object(SubscriberClient, "subscribe")
+    def test_returns_the_streaming_pull_future_from_the_client(
+        self, client_subscribe, project_id, subscriber, callback, scheduler
+    ):
+        expected_future = MagicMock(name="streaming_pull_future")
+        client_subscribe.return_value = expected_future
+
+        future = subscriber.consume(
+            subscription_name=f"{project_id}-test-topic",
+            callback=callback,
+            scheduler=scheduler,
+        )
+
+        assert future is expected_future
+
+    @patch.object(SubscriberClient, "subscribe")
+    def test_forwards_the_callback_to_the_client(
+        self, client_subscribe, project_id, subscriber, callback, scheduler
+    ):
+        subscriber.consume(
+            subscription_name=f"{project_id}-test-topic",
+            callback=callback,
+            scheduler=scheduler,
+        )
+
+        assert client_subscribe.call_args[1]["callback"] is callback
+
+    @patch.object(SubscriberClient, "subscribe")
+    def test_forwards_the_scheduler_to_the_client(
+        self, client_subscribe, project_id, subscriber, callback, scheduler
+    ):
+        subscriber.consume(
+            subscription_name=f"{project_id}-test-topic",
+            callback=callback,
+            scheduler=scheduler,
+        )
+
+        assert client_subscribe.call_args[1]["scheduler"] is scheduler
+
+    @patch.object(SubscriberClient, "subscribe")
+    def test_subscribes_to_the_given_subscription_name_only(
+        self, client_subscribe, subscriber, callback, scheduler
+    ):
+        subscriber.consume(
+            subscription_name="another-subscription",
+            callback=callback,
+            scheduler=scheduler,
+        )
+
+        client_subscribe.assert_called_once_with(
+            "projects/rele-test/subscriptions/another-subscription",
+            callback=callback,
+            scheduler=scheduler,
+        )
