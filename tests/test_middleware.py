@@ -4,7 +4,7 @@ from unittest.mock import patch
 import pytest
 
 import rele
-from rele.middleware import BaseMiddleware, run_middleware_hook
+from rele.middleware import DEPRECATED_HOOKS, BaseMiddleware, run_middleware_hook
 
 
 def _build_middleware_with_post_publish():
@@ -62,6 +62,27 @@ class TestMiddleware:
             class TestMiddleware(BaseMiddleware):
                 def post_publish(self, topic):
                     pass
+
+    def test_deprecated_hook_warning_names_the_actual_hook_and_replacement(self):
+        """With a single entry, a hard-coded message happens to read correctly.
+
+        Add a second deprecated hook to prove the warning text is derived
+        from the hook that was actually defined, not hard-coded to
+        "post_publish"/"post_publish_success" regardless of which hook fired.
+        """
+        with patch.dict(
+            DEPRECATED_HOOKS, {"pre_process_message": "pre_process_message_v2"}
+        ):
+            with warnings.catch_warnings(record=True) as caught:
+                warnings.simplefilter("always")
+
+                class TestMiddleware(BaseMiddleware):
+                    def pre_process_message(self, subscription, message):
+                        pass
+
+            messages = [str(w.message) for w in caught]
+            assert any("pre_process_message_v2" in m for m in messages)
+            assert not any("post_publish" in m for m in messages)
 
 
 class TestRunMiddlewareHook:
