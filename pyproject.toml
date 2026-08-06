@@ -58,6 +58,7 @@ test = [
     "freezegun==1.5.5",
     "django",
     "tabulate",
+    "flask",
     "sample-pypi-package",
 ]
 docs = ["Sphinx"]
