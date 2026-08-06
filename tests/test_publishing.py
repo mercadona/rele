@@ -1,4 +1,4 @@
-from types import SimpleNamespace
+from types import ModuleType
 from unittest.mock import ANY, MagicMock, patch
 
 import pytest
@@ -35,13 +35,15 @@ class TestPublish:
         publishing._publisher = None
         message = {"foo": "bar"}
 
-        with pytest.raises(ValueError):
+        with pytest.raises(
+            ValueError, match=r"Config setup not called and no settings module found\."
+        ):
             publishing.publish(topic="order-cancelled", data=message, myattr="hello")
 
     def test_raises_error_when_publisher_does_not_exist_and_settings_have_no_rele(
         self, without_global_publisher
     ):
-        settings_without_rele = SimpleNamespace()
+        settings_without_rele = ModuleType("tests.settings_without_rele")
         message = {"foo": "bar"}
 
         with patch("rele.publishing.discover") as mock_discover:
@@ -50,7 +52,10 @@ class TestPublish:
             with patch("rele.publishing.config", autospec=True) as mock_config:
                 with pytest.raises(
                     ValueError,
-                    match=r"Config setup not called and settings module not found\.",
+                    match=(
+                        r"Config setup not called and settings module "
+                        r"'tests\.settings_without_rele' has no RELE dict\."
+                    ),
                 ):
                     publishing.publish(
                         topic="order-cancelled", data=message, myattr="hello"
