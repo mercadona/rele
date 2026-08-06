@@ -199,8 +199,8 @@ class TestConfig:
         assert config.credentials.project_id == "rele-test"
         assert config.gc_project_id == "rele-test"
 
-    @patch.dict(os.environ, {"GOOGLE_APPLICATION_CREDENTIALS": ""})
-    def test_sets_defaults(self):
+    @patch("rele.config.get_google_defaults", return_value=(None, None))
+    def test_sets_defaults(self, _mock_google_defaults):
         settings = {}
 
         config = Config(settings)
@@ -212,6 +212,20 @@ class TestConfig:
         assert config.middleware == ["rele.contrib.LoggingMiddleware"]
         assert config.encoder == json.JSONEncoder
         assert config.publisher_blocking is False
+
+    def test_returns_no_project_id_when_default_creds_have_none(self):
+        class UserAdcCredentials:
+            """What google.auth.default() returns under user ADC."""
+
+            token = "a-token"
+
+        with patch(
+            "rele.config.get_google_defaults",
+            return_value=(UserAdcCredentials(), None),
+        ):
+            config = Config({})
+
+            assert config.gc_project_id is None
 
     @patch.dict(
         os.environ,
