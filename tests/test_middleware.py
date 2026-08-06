@@ -57,11 +57,29 @@ class TestMiddleware:
         assert mock_middleware_setup.call_args_list[0][-1] == {"foo": "bar"}
 
     def test_warns_about_deprecated_hooks(self):
-        with pytest.warns(DeprecationWarning):
+        with pytest.warns(
+            DeprecationWarning,
+            match="The post_publish hook in the middleware is deprecated "
+            "and will be removed in future versions. Please substitute it with "
+            "the post_publish_success hook instead.",
+        ):
 
             class TestMiddleware(BaseMiddleware):
                 def post_publish(self, topic):
                     pass
+
+    def test_warns_about_custom_deprecated_hooks(self):
+        with patch("rele.middleware.DEPRECATED_HOOKS", {"foo": "bar"}):
+            with pytest.warns(
+                DeprecationWarning,
+                match="The foo hook in the middleware is deprecated "
+                "and will be removed in future versions. Please substitute it with "
+                "the bar hook instead.",
+            ):
+
+                class TestMiddleware(BaseMiddleware):
+                    def foo(self):
+                        pass
 
 
 class TestRunMiddlewareHook:

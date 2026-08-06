@@ -9,7 +9,9 @@ if TYPE_CHECKING:
 _middlewares: list["BaseMiddleware"] = []
 
 default_middleware = ["rele.contrib.LoggingMiddleware"]
-DEPRECATED_HOOKS = ["post_publish"]
+DEPRECATED_HOOKS = {
+    "post_publish": "post_publish_success",
+}
 
 
 def register_middleware(config: "Config", **kwargs: Any) -> None:
@@ -34,12 +36,12 @@ def run_middleware_hook(hook_name: str, *args: Any, **kwargs: Any) -> None:
 class WarnDeprecatedHooks(type):
     def __new__(cls, *args: Any, **kwargs: Any) -> type:
         x: type = super().__new__(cls, *args, **kwargs)
-        for deprecated_hook in DEPRECATED_HOOKS:
+        for deprecated_hook, replacement_hook in DEPRECATED_HOOKS.items():
             if hasattr(x, deprecated_hook):
                 warnings.warn(
-                    "The post_publish hook in the middleware is deprecated "
-                    "and will be removed in future versions. Please substitute it with "
-                    "the post_publish_success hook instead.",
+                    f"The {deprecated_hook} hook in the middleware is deprecated "
+                    f"and will be removed in future versions. Please substitute it with "
+                    f"the {replacement_hook} hook instead.",
                     DeprecationWarning,
                     stacklevel=2,
                 )
