@@ -1,3 +1,4 @@
+import re
 import warnings
 from unittest.mock import patch
 
@@ -57,7 +58,14 @@ class TestMiddleware:
         assert mock_middleware_setup.call_args_list[0][-1] == {"foo": "bar"}
 
     def test_warns_about_deprecated_hooks(self):
-        with pytest.warns(DeprecationWarning):
+        with pytest.warns(
+            DeprecationWarning,
+            match=re.escape(
+                "The post_publish hook in the middleware is deprecated "
+                "and will be removed in future versions. Please substitute it with "
+                "the post_publish_success hook instead."
+            ),
+        ):
 
             class TestMiddleware(BaseMiddleware):
                 def post_publish(self, topic):
