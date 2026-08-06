@@ -10,6 +10,7 @@ from google.protobuf import timestamp_pb2
 from rele import Callback, Subscription, sub
 from rele.middleware import register_middleware
 from rele.retry_policy import RetryPolicy
+from tests import subs as subs_module
 
 logger = logging.getLogger(__name__)
 
@@ -112,6 +113,25 @@ class TestSubscription:
         response = sub_process_landscape_gif_photos(data, type=type, format=format)
 
         assert response is None
+
+    def test_name_contains_suffix_when_suffix_given(self):
+        subscription = Subscription(
+            func=lambda data, **kwargs: None,
+            topic="some-cool-topic",
+            prefix="rele",
+            suffix="alpha",
+        )
+
+        assert subscription.name == "rele-some-cool-topic-alpha"
+
+    def test_name_contains_suffix_when_suffix_given_without_prefix(self):
+        subscription = Subscription(
+            func=lambda data, **kwargs: None,
+            topic="some-cool-topic",
+            suffix="alpha",
+        )
+
+        assert subscription.name == "some-cool-topic-alpha"
 
     def test_raises_error_when_filter_by_is_not_valid(self):
         Subscription(
@@ -362,6 +382,37 @@ class TestDecorator:
             "Subscription function tests.test_subscription.<lambda> is outside a subs "
             "module that will not be discovered." in caplog.text
         )
+
+    def test_does_not_log_warning_when_function_in_subs_module(self, caplog):
+        def a_sub(data, **kwargs):
+            return None
+
+        a_sub.__module__ = subs_module.__name__
+
+        with caplog.at_level(logging.WARNING):
+            subscription = sub(topic="topic", prefix="rele")(a_sub)
+
+        assert isinstance(subscription, Subscription)
+        assert "outside a subs module" not in caplog.text
+
+    def test_suffix_is_propagated_to_subscription_name(self):
+        subscription = sub(topic="topic", prefix="rele", suffix="my-suffix")(
+            lambda data, **kwargs: None
+        )
+
+        assert subscription.name == "rele-topic-my-suffix"
+
+    def test_backend_filter_by_is_propagated_when_specified(self):
+        subscription = sub(
+            topic="topic", prefix="rele", backend_filter_by="attributes:domain"
+        )(lambda data, **kwargs: None)
+
+        assert subscription.backend_filter_by == "attributes:domain"
+
+    def test_backend_filter_by_is_none_when_not_specified(self):
+        subscription = sub(topic="topic", prefix="rele")(lambda data, **kwargs: None)
+
+        assert subscription.backend_filter_by is None
 
     def test_retry_policy_is_applied_when_specified(self):
         subscription = sub(

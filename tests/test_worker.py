@@ -53,6 +53,21 @@ def worker_without_client_options(config):
 
 
 @pytest.fixture
+def worker_with_three_threads(config):
+    subscriptions = (sub_stub,)
+    return Worker(
+        subscriptions,
+        config.client_options,
+        config.gc_project_id,
+        config.credentials,
+        config.gc_storage_region,
+        default_ack_deadline=60,
+        threads_per_subscription=3,
+        default_retry_policy=config.retry_policy,
+    )
+
+
+@pytest.fixture
 def mock_consume(config):
     with patch.object(Subscriber, "consume") as m:
         # Point the client at a non-routable endpoint so the streaming pull
@@ -95,6 +110,14 @@ class TestWorker:
         assert isinstance(scheduler, ThreadScheduler)
         assert isinstance(scheduler._executor, futures.ThreadPoolExecutor)
 
+    def test_start_sizes_the_executor_with_threads_per_subscription(
+        self, mock_consume, worker_with_three_threads
+    ):
+        worker_with_three_threads.start()
+
+        scheduler = mock_consume.call_args_list[0][1]["scheduler"]
+        assert scheduler._executor._max_workers == 3
+
     @patch.object(Worker, "_wait_forever")
     def test_run_sets_up_and_creates_subscriptions_when_called(
         self, mock_wait_forever, mock_consume, mock_create_subscription, worker
@@ -119,7 +142,14 @@ class TestWorker:
     ):
         worker.run_forever(sleep_interval=127)
 
-        mock_wait_forever.assert_called_once()
+        mock_wait_forever.assert_called_once_with(sleep_interval=127)
+
+    @patch.object(Worker, "_wait_forever")
+    @pytest.mark.usefixtures("mock_consume", "mock_create_subscription")
+    def test_wait_forevers_for_one_second_by_default(self, mock_wait_forever, worker):
+        worker.run_forever()
+
+        mock_wait_forever.assert_called_once_with(sleep_interval=1)
 
     @patch.object(Worker, "_wait_forever")
     def test_stop_cancels_futures_and_closes_subscriber(
@@ -127,11 +157,15 @@ class TestWorker:
     ):
         worker.run_forever()
 
-        with pytest.raises(SystemExit):
+        with pytest.raises(SystemExit) as exc_info:
             worker.stop()
 
         assert worker._futures[sub_stub]._state == FINISHED
         assert worker._subscriber._client._closed is True
+        # The exit code is what a supervisor or k8s reads to decide whether the
+        # shutdown was clean. Asserted here rather than in a test of its own
+        # because this fixture setup is the slowest in the suite (~1s).
+        assert exc_info.value.code == 0
 
     @patch("rele.contrib.django_db_middleware.db.connections.close_all")
     def test_stop_closes_db_connections(self, mock_db_close_all, config, worker):
@@ -205,6 +239,12 @@ class TestWorker:
 
 
 class TestCheckInternetConnection:
+    @patch("rele.worker.socket.socket")
+    def test_opens_a_tcp_ipv4_socket(self, mock_socket):
+        assert check_internet_connection("example.com") is True
+
+        mock_socket.assert_called_once_with(socket.AF_INET, socket.SOCK_STREAM)
+
     @patch("rele.worker.socket.socket")
     def test_closes_socket_after_success(self, mock_socket):
         sock = mock_socket.return_value
@@ -340,6 +380,16 @@ class TestCreateAndRun:
             RetryPolicy(5, 30),
         )
         mock_worker.return_value.run_forever.assert_called_once_with()
+
+    def test_passes_the_config_credentials_to_the_worker(
+        self, config_with_retry_policy, mock_worker
+    ):
+        subscriptions = (sub_stub,)
+        create_and_run(subscriptions, config_with_retry_policy)
+
+        credentials = mock_worker.call_args[0][3]
+        assert credentials is not None
+        assert credentials.service_account_email == "rele@rele.com"
 
     def test_creates_subscriber_with_correct_arguments(self, mock_subscriber, config):
         subscriptions = (sub_stub,)
