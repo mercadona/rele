@@ -31,14 +31,21 @@ class TestPublish:
                 "order-cancelled", {"foo": "bar"}, myattr="hello"
             )
 
-    def test_raises_error_when_publisher_does_not_exists_and_settings_not_found(self):
-        publishing._publisher = None
+    def test_raises_error_when_publisher_does_not_exists_and_settings_not_found(
+        self, without_global_publisher
+    ):
         message = {"foo": "bar"}
 
-        with pytest.raises(
-            ValueError, match=r"Config setup not called and no settings module found\."
-        ):
-            publishing.publish(topic="order-cancelled", data=message, myattr="hello")
+        with patch("rele.publishing.discover") as mock_discover:
+            mock_discover.sub_modules.return_value = None, []
+
+            with pytest.raises(
+                ValueError,
+                match=r"Config setup not called and no settings module found\.",
+            ):
+                publishing.publish(
+                    topic="order-cancelled", data=message, myattr="hello"
+                )
 
     def test_raises_error_when_publisher_does_not_exist_and_settings_have_no_rele(
         self, without_global_publisher
