@@ -1,1 +1,4 @@
-* @mercadona/staff
+# Owners must be individually visible and have write access to this repository.
+# A private organisation team cannot be used here: @mercadona/staff is not
+# publicly visible, so GitHub could not resolve it and the rule matched nobody.
+* @elreplicante @alcaptar @pasmontesinos
