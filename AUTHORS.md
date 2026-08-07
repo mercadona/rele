@@ -17,3 +17,4 @@ Thank you to all the contributors to Relé!
 * Jordi Chulia (@jorchube)
 * Emilio Carrión (@EmilioCarrion)
 * Miro (@Mirochill)
+* anops101 (@anishtilekar)
