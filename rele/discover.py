@@ -48,7 +48,7 @@ def sub_modules(
     """
     module_paths: list[str] = []
     for _, package, is_package in pkgutil.walk_packages(path=["."]):
-        if package == "settings":
+        if settings_path is None and package == "settings":
             settings_path = package
         if is_package and module_has_submodule(package, "subs"):
             module = package + ".subs"

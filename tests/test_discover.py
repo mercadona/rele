@@ -38,6 +38,16 @@ class TestDiscoverSubModules:
         (package / "__init__.py").write_text("")
         (package / "subs.py").write_text("")
 
+        # A second settings module, addressable by an explicit dotted path, next
+        # to the top-level one. It has no subs.py, so it does not change the
+        # discovered paths.
+        explicit = tmp_path / "explicit_app"
+        explicit.mkdir()
+        (explicit / "__init__.py").write_text("")
+        (explicit / "settings.py").write_text(
+            'MARKER = "explicit-settings"\nRELE = {}\n'
+        )
+
         monkeypatch.chdir(tmp_path)
         monkeypatch.syspath_prepend(str(tmp_path))
         sys.path_importer_cache.pop(".", None)
@@ -49,6 +59,8 @@ class TestDiscoverSubModules:
             "settings",
             "autodiscovered_app.subs",
             "autodiscovered_app",
+            "explicit_app.settings",
+            "explicit_app",
         ):
             sys.modules.pop(module_name, None)
         sys.path_importer_cache.pop(".", None)
@@ -93,6 +105,15 @@ class TestDiscoverSubModules:
         assert discovered_settings.__name__ == "settings"
         assert discovered_settings.MARKER == "top-level-settings"
         assert discovered_settings is sys.modules["settings"]
+        assert paths == ["autodiscovered_app.subs"]
+
+    @pytest.mark.usefixtures("project_with_top_level_settings")
+    def test_explicit_settings_path_is_not_overridden_by_autodiscovery(self):
+        discovered_settings, paths = discover.sub_modules("explicit_app.settings")
+
+        assert discovered_settings is not None
+        assert discovered_settings.__name__ == "explicit_app.settings"
+        assert discovered_settings.MARKER == "explicit-settings"
         assert paths == ["autodiscovered_app.subs"]
 
     def test_raises_when_incorrect_path(self):
