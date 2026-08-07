@@ -40,7 +40,7 @@ test: ## run tests quickly with the default Python
 
 coverage: ## generates the coverage report and the .coverage data file
 	uv run coverage run --source rele runtests.py tests
-	uv run coverage report -m
+	uv run coverage report -m --fail-under=99
 
 sdist: clean ## package
 	uv build
