@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.17.3](https://github.com/mercadona/rele/compare/v1.17.2...v1.17.3) (2026-08-07)
+
+
+### Bug Fixes
+
+* let an explicit settings path win over autodiscovery ([#354](https://github.com/mercadona/rele/issues/354)) ([707b025](https://github.com/mercadona/rele/commit/707b025c788af58e1dc52e90288e0fc069a5c200))
+* name individual code owners instead of a private team ([#350](https://github.com/mercadona/rele/issues/350)) ([ead306a](https://github.com/mercadona/rele/commit/ead306a6484facb6dc51d0086ad2ee97c1cbff45))
+
 ## [1.17.2](https://github.com/mercadona/rele/compare/v1.17.1...v1.17.2) (2026-08-07)
 
 
