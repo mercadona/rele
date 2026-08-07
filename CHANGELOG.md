@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.17.2](https://github.com/mercadona/rele/compare/v1.17.1...v1.17.2) (2026-08-07)
+
+
+### Bug Fixes
+
+* name the correct hook in the deprecation warning ([#344](https://github.com/mercadona/rele/issues/344)) ([8f0c0cd](https://github.com/mercadona/rele/commit/8f0c0cd573d901756971f1bb5b4ebb2565d5ea5e)), closes [#340](https://github.com/mercadona/rele/issues/340)
+* return None from gc_project_id when credentials have no project ([#342](https://github.com/mercadona/rele/issues/342)) ([5c4012d](https://github.com/mercadona/rele/commit/5c4012d345fda10d3b5804e53dcf34c233de8225))
+
+
+### Documentation
+
+* credit Rajeev Nandan in AUTHORS.md ([#348](https://github.com/mercadona/rele/issues/348)) ([50e3a6e](https://github.com/mercadona/rele/commit/50e3a6ee33d79c9575a7211eaa3eaf9427448ef4))
+
 ## [1.17.1](https://github.com/mercadona/rele/compare/v1.17.0...v1.17.1) (2026-08-05)
 
 
