@@ -121,6 +121,10 @@ explicit_package_bases = false
 [tool.coverage.run]
 include = ["*"]
 omit = ["*/__init__.py"]
+# Required by the coverage badge action: it reads .coverage from inside a Docker
+# container, where the workspace is mounted at a different path than the one the
+# absolute paths in the data file were recorded with.
+relative_files = true
 
 [tool.pytest.ini_options]
 filterwarnings = ["ignore::UserWarning"]
