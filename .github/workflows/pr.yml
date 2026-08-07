@@ -1,10 +1,17 @@
-name: Pull Request
+name: CI
 
-on: [pull_request]
+on:
+  pull_request:
+  push:
+    branches: [master]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    # A full job takes well under a minute; anything near this is hung, not slow.
+    # Without it the default is 6 hours, which is how long a stuck codecov upload
+    # held a runner on the 1.17.2 release PR.
+    timeout-minutes: 15
 
     strategy:
       matrix:
