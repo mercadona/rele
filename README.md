@@ -17,8 +17,8 @@
         <img src="https://readthedocs.org/projects/mercadonarele/badge/?version=latest"
              alt="Read the Docs">
     </a>
-    <a href="https://codecov.io/gh/mercadona/rele">
-        <img src="https://codecov.io/gh/mercadona/rele/branch/master/graph/badge.svg"
+    <a href="https://github.com/mercadona/rele/tree/python-coverage-comment-action-data">
+        <img src="https://raw.githubusercontent.com/mercadona/rele/python-coverage-comment-action-data/badge.svg"
              alt="Code Coverage">
     </a>
     <a href="https://pypi.org/project/rele/">

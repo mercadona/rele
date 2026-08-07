@@ -13,6 +13,14 @@ jobs:
     # held a runner on the 1.17.2 release PR.
     timeout-minutes: 15
 
+    permissions:
+      # Push the generated badge to the coverage data branch.
+      contents: write
+      # Publish the coverage comment on pull requests. GitHub downgrades this to
+      # read-only for runs from forks, which the action handles by degrading to
+      # no comment rather than failing.
+      pull-requests: write
+
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
@@ -35,8 +43,16 @@ jobs:
         run: make typecheck
 
       - name: Coverage
-        run: |
-          make coverage
-          uv run codecov
+        run: make coverage
+
+      # Runs once, not once per matrix entry: the action pushes to a shared data
+      # branch, and five concurrent pushes would race each other. Coverage does
+      # not vary by interpreter in this project.
+      - name: Coverage badge and pull request comment
+        if: matrix.python-version == '3.13'
+        uses: py-cov-action/python-coverage-comment-action@v4.1
+        with:
+          GITHUB_TOKEN: ${{ github.token }}
+          activity: ${{ (github.event_name == 'push' && github.ref_name == 'master') && 'save_coverage_data_files' || 'process_pr' }}
 
 
