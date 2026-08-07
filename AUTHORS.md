@@ -18,3 +18,4 @@ Thank you to all the contributors to Relé!
 * Emilio Carrión (@EmilioCarrion)
 * Miro (@Mirochill)
 * anops101 (@anishtilekar)
+* Rajeev Nandan (@Rajeev91691)
