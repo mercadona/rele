@@ -1,5 +1,5 @@
 .PHONY: clean-pyc clean-build docs help
-.PHONY: lint test coverage test-codecov
+.PHONY: lint test coverage
 .DEFAULT_GOAL := help
 
 help:
@@ -38,7 +38,7 @@ lint-fix: ## try to automagically fix coding style issues
 test: ## run tests quickly with the default Python
 	uv run python runtests.py tests
 
-coverage: ## generates codecov report
+coverage: ## generates the coverage report and the .coverage data file
 	uv run coverage run --source rele runtests.py tests
 	uv run coverage report -m
 

@@ -52,7 +52,6 @@ test = [
     "pytest-cov>=2.7.0",
     "pytest-django>=4.5",
     "coverage>=4.4.0",
-    "codecov>=2.0.0",
     "ruff==0.15.22",
     "mypy==2.3.0",
     "freezegun==1.5.5",
