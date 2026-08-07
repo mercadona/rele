@@ -28,8 +28,14 @@ jobs:
         run: make typecheck
 
       - name: Coverage
-        run: |
-          make coverage
-          uv run codecov
+        run: make coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v7
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          flags: python-${{ matrix.python-version }}
+          name: python-${{ matrix.python-version }}
 
 

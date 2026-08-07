@@ -20,6 +20,7 @@ clean-pyc: ## remove Python file artifacts
 clean-tests: ## remove pytest artifacts
 	rm -fr .pytest_cache/
 	rm -fr htmlcov/
+	rm -f coverage.xml
 
 install: ## install the project and every dependency group
 	uv sync --all-groups --all-extras
@@ -38,9 +39,10 @@ lint-fix: ## try to automagically fix coding style issues
 test: ## run tests quickly with the default Python
 	uv run python runtests.py tests
 
-coverage: ## generates codecov report
+coverage: ## generates the coverage report, and coverage.xml for codecov
 	uv run coverage run --source rele runtests.py tests
 	uv run coverage report -m
+	uv run coverage xml
 
 sdist: clean ## package
 	uv build
