@@ -80,7 +80,10 @@ class Config:
         if self._gc_project_id:
             return self._gc_project_id
         elif self.credentials:
-            return cast(str, self.credentials.project_id)
+            # project_id only exists on service account credentials; under user
+            # Application Default Credentials the attribute is absent.
+            project_id: str | None = getattr(self.credentials, "project_id", None)
+            return project_id
         else:
             return None
 
