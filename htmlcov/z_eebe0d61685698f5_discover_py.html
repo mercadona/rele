@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_d8156599098e2e44_runrele_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.15.2">coverage.py v7.15.2</a>,
-            created at 2026-08-07 12:12 +0000
+            created at 2026-08-07 12:30 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -130,7 +130,7 @@
     <p class="pln"><span class="n"><a id="t48" href="#t48">48</a></span><span class="t"><span class="str">    """</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t49" href="#t49">49</a></span><span class="t">    <span class="nam">module_paths</span><span class="op">:</span> <span class="nam">list</span><span class="op">[</span><span class="nam">str</span><span class="op">]</span> <span class="op">=</span> <span class="op">[</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t50" href="#t50">50</a></span><span class="t">    <span class="key">for</span> <span class="nam">_</span><span class="op">,</span> <span class="nam">package</span><span class="op">,</span> <span class="nam">is_package</span> <span class="key">in</span> <span class="nam">pkgutil</span><span class="op">.</span><span class="nam">walk_packages</span><span class="op">(</span><span class="nam">path</span><span class="op">=</span><span class="op">[</span><span class="str">"."</span><span class="op">]</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t51" href="#t51">51</a></span><span class="t">        <span class="key">if</span> <span class="nam">package</span> <span class="op">==</span> <span class="str">"settings"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t51" href="#t51">51</a></span><span class="t">        <span class="key">if</span> <span class="nam">settings_path</span> <span class="key">is</span> <span class="key">None</span> <span class="key">and</span> <span class="nam">package</span> <span class="op">==</span> <span class="str">"settings"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t52" href="#t52">52</a></span><span class="t">            <span class="nam">settings_path</span> <span class="op">=</span> <span class="nam">package</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t53" href="#t53">53</a></span><span class="t">        <span class="key">if</span> <span class="nam">is_package</span> <span class="key">and</span> <span class="nam">module_has_submodule</span><span class="op">(</span><span class="nam">package</span><span class="op">,</span> <span class="str">"subs"</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t54" href="#t54">54</a></span><span class="t">            <span class="nam">module</span> <span class="op">=</span> <span class="nam">package</span> <span class="op">+</span> <span class="str">".subs"</span>&nbsp;</span><span class="r"></span></p>
@@ -148,7 +148,7 @@
             <a class="nav" href="z_d8156599098e2e44_runrele_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.15.2">coverage.py v7.15.2</a>,
-            created at 2026-08-07 12:12 +0000
+            created at 2026-08-07 12:30 +0000
         </p>
     </div>
 </footer>
