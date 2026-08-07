@@ -39,9 +39,14 @@ class Config:
         self.app_name: str | None = setting.get("APP_NAME")
         self.sub_prefix: str | None = setting.get("SUB_PREFIX")
         self.middleware: list[str] = setting.get("MIDDLEWARE", default_middleware)
-        self.ack_deadline: int = setting.get(
-            "ACK_DEADLINE",
-            os.environ.get("DEFAULT_ACK_DEADLINE", DEFAULT_ACK_DEADLINE),
+        # Coerced because the DEFAULT_ACK_DEADLINE environment variable yields a
+        # string, and this value reaches the int32 `ack_deadline_seconds` field
+        # of the subscription request, which rejects it.
+        self.ack_deadline: int = int(
+            setting.get(
+                "ACK_DEADLINE",
+                os.environ.get("DEFAULT_ACK_DEADLINE", DEFAULT_ACK_DEADLINE),
+            )
         )
         self.publisher_blocking: bool = setting.get(
             "PUBLISHER_BLOCKING", DEFAULT_BLOCKING

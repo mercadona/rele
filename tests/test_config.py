@@ -165,6 +165,23 @@ class TestConfig:
         assert config.ack_deadline == 120
         assert config.filter_by == [filter_by_english]
 
+    @patch.dict(os.environ, {"DEFAULT_ACK_DEADLINE": "120"})
+    def test_ack_deadline_from_the_env_var_is_an_int(self):
+        config = Config({"APP_NAME": "rele", "GC_PROJECT_ID": "rele-test"})
+
+        # os.environ yields strings, and this value ends up in the int32
+        # `ack_deadline_seconds` field of the subscription request.
+        assert config.ack_deadline == 120
+        assert isinstance(config.ack_deadline, int)
+
+    @patch.dict(os.environ, {"DEFAULT_ACK_DEADLINE": "120"})
+    def test_ack_deadline_setting_takes_precedence_over_the_env_var(self):
+        config = Config(
+            {"APP_NAME": "rele", "GC_PROJECT_ID": "rele-test", "ACK_DEADLINE": 30}
+        )
+
+        assert config.ack_deadline == 30
+
     def test_uses_project_id_from_settings_when_given(self):
         settings = {
             "GC_PROJECT_ID": "settings-project",
