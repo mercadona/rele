@@ -41,6 +41,9 @@ class Subscriber:
     For convenience, this class wraps the creation and consumption of a topic
     subscription.
 
+    If the setting `USE_EMULATOR` evaluates to True, the Subscriber Client will
+    not have any credentials or client options assigned.
+
     :param gc_project_id: str :ref:`settings_project_id` .
     :param credentials: obj :meth:`~rele.config.Config.credentials`.
     :param message_storage_policy: str Region to store the messages
@@ -63,9 +66,12 @@ class Subscriber:
         self._message_storage_policy = self._normalize_storage_policy(
             message_storage_policy
         )
-        self._client = pubsub_v1.SubscriberClient(
-            credentials=credentials, client_options=client_options
-        )
+        if USE_EMULATOR:
+            self._client = pubsub_v1.SubscriberClient()
+        else:
+            self._client = pubsub_v1.SubscriberClient(
+                credentials=credentials, client_options=client_options
+            )
         self._retry_policy = default_retry_policy
 
     def update_or_create_subscription(self, subscription: Subscription) -> None:
