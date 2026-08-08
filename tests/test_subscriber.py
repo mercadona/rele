@@ -148,6 +148,7 @@ class TestSubscriber:
                 Subscription(None, topic="rele-test-topic")
             )
 
+        mock_subscriber_client.assert_called_once_with()
         mock_publisher_client.assert_called_once_with(credentials=None)
 
     @patch.object(SubscriberClient, "create_subscription")
