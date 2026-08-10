@@ -20,3 +20,4 @@ Thank you to all the contributors to Relé!
 * anops101 (@anishtilekar)
 * Rajeev Nandan (@Rajeev91691)
 * Vijay Misal (@vjymisal0)
+* Aryan Singh K. (@aryansk)
