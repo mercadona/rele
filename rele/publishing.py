@@ -51,8 +51,13 @@ def publish(topic: str, data: Any, **kwargs: Any) -> None:
     """
     if not _publisher:
         settings, _ = discover.sub_modules()
-        if settings is None or not hasattr(settings, "RELE"):
-            raise ValueError("Config setup not called and settings module not found.")
+        if settings is None:
+            raise ValueError("Config setup not called and no settings module found.")
+        if not hasattr(settings, "RELE"):
+            raise ValueError(
+                f"Config setup not called and settings module {settings.__name__!r} "
+                "has no RELE dict."
+            )
 
         config.setup(settings.RELE)
 

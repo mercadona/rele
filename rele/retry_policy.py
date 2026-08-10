@@ -8,8 +8,9 @@ class RetryPolicy:
     Defines retry policy settings and ensures the values are correct.
     If provided values are wrong, a ValidationError is raised.
 
-    :param minimum_backoff: int Accepts values greater than 0
-    :param maximum_backoff: int Accepts values greater than minimum_backoff.
+    :param minimum_backoff: int Accepts values greater than 0.
+    :param maximum_backoff: int Accepts values greater than 0, and not smaller
+        than minimum_backoff. Equal backoffs are legal.
     """
 
     minimum_backoff: int
@@ -24,11 +25,13 @@ class RetryPolicy:
     def _guard_against_wrong_parameters(
         self, minimum_backoff: int, maximum_backoff: int
     ) -> None:
-        if minimum_backoff == 0:
+        if minimum_backoff <= 0:
             raise ValueError("minimum_backoff must be greater than 0")
 
-        if maximum_backoff == 0:
+        if maximum_backoff <= 0:
             raise ValueError("maximum_backoff must be greater than 0")
 
         if minimum_backoff > maximum_backoff:
-            raise ValueError("minimum_backoff should be less than maximum_backoff.")
+            raise ValueError(
+                "minimum_backoff must not be greater than maximum_backoff."
+            )
