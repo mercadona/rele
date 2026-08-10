@@ -19,10 +19,10 @@
 | rele/management/discover.py                   |       31 |        0 |    100% |           |
 | rele/middleware.py                            |       40 |        0 |    100% |           |
 | rele/publishing.py                            |       16 |        0 |    100% |           |
-| rele/retry\_policy.py                         |       14 |        1 |     93% |        31 |
+| rele/retry\_policy.py                         |       14 |        0 |    100% |           |
 | rele/subscription.py                          |       88 |        0 |    100% |           |
 | rele/worker.py                                |      115 |        1 |     99% |       241 |
-| **TOTAL**                                     |  **712** |    **7** | **99%** |           |
+| **TOTAL**                                     |  **712** |    **6** | **99%** |           |
 
 
 ## Setup coverage badge
