@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.17.3](https://github.com/mercadona/rele/compare/v1.17.2...v1.17.3) (2026-08-10)
+
+
+### Bug Fixes
+
+* let an explicit settings path win over autodiscovery ([#354](https://github.com/mercadona/rele/issues/354)) ([707b025](https://github.com/mercadona/rele/commit/707b025c788af58e1dc52e90288e0fc069a5c200))
+* name individual code owners instead of a private team ([#350](https://github.com/mercadona/rele/issues/350)) ([ead306a](https://github.com/mercadona/rele/commit/ead306a6484facb6dc51d0086ad2ee97c1cbff45))
+* publish() reports the wrong error when settings has no RELE dict ([#343](https://github.com/mercadona/rele/issues/343)) ([e1c0446](https://github.com/mercadona/rele/commit/e1c044680ac34902f6843a59b501e217b9084493)), closes [#341](https://github.com/mercadona/rele/issues/341)
+* reject negative backoffs in RetryPolicy ([#356](https://github.com/mercadona/rele/issues/356)) ([9d3ed28](https://github.com/mercadona/rele/commit/9d3ed28ae11600c99d0949384106f31f454dbb01))
+* Subscriber still passed real credentials when using the Pub/Sub emulator ([#357](https://github.com/mercadona/rele/issues/357)) ([7fc1b75](https://github.com/mercadona/rele/commit/7fc1b75b6e8a508cca639b121d87754971f5a4e6))
+
+
+### Documentation
+
+* credit Aryan Singh K. in AUTHORS.md ([#358](https://github.com/mercadona/rele/issues/358)) ([d2a9b94](https://github.com/mercadona/rele/commit/d2a9b94a8870bbec5b55ef704b21f7747ce382c5))
+
 ## [1.17.2](https://github.com/mercadona/rele/compare/v1.17.1...v1.17.2) (2026-08-07)
 
 
