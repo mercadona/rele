@@ -1,6 +1,5 @@
 import concurrent
 import decimal
-import importlib.util
 import logging
 import os
 from concurrent.futures import TimeoutError
@@ -9,26 +8,19 @@ from unittest.mock import ANY, MagicMock, patch
 import pytest
 from google.cloud.pubsub_v1 import PublisherClient
 
-import rele.client
 from rele import Publisher
+from rele.client import _use_emulator
 
 
-def _load_client_module_with_env(env):
-    """Import a private copy of ``rele.client`` under a patched environment.
+def test_use_emulator_reads_env_on_every_call():
+    with patch.dict(os.environ, {}, clear=True):
+        assert _use_emulator() is False
 
-    ``rele.client.USE_EMULATOR`` is evaluated once, at import time, so the
-    emulator branches can only be reached by importing the module again with
-    ``PUBSUB_EMULATOR_HOST`` set. The copy is never registered in
-    ``sys.modules``, which leaves the real ``rele.client`` (and the classes
-    every other test holds a reference to) untouched.
-    """
-    spec = importlib.util.spec_from_file_location(
-        "rele_client_with_emulator", rele.client.__file__
-    )
-    module = importlib.util.module_from_spec(spec)
-    with patch.dict(os.environ, env):
-        spec.loader.exec_module(module)
-    return module
+        os.environ["PUBSUB_EMULATOR_HOST"] = "localhost:8085"
+        assert _use_emulator() is True
+
+        del os.environ["PUBSUB_EMULATOR_HOST"]
+        assert _use_emulator() is False
 
 
 @pytest.mark.usefixtures("publisher", "time_mock")
@@ -78,19 +70,15 @@ class TestPublisher:
     def test_initialises_without_credentials_when_emulator_host_is_set(
         self, mock_publisher_client, config
     ):
-        client_module = _load_client_module_with_env(
-            {"PUBSUB_EMULATOR_HOST": "localhost:8085"}
-        )
-        assert client_module.USE_EMULATOR is True
-
-        client_module.Publisher(
-            gc_project_id=config.gc_project_id,
-            credentials=config.credentials,
-            encoder=config.encoder,
-            timeout=config.publisher_timeout,
-            blocking=config.publisher_blocking,
-            client_options=config.client_options,
-        )
+        with patch.dict(os.environ, {"PUBSUB_EMULATOR_HOST": "localhost:8085"}):
+            Publisher(
+                gc_project_id=config.gc_project_id,
+                credentials=config.credentials,
+                encoder=config.encoder,
+                timeout=config.publisher_timeout,
+                blocking=config.publisher_blocking,
+                client_options=config.client_options,
+            )
 
         mock_publisher_client.assert_called_once_with()
 

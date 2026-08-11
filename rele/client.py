@@ -21,7 +21,16 @@ from rele.subscription import Subscription
 
 logger = logging.getLogger(__name__)
 
-USE_EMULATOR = True if os.environ.get("PUBSUB_EMULATOR_HOST") else False
+
+def _use_emulator() -> bool:
+    return bool(os.environ.get("PUBSUB_EMULATOR_HOST"))
+
+
+# Deprecated: this is only evaluated once, at import time, so setting
+# PUBSUB_EMULATOR_HOST afterwards has no effect on it. Kept for backwards
+# compatibility since it's public API surface; internally we call
+# _use_emulator() instead, which reads the environment on every call.
+USE_EMULATOR = _use_emulator()
 DEFAULT_ENCODER_PATH = "json.JSONEncoder"
 DEFAULT_ACK_DEADLINE = 60
 DEFAULT_BLOCKING = False
@@ -62,11 +71,12 @@ class Subscriber:
     ) -> None:
         self._gc_project_id = gc_project_id
         self._ack_deadline = default_ack_deadline or DEFAULT_ACK_DEADLINE
-        self.credentials = credentials if not USE_EMULATOR else None
+        use_emulator = _use_emulator()
+        self.credentials = credentials if not use_emulator else None
         self._message_storage_policy = self._normalize_storage_policy(
             message_storage_policy
         )
-        if USE_EMULATOR:
+        if use_emulator:
             self._client = pubsub_v1.SubscriberClient()
         else:
             self._client = pubsub_v1.SubscriberClient(
@@ -257,7 +267,7 @@ class Publisher:
         self._timeout = timeout
         self._blocking = blocking
         self._encoder = encoder
-        if USE_EMULATOR:
+        if _use_emulator():
             self._client = pubsub_v1.PublisherClient()
         else:
             self._client = pubsub_v1.PublisherClient(

@@ -1,4 +1,3 @@
-import importlib.util
 import os
 import re
 from unittest.mock import ANY, MagicMock, patch
@@ -11,28 +10,9 @@ from google.cloud.pubsub_v1.types import FieldMask
 from google.protobuf import duration_pb2
 from google.pubsub_v1 import MessageStoragePolicy
 
-import rele.client
 from rele import Subscriber
 from rele.retry_policy import RetryPolicy
 from rele.subscription import Subscription
-
-
-def _load_client_module_with_env(env):
-    """Import a private copy of ``rele.client`` under a patched environment.
-
-    ``rele.client.USE_EMULATOR`` is evaluated once, at import time, so the
-    emulator branches can only be reached by importing the module again with
-    ``PUBSUB_EMULATOR_HOST`` set. The copy is never registered in
-    ``sys.modules``, which leaves the real ``rele.client`` (and the classes
-    every other test holds a reference to) untouched.
-    """
-    spec = importlib.util.spec_from_file_location(
-        "rele_client_with_emulator", rele.client.__file__
-    )
-    module = importlib.util.module_from_spec(spec)
-    with patch.dict(os.environ, env):
-        spec.loader.exec_module(module)
-    return module
 
 
 class TestSubscriber:
@@ -119,12 +99,8 @@ class TestSubscriber:
         )
 
     def test_creates_topic_without_credentials_when_emulator_host_is_set(self, config):
-        client_module = _load_client_module_with_env(
-            {"PUBSUB_EMULATOR_HOST": "localhost:8085"}
-        )
-        assert client_module.USE_EMULATOR is True
-
         with (
+            patch.dict(os.environ, {"PUBSUB_EMULATOR_HOST": "localhost:8085"}),
             patch(
                 "rele.client.pubsub_v1.SubscriberClient", autospec=True
             ) as mock_subscriber_client,
@@ -134,7 +110,7 @@ class TestSubscriber:
                 exceptions.NotFound("Subscription topic does not exist"),
                 True,
             ]
-            subscriber = client_module.Subscriber(
+            subscriber = Subscriber(
                 gc_project_id=config.gc_project_id,
                 credentials=config.credentials,
                 message_storage_policy=config.gc_storage_region,
