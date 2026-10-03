@@ -8,6 +8,7 @@ from google.cloud import pubsub_v1
 from google.protobuf import timestamp_pb2
 
 from rele import Callback, Subscription, sub
+from rele.dead_letter_policy import DeadLetterPolicy
 from rele.middleware import register_middleware
 from rele.retry_policy import RetryPolicy
 from tests import subs as subs_module
@@ -151,6 +152,15 @@ class TestSubscription:
             Subscription(
                 func=lambda x: None, topic="topic", prefix="rele", filter_by=(1,)
             )
+
+    def test_subscription_with_dead_letter_policy(self):
+        dlp = DeadLetterPolicy("dlp-topic", 10)
+        subscription = Subscription(
+            func=lambda data, **kwargs: None,
+            topic="some-cool-topic",
+            dead_letter_policy=dlp,
+        )
+        assert subscription.dead_letter_policy == dlp
 
 
 class TestCallback:
@@ -422,3 +432,13 @@ class TestDecorator:
         )(lambda data, **kwargs: None)
 
         assert subscription.retry_policy == RetryPolicy(1, 10)
+
+    def test_dead_letter_policy_is_applied_when_specified(self):
+        dlp = DeadLetterPolicy("dlp-topic", 10)
+        subscription = sub(
+            topic="topic",
+            prefix="rele",
+            dead_letter_policy=dlp,
+        )(lambda data, **kwargs: None)
+
+        assert subscription.dead_letter_policy == dlp

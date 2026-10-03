@@ -11,6 +11,7 @@ from google.protobuf import timestamp_pb2
 from rele import Publisher
 from rele.client import Subscriber
 from rele.config import Config
+from rele.dead_letter_policy import DeadLetterPolicy
 from rele.middleware import register_middleware
 from rele.retry_policy import RetryPolicy
 
@@ -58,6 +59,20 @@ def config_with_retry_policy(project_id):
             "GC_STORAGE_REGION": "some-region",
             "MIDDLEWARE": ["rele.contrib.LoggingMiddleware"],
             "DEFAULT_RETRY_POLICY": RetryPolicy(5, 30),
+        }
+    )
+
+
+@pytest.fixture
+def config_with_dead_letter_policy(project_id):
+    return Config(
+        {
+            "APP_NAME": "rele",
+            "SUB_PREFIX": "rele",
+            "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
+            "GC_STORAGE_REGION": "some-region",
+            "MIDDLEWARE": ["rele.contrib.LoggingMiddleware"],
+            "DEFAULT_DEAD_LETTER_POLICY": DeadLetterPolicy("dlp-topic", 5),
         }
     )
 

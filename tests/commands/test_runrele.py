@@ -26,6 +26,7 @@ class TestRunReleCommand:
             60,
             2,
             None,
+            None,
         )
         mock_worker.return_value.run_forever.assert_called_once_with()
 
@@ -49,6 +50,7 @@ class TestRunReleCommand:
             ["europe-southwest1", "europe-west1", "europe-west8", "europe-west9"],
             60,
             2,
+            None,
             None,
         )
         mock_worker.return_value.run_forever.assert_called_once_with()

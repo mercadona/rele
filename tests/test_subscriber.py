@@ -13,6 +13,7 @@ from google.pubsub_v1 import MessageStoragePolicy
 
 import rele.client
 from rele import Subscriber
+from rele.dead_letter_policy import DeadLetterPolicy
 from rele.retry_policy import RetryPolicy
 from rele.subscription import Subscription
 
@@ -85,6 +86,22 @@ class TestSubscriber:
                 gc_project_id=config.gc_project_id,
                 credentials=config.credentials,
                 message_storage_policy={"allowed_persistence_regions": "some-region"},
+                client_options=config.client_options,
+                default_ack_deadline=60,
+            )
+
+    @patch("rele.client.pubsub_v1.SubscriberClient", autospec=True)
+    def test_raises_value_error_when_message_storage_policy_is_empty_list(
+        self, mock_subscriber_client, config
+    ):
+        with pytest.raises(
+            ValueError,
+            match=re.escape("The storage policy must include at least one region."),
+        ):
+            Subscriber(
+                gc_project_id=config.gc_project_id,
+                credentials=config.credentials,
+                message_storage_policy=[],
                 client_options=config.client_options,
                 default_ack_deadline=60,
             )
@@ -460,6 +477,219 @@ class TestSubscriber:
         )
 
         client_update_subscription.assert_not_called()
+
+    @patch.object(SubscriberClient, "create_subscription")
+    @patch.object(SubscriberClient, "update_subscription")
+    def test_creates_subscription_with_dead_letter_policy_when_provided(
+        self,
+        client_update_subscription,
+        client_create_subscription,
+        project_id,
+        subscriber,
+    ):
+        expected_subscription = (
+            f"projects/{project_id}/subscriptions/{project_id}-test-topic"
+        )
+        expected_topic = f"projects/{project_id}/topics/{project_id}-test-topic"
+        expected_dead_letter_policy = pubsub_v1.types.DeadLetterPolicy(
+            dead_letter_topic=f"projects/{project_id}/topics/dlp-topic",
+            max_delivery_attempts=10,
+        )
+
+        subscriber.update_or_create_subscription(
+            Subscription(
+                None,
+                topic=f"{project_id}-test-topic",
+                dead_letter_policy=DeadLetterPolicy("dlp-topic", 10),
+            )
+        )
+
+        client_create_subscription.assert_called_once_with(
+            request={
+                "ack_deadline_seconds": 60,
+                "name": expected_subscription,
+                "topic": expected_topic,
+                "dead_letter_policy": expected_dead_letter_policy,
+            }
+        )
+
+    @patch.object(SubscriberClient, "create_subscription")
+    @patch.object(SubscriberClient, "update_subscription")
+    def test_creates_subscription_with_dead_letter_policy_full_path_when_provided(
+        self,
+        client_update_subscription,
+        client_create_subscription,
+        project_id,
+        subscriber,
+    ):
+        expected_subscription = (
+            f"projects/{project_id}/subscriptions/{project_id}-test-topic"
+        )
+        expected_topic = f"projects/{project_id}/topics/{project_id}-test-topic"
+        expected_dead_letter_policy = pubsub_v1.types.DeadLetterPolicy(
+            dead_letter_topic="projects/custom-project/topics/dlp-topic",
+            max_delivery_attempts=5,
+        )
+
+        subscriber.update_or_create_subscription(
+            Subscription(
+                None,
+                topic=f"{project_id}-test-topic",
+                dead_letter_policy=DeadLetterPolicy(
+                    "projects/custom-project/topics/dlp-topic", 5
+                ),
+            )
+        )
+
+        client_create_subscription.assert_called_once_with(
+            request={
+                "ack_deadline_seconds": 60,
+                "name": expected_subscription,
+                "topic": expected_topic,
+                "dead_letter_policy": expected_dead_letter_policy,
+            }
+        )
+
+    @patch.object(SubscriberClient, "create_subscription")
+    @patch.object(SubscriberClient, "update_subscription")
+    def test_default_dead_letter_policy_is_applied_when_not_explicitly_provided(
+        self,
+        client_update_subscription,
+        client_create_subscription,
+        project_id,
+        config_with_dead_letter_policy,
+    ):
+        subscriber = Subscriber(
+            config_with_dead_letter_policy.gc_project_id,
+            config_with_dead_letter_policy.credentials,
+            config_with_dead_letter_policy.gc_storage_region,
+            config_with_dead_letter_policy.client_options,
+            60,
+            default_dead_letter_policy=config_with_dead_letter_policy.dead_letter_policy,
+        )
+        expected_subscription = (
+            f"projects/{project_id}/subscriptions/{project_id}-test-topic"
+        )
+        expected_topic = f"projects/{project_id}/topics/{project_id}-test-topic"
+        expected_dead_letter_policy = pubsub_v1.types.DeadLetterPolicy(
+            dead_letter_topic=f"projects/{project_id}/topics/dlp-topic",
+            max_delivery_attempts=5,
+        )
+
+        subscriber.update_or_create_subscription(
+            Subscription(
+                None,
+                topic=f"{project_id}-test-topic",
+            )
+        )
+
+        client_create_subscription.assert_called_once_with(
+            request={
+                "ack_deadline_seconds": 60,
+                "name": expected_subscription,
+                "topic": expected_topic,
+                "dead_letter_policy": expected_dead_letter_policy,
+            }
+        )
+
+    @patch.object(
+        SubscriberClient,
+        "create_subscription",
+        side_effect=exceptions.AlreadyExists("Subscription already exists"),
+    )
+    @patch.object(SubscriberClient, "update_subscription")
+    def test_subscription_is_updated_with_dead_letter_policy_when_already_exists(
+        self,
+        client_update_subscription,
+        client_create_subscription,
+        project_id,
+        subscriber,
+    ):
+        subscription_path = (
+            f"projects/{project_id}/subscriptions/{project_id}-test-topic"
+        )
+        topic_path = f"projects/{project_id}/topics/{project_id}-test-topic"
+        dead_letter_policy = pubsub_v1.types.DeadLetterPolicy(
+            dead_letter_topic=f"projects/{project_id}/topics/dlp-topic",
+            max_delivery_attempts=10,
+        )
+
+        subscription = pubsub_v1.types.Subscription(
+            name=subscription_path,
+            topic=topic_path,
+            dead_letter_policy=dead_letter_policy,
+        )
+
+        update_mask = FieldMask(paths=["dead_letter_policy"])
+
+        subscriber.update_or_create_subscription(
+            Subscription(
+                None,
+                topic=f"{project_id}-test-topic",
+                dead_letter_policy=DeadLetterPolicy("dlp-topic", 10),
+            )
+        )
+        client_update_subscription.assert_called_once_with(
+            request={"subscription": subscription, "update_mask": update_mask}
+        )
+
+    @patch.object(
+        SubscriberClient,
+        "create_subscription",
+        side_effect=exceptions.AlreadyExists("Subscription already exists"),
+    )
+    @patch.object(SubscriberClient, "update_subscription")
+    def test_subscription_is_updated_with_retry_and_dead_letter_policies_when_already_exists(
+        self,
+        client_update_subscription,
+        client_create_subscription,
+        project_id,
+        subscriber,
+    ):
+        subscription_path = (
+            f"projects/{project_id}/subscriptions/{project_id}-test-topic"
+        )
+        topic_path = f"projects/{project_id}/topics/{project_id}-test-topic"
+        retry_policy = pubsub_v1.types.RetryPolicy(
+            minimum_backoff=duration_pb2.Duration(seconds=10),
+            maximum_backoff=duration_pb2.Duration(seconds=50),
+        )
+        dead_letter_policy = pubsub_v1.types.DeadLetterPolicy(
+            dead_letter_topic=f"projects/{project_id}/topics/dlp-topic",
+            max_delivery_attempts=10,
+        )
+
+        subscription = pubsub_v1.types.Subscription(
+            name=subscription_path,
+            topic=topic_path,
+            retry_policy=retry_policy,
+            dead_letter_policy=dead_letter_policy,
+        )
+
+        update_mask = FieldMask(paths=["retry_policy", "dead_letter_policy"])
+
+        subscriber.update_or_create_subscription(
+            Subscription(
+                None,
+                topic=f"{project_id}-test-topic",
+                retry_policy=RetryPolicy(10, 50),
+                dead_letter_policy=DeadLetterPolicy("dlp-topic", 10),
+            )
+        )
+        client_update_subscription.assert_called_once_with(
+            request={"subscription": subscription, "update_mask": update_mask}
+        )
+
+    @patch("rele.client.google.auth.default")
+    def test_get_google_defaults_returns_none_when_default_credentials_error(
+        self, mock_default
+    ):
+        import google.auth.exceptions
+
+        mock_default.side_effect = google.auth.exceptions.DefaultCredentialsError()
+        credentials, project = rele.client.get_google_defaults()
+        assert credentials is None
+        assert project is None
 
 
 class TestSubscriberConsume:

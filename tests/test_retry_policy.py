@@ -17,6 +17,7 @@ class TestRetryPolicy:
             (-5, 30),
             (1, -1),
             (-1, 0),
+            (5, 0),
         ],
     )
     def test_value_error_is_raised_instantiating_with_wrong_values(
@@ -24,6 +25,11 @@ class TestRetryPolicy:
     ):
         with pytest.raises(ValueError):
             RetryPolicy(minimum_backoff, maximum_backoff)
+
+    def test_instantiates_with_valid_values(self):
+        policy = RetryPolicy(5, 10)
+        assert policy.minimum_backoff == 5
+        assert policy.maximum_backoff == 10
 
     @pytest.mark.parametrize(
         "minimum_backoff, maximum_backoff",

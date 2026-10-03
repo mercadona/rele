@@ -15,6 +15,7 @@ from google.protobuf import duration_pb2
 from google.pubsub_v1 import MessageStoragePolicy
 from google.pubsub_v1 import RetryPolicy as GCloudRetryPolicy
 
+from rele.dead_letter_policy import DeadLetterPolicy
 from rele.middleware import run_middleware_hook
 from rele.retry_policy import RetryPolicy
 from rele.subscription import Subscription
@@ -59,6 +60,7 @@ class Subscriber:
         client_options: dict[str, Any] | None,
         default_ack_deadline: int | None = None,
         default_retry_policy: RetryPolicy | None = None,
+        default_dead_letter_policy: DeadLetterPolicy | None = None,
     ) -> None:
         self._gc_project_id = gc_project_id
         self._ack_deadline = default_ack_deadline or DEFAULT_ACK_DEADLINE
@@ -73,6 +75,7 @@ class Subscriber:
                 credentials=credentials, client_options=client_options
             )
         self._retry_policy = default_retry_policy
+        self._dead_letter_policy = default_dead_letter_policy
 
     def update_or_create_subscription(self, subscription: Subscription) -> None:
         """Handles creating the subscription when it does not exists or updates it
@@ -154,9 +157,14 @@ class Subscriber:
             request["filter"] = subscription.backend_filter_by
 
         retry_policy = subscription.retry_policy or self._retry_policy
-
         if retry_policy:
             request["retry_policy"] = self._build_gcloud_retry_policy(retry_policy)
+
+        dead_letter_policy = subscription.dead_letter_policy or self._dead_letter_policy
+        if dead_letter_policy:
+            request["dead_letter_policy"] = self._build_gcloud_dead_letter_policy(
+                dead_letter_policy
+            )
 
         self._client.create_subscription(request=request)
 
@@ -164,19 +172,29 @@ class Subscriber:
         self, subscription_path: str, topic_path: str, subscription: Subscription
     ) -> None:
         retry_policy = subscription.retry_policy or self._retry_policy
+        dead_letter_policy = subscription.dead_letter_policy or self._dead_letter_policy
 
-        if not retry_policy:
+        if not retry_policy and not dead_letter_policy:
             return
 
-        update_mask = FieldMask(paths=["retry_policy"])
-
-        client_retry_policy = self._build_gcloud_retry_policy(retry_policy)
-
+        paths = []
         gcloud_subscription = pubsub_v1.types.Subscription(
             name=subscription_path,
             topic=topic_path,
-            retry_policy=client_retry_policy,
         )
+
+        if retry_policy:
+            paths.append("retry_policy")
+            gcloud_subscription.retry_policy = self._build_gcloud_retry_policy(
+                retry_policy
+            )
+
+        if dead_letter_policy:
+            paths.append("dead_letter_policy")
+            build_dlp = self._build_gcloud_dead_letter_policy
+            gcloud_subscription.dead_letter_policy = build_dlp(dead_letter_policy)
+
+        update_mask = FieldMask(paths=paths)
 
         self._client.update_subscription(
             request={"subscription": gcloud_subscription, "update_mask": update_mask}
@@ -194,6 +212,20 @@ class Subscriber:
 
         return GCloudRetryPolicy(
             minimum_backoff=minimum_backoff, maximum_backoff=maximum_backoff
+        )
+
+    def _build_gcloud_dead_letter_policy(self, rele_dead_letter_policy: Any) -> Any:
+        # Assuming we need to prefix the project if it's not a full path?
+        # Actually Google Cloud pubsub expects the full topic path.
+        # But wait, if dead_letter_topic is just a topic name, we need to format it.
+        # Let's check if the topic name includes projects/ prefix.
+        topic = rele_dead_letter_policy.dead_letter_topic
+        if not topic.startswith("projects/"):
+            topic = self._client.topic_path(self._gc_project_id, topic)
+
+        return pubsub_v1.types.DeadLetterPolicy(
+            dead_letter_topic=topic,
+            max_delivery_attempts=rele_dead_letter_policy.max_delivery_attempts,
         )
 
     def consume(

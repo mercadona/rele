@@ -13,6 +13,7 @@ from google.cloud.pubsub_v1.futures import Future
 from google.cloud.pubsub_v1.subscriber.scheduler import ThreadScheduler
 
 from .client import Subscriber
+from .dead_letter_policy import DeadLetterPolicy
 from .middleware import run_middleware_hook
 from .retry_policy import RetryPolicy
 from .subscription import Callback, Subscription
@@ -63,6 +64,7 @@ class Worker:
         default_ack_deadline: int | None = None,
         threads_per_subscription: int | None = None,
         default_retry_policy: RetryPolicy | None = None,
+        default_dead_letter_policy: DeadLetterPolicy | None = None,
     ) -> None:
         self._subscriber = Subscriber(
             gc_project_id,
@@ -71,6 +73,7 @@ class Worker:
             client_options,
             default_ack_deadline,
             default_retry_policy,
+            default_dead_letter_policy,
         )
         self._futures: dict[Subscription, Future] = {}
         self._subscriptions = subscriptions
@@ -267,6 +270,7 @@ def create_and_run(subs: list[Subscription], config: "Config") -> None:
         config.ack_deadline,
         config.threads_per_subscription,
         config.retry_policy,
+        config.dead_letter_policy,
     )
 
     # to allow killing runrele worker via ctrl+c

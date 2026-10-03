@@ -7,7 +7,8 @@ import pytest
 from google.oauth2 import service_account
 
 from rele import Subscription, sub
-from rele.config import Config, load_subscriptions_from_paths
+from rele.config import Config, load_subscriptions_from_paths, setup
+from rele.dead_letter_policy import DeadLetterPolicy
 
 
 @sub(topic="test-topic", prefix="rele")
@@ -149,6 +150,7 @@ class TestConfig:
             "THREADS_PER_SUBSCRIPTION": 7,
             "ACK_DEADLINE": 120,
             "FILTER_SUBS_BY": [filter_by_english],
+            "DEFAULT_DEAD_LETTER_POLICY": DeadLetterPolicy("dlp-topic", 5),
         }
 
         config = Config(settings)
@@ -164,6 +166,7 @@ class TestConfig:
         assert config.threads_per_subscription == 7
         assert config.ack_deadline == 120
         assert config.filter_by == [filter_by_english]
+        assert config.dead_letter_policy == DeadLetterPolicy("dlp-topic", 5)
 
     def test_uses_project_id_from_settings_when_given(self):
         settings = {
@@ -212,6 +215,7 @@ class TestConfig:
         assert config.middleware == ["rele.contrib.LoggingMiddleware"]
         assert config.encoder == json.JSONEncoder
         assert config.publisher_blocking is False
+        assert config.dead_letter_policy is None
 
     def test_returns_no_project_id_when_default_creds_have_none(self):
         class UserAdcCredentials:
@@ -248,3 +252,7 @@ class TestConfig:
         assert config.middleware == ["rele.contrib.LoggingMiddleware"]
         assert config.encoder == json.JSONEncoder
         assert config.publisher_blocking is False
+
+    def test_setup_with_none_settings(self):
+        config = setup(None)
+        assert config.app_name is None

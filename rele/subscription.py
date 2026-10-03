@@ -5,6 +5,7 @@ from collections.abc import Callable, Iterable
 from inspect import getfullargspec, getmodule
 from typing import Any
 
+from .dead_letter_policy import DeadLetterPolicy
 from .middleware import run_middleware_hook
 from .retry_policy import RetryPolicy
 
@@ -47,6 +48,7 @@ class Subscription:
         filter_by: FilterBy | Iterable[FilterBy] | None = None,
         backend_filter_by: str | None = None,
         retry_policy: RetryPolicy | None = None,
+        dead_letter_policy: DeadLetterPolicy | None = None,
     ) -> None:
         self._validate_filter_by(filter_by)
 
@@ -57,6 +59,7 @@ class Subscription:
         self._filters = self._init_filters(filter_by)
         self.backend_filter_by = backend_filter_by
         self.retry_policy = retry_policy
+        self.dead_letter_policy = dead_letter_policy
 
     def _validate_filter_by(
         self, filter_by: FilterBy | Iterable[FilterBy] | None
@@ -171,6 +174,7 @@ def sub(
     filter_by: FilterBy | Iterable[FilterBy] | None = None,
     backend_filter_by: str | None = None,
     retry_policy: RetryPolicy | None = None,
+    dead_letter_policy: DeadLetterPolicy | None = None,
 ) -> Callable[[Callable[..., Any]], Subscription]:
     """Decorator function that makes declaring a PubSub Subscription simple.
 
@@ -217,6 +221,7 @@ def sub(
                       functions that filters the messages to be processed by
                       the sub regarding their attributes.
     :param retry_policy: obj :class:`~rele.retry_policy.RetryPolicy`
+    :param dead_letter_policy: obj :class:`~rele.dead_letter_policy.DeadLetterPolicy`
     :return: :class:`~rele.subscription.Subscription`
     """
 
@@ -245,6 +250,7 @@ def sub(
             filter_by=filter_by,
             backend_filter_by=backend_filter_by,
             retry_policy=retry_policy,
+            dead_letter_policy=dead_letter_policy,
         )
 
     return decorator
