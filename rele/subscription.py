@@ -48,13 +48,13 @@ class Subscription:
         backend_filter_by: str | None = None,
         retry_policy: RetryPolicy | None = None,
     ) -> None:
-        self._validate_filter_by(filter_by)
+        self._filters = self._init_filters(filter_by)
+        self._validate_filter_by(self._filters)
 
         self._func = func
         self.topic = topic
         self._prefix = prefix
         self._suffix = suffix
-        self._filters = self._init_filters(filter_by)
         self.backend_filter_by = backend_filter_by
         self.retry_policy = retry_policy
 
@@ -74,7 +74,7 @@ class Subscription:
         self, filter_by: FilterBy | Iterable[FilterBy] | None
     ) -> Iterable[FilterBy] | None:
         if isinstance(filter_by, Iterable):
-            return filter_by
+            return list(filter_by)
         elif filter_by:
             return [filter_by]
 

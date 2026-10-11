@@ -54,6 +54,35 @@ def sub_process_landscape_gif_photos(data, **kwargs):
 
 
 class TestSubscription:
+    @pytest.mark.parametrize("set_filters", [False, True])
+    def test_generator_filters_apply_to_every_message(self, set_filters):
+        handler = MagicMock(return_value="processed")
+        filters = (predicate for predicate in (landscape_filter, gif_filter))
+        subscription = Subscription(
+            func=handler,
+            topic="photo-updated",
+            filter_by=None if set_filters else filters,
+        )
+        if set_filters:
+            subscription.set_filters(filters)
+
+        data = {"name": "photo.gif"}
+        for _ in range(2):
+            handler.reset_mock()
+            assert subscription(data, type="landscape", format="gif") == "processed"
+            handler.assert_called_once_with(data, type="landscape", format="gif")
+            assert subscription(data, type="portrait", format="gif") is None
+            assert subscription(data, type="landscape", format="jpg") is None
+            handler.assert_called_once()
+
+    def test_rejects_non_callable_in_generator_filters(self):
+        with pytest.raises(ValueError, match="Filter_by must be a callable"):
+            Subscription(
+                func=MagicMock(),
+                topic="photo-updated",
+                filter_by=iter((landscape_filter, None)),
+            )
+
     def test_subs_return_subscription_objects(self):
         assert isinstance(sub_stub, Subscription)
         assert sub_stub.topic == "some-cool-topic"
