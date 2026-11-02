@@ -92,6 +92,31 @@ Additionally, if you added message attributes to your Message, you can access th
               f"rotation {kwargs['rotation']}.")
 
 
+Subscriptions must be synchronous
+---------------------------------
+
+Relé calls each subscription function synchronously from the worker's thread
+pool, and the Pub/Sub client it uses has no async support. Registering an
+``async def`` function raises a ``ValueError`` as soon as it is decorated:
+it would otherwise never run while its messages were still acked.
+
+To reuse asynchronous code, call it from a synchronous subscription, for
+example with ``asyncio.run``:
+
+.. code:: python
+
+    import asyncio
+
+    from rele import sub
+
+    async def process_photo(data):
+        ...
+
+    @sub(topic='photo-uploaded')
+    def photo_uploaded(data, **kwargs):
+        asyncio.run(process_photo(data))
+
+
 Message attributes
 ------------------
 

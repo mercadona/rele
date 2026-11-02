@@ -2,7 +2,7 @@ import json
 import logging
 import time
 from collections.abc import Callable, Iterable
-from inspect import getfullargspec, getmodule
+from inspect import getfullargspec, getmodule, iscoroutinefunction, unwrap
 from typing import Any
 
 from .middleware import run_middleware_hook
@@ -57,6 +57,19 @@ class Subscription:
         self._filters = self._init_filters(filter_by)
         self.backend_filter_by = backend_filter_by
         self.retry_policy = retry_policy
+        self._validate_func(func)
+
+    def _validate_func(self, func: Callable[..., Any]) -> None:
+        if iscoroutinefunction(func) or iscoroutinefunction(unwrap(func)):
+            name = getattr(func, "__qualname__", repr(func))
+            raise ValueError(
+                f"Subscription function {getattr(func, '__module__', '')}.{name} "
+                "is a coroutine function (async def), which is not supported: "
+                "Relé subscriptions must be synchronous. The worker would call it "
+                "without awaiting it, so it would never run and the message "
+                "would still be acked. Call the coroutine from a synchronous "
+                "function instead, for example with asyncio.run()."
+            )
 
     def _validate_filter_by(
         self, filter_by: FilterBy | Iterable[FilterBy] | None
@@ -203,7 +216,7 @@ def sub(
              pass
 
         @sub(topic='photo-updated',
-             filter_by=lambda **attrs: attrs.get('type') == 'landscape')
+             filter_by=lambda attrs: attrs.get('type') == 'landscape')
         def sub_process_landscape_photos(data, **kwargs):
             pass
 

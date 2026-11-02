@@ -1,3 +1,4 @@
+import functools
 import logging
 import queue
 import time
@@ -151,6 +152,35 @@ class TestSubscription:
             Subscription(
                 func=lambda x: None, topic="topic", prefix="rele", filter_by=(1,)
             )
+
+    def test_raises_error_when_func_is_a_coroutine_function(self):
+        async def async_handler(data, **kwargs):
+            pass
+
+        with pytest.raises(ValueError, match="must be synchronous"):
+            Subscription(func=async_handler, topic="topic", prefix="rele")
+
+    def test_raises_error_when_func_is_a_wrapped_coroutine_function(self):
+        async def async_handler(data, **kwargs):
+            pass
+
+        @functools.wraps(async_handler)
+        def wrapper(data, **kwargs):
+            return async_handler(data, **kwargs)
+
+        with pytest.raises(ValueError, match="must be synchronous"):
+            Subscription(func=wrapper, topic="topic", prefix="rele")
+
+    def test_raises_error_when_func_is_a_coroutine_method(self):
+        class AsyncSub(Subscription):
+            def __init__(self):
+                super().__init__(self.callback_func, "topic")
+
+            async def callback_func(self, data, **kwargs):
+                pass
+
+        with pytest.raises(ValueError, match="must be synchronous"):
+            AsyncSub()
 
 
 class TestCallback:
@@ -375,6 +405,34 @@ class TestDecorator:
 
         with pytest.raises(RuntimeError):
             sub(topic="topic", prefix="rele")(lambda data, value=None: None)
+
+    def test_raises_error_at_decoration_when_function_is_a_coroutine(self):
+        with pytest.raises(ValueError) as exc_info:
+
+            @sub(topic="topic", prefix="rele")
+            async def async_handler(data, **kwargs):
+                pass
+
+        message = str(exc_info.value)
+        assert "tests.test_subscription" in message
+        assert "async_handler" in message
+        assert "must be synchronous" in message
+        assert "asyncio.run" in message
+
+    def test_rejected_coroutine_never_reaches_callback_so_nothing_is_acked(self):
+        handler_calls = []
+
+        async def async_handler(data, **kwargs):
+            handler_calls.append(data)
+
+        created = []
+        with pytest.raises(ValueError):
+            created.append(sub(topic="topic", prefix="rele")(async_handler))
+
+        # No Subscription exists, so no Callback can be built around it and no
+        # message can ever be acked on behalf of the coroutine.
+        assert created == []
+        assert handler_calls == []
 
     def test_logs_warning_when_function_not_in_subs_module(self, caplog):
         sub(topic="topic", prefix="rele")(lambda data, **kwargs: None)
