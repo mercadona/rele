@@ -32,7 +32,8 @@ Example::
         'FILTER_SUBS_BY': boolean_function,
         'DEFAULT_RETRY_POLICY': RetryPolicy(10, 50),
         'GC_STORAGE_REGION': ["europe-southwest1", "europe-west1", "europe-west8", "europe-west9"],
-        'CLIENT_OPTIONS': {'api_endpoint': 'custom-api.interconnect.example.com'}
+        'CLIENT_OPTIONS': {'api_endpoint': 'custom-api.interconnect.example.com'},
+        'MANAGE_SUBSCRIPTIONS': True,
     }
 
 ``GC_PROJECT_ID``
@@ -212,3 +213,21 @@ Provide custom options for publisher and subscriber client. Following are three 
 3. The `universe_domain` property can be used to override the default "googleapis.com" universe. Note that the api_endpoint property still takes precedence; and universe_domain is currently not supported for mTLS.
 
 For more information about the client options, please see `Publisher Client <https://cloud.google.com/python/docs/reference/pubsub/latest/google.cloud.pubsub_v1.publisher.client.Client>`_ and `Subscriber Client <https://cloud.google.com/python/docs/reference/pubsub/latest/google.cloud.pubsub_v1.subscriber.client.Client>`_.
+
+.. _settings_manage_subscriptions:
+
+``MANAGE_SUBSCRIPTIONS``
+----------------------------
+
+**Optional**
+
+Default: ``True``
+
+Whether the worker creates and updates its subscriptions (and creates missing
+topics) when it starts.
+
+Set it to ``False`` when subscriptions are provisioned outside Relé, for
+example with Terraform, so the worker only consumes and can run with a
+subscriber-only service account. In that case ``DEFAULT_RETRY_POLICY``,
+backend filters, ``ACK_DEADLINE`` and any other subscription configuration
+declared in Relé are **not** applied. See :ref:`external_subscriptions`.

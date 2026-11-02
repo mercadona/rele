@@ -26,6 +26,7 @@ class TestRunReleCommand:
             60,
             2,
             None,
+            True,
         )
         mock_worker.return_value.run_forever.assert_called_once_with()
 
@@ -50,5 +51,6 @@ class TestRunReleCommand:
             60,
             2,
             None,
+            True,
         )
         mock_worker.return_value.run_forever.assert_called_once_with()

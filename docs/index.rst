@@ -80,6 +80,7 @@ ___________
     guides/flask
     guides/filters
     guides/emulator
+    guides/external_subscriptions
     guides/unrecoverable_middleware
 
 

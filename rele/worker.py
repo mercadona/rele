@@ -51,6 +51,8 @@ class Worker:
     and the starting and stopping the consumption of them.
 
     :param subscriptions: list :class:`~rele.subscription.Subscription`
+    :param manage_subscriptions: bool When ``False``, the worker never creates
+        or updates subscriptions or topics and only consumes the existing ones.
     """
 
     def __init__(
@@ -63,6 +65,7 @@ class Worker:
         default_ack_deadline: int | None = None,
         threads_per_subscription: int | None = None,
         default_retry_policy: RetryPolicy | None = None,
+        manage_subscriptions: bool = True,
     ) -> None:
         self._subscriber = Subscriber(
             gc_project_id,
@@ -75,6 +78,7 @@ class Worker:
         self._futures: dict[Subscription, Future] = {}
         self._subscriptions = subscriptions
         self.threads_per_subscription = threads_per_subscription
+        self.manage_subscriptions = manage_subscriptions
         self.internet_check_endpoint = self._get_internet_check_endpoint(client_options)
 
     def _get_internet_check_endpoint(
@@ -92,7 +96,16 @@ class Worker:
 
         If the subscription already exists, the subscription will not be
         re-created. Therefore, it is idempotent.
+
+        When ``manage_subscriptions`` is ``False`` nothing is created or
+        updated: the subscriptions are expected to exist already.
         """
+        if not self.manage_subscriptions:
+            logger.info(
+                "Subscription management is disabled (MANAGE_SUBSCRIPTIONS=False): "
+                "subscriptions and topics are neither created nor updated."
+            )
+            return
         logger.debug("[start] start setup")
         for subscription in self._subscriptions:
             self._subscriber.update_or_create_subscription(subscription)
@@ -267,6 +280,7 @@ def create_and_run(subs: list[Subscription], config: "Config") -> None:
         config.ack_deadline,
         config.threads_per_subscription,
         config.retry_policy,
+        config.manage_subscriptions,
     )
 
     # to allow killing runrele worker via ctrl+c
