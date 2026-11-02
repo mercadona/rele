@@ -7,6 +7,7 @@ from concurrent.futures import TimeoutError
 from unittest.mock import ANY, MagicMock, patch
 
 import pytest
+from google.api_core.exceptions import NotFound
 from google.cloud.pubsub_v1 import PublisherClient
 
 import rele.client
@@ -254,3 +255,26 @@ class TestPublisher:
         )
 
         assert result is mock_future
+
+    @pytest.mark.parametrize("raise_exception", [True, False])
+    def test_runs_post_publish_failure_hook_on_non_timeout_error(
+        self, publisher, mock_future, mock_post_publish_failure, raise_exception
+    ):
+        exception = NotFound("topic not found")
+        mock_future.result.side_effect = exception
+        kwargs = {
+            "topic": "order-cancelled",
+            "data": {"foo": "bar"},
+            "blocking": True,
+            "raise_exception": raise_exception,
+        }
+
+        if raise_exception:
+            with pytest.raises(NotFound):
+                publisher.publish(**kwargs)
+        else:
+            assert publisher.publish(**kwargs) is mock_future
+
+        mock_post_publish_failure.assert_called_once_with(
+            "order-cancelled", exception, {"foo": "bar"}
+        )

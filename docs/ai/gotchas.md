@@ -78,5 +78,6 @@ Full flow in `release-process.md`; these are the traps that actually bit.
   issue without team sign-off.
 - Issue #224 (make subscription creation optional / least-privilege) is the
   best-regarded pending feature; absorbed #262.
-- `post_publish_failure` only fires on `TimeoutError`, not other publish
-  errors (issue #198).
+- `post_publish_failure` only fires in blocking mode; non-blocking publishes
+  return the future and never run the hook (any error, not just timeouts,
+  triggers it when blocking).

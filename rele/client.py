@@ -4,7 +4,6 @@ import os
 import time
 import warnings
 from collections.abc import Callable
-from concurrent.futures import TimeoutError
 from typing import Any
 
 import google.auth
@@ -327,7 +326,7 @@ class Publisher:
 
         try:
             future.result(timeout=timeout or self._timeout)
-        except TimeoutError as e:
+        except Exception as e:
             run_middleware_hook("post_publish_failure", topic, e, data)
             if raise_exception:
                 raise e

@@ -17,8 +17,8 @@ lifecycle moment in middleware hooks. Publishing goes through a process-wide
 - `client.py` — `Subscriber` (create/update subscriptions, auto-creates
   missing topics, translates rele `RetryPolicy` → gcloud types) and
   `Publisher` (json-encodes with the configured encoder, non-blocking by
-  default; only `TimeoutError` triggers the `post_publish_failure` hook —
-  known limitation, see issue #198).
+  default; in blocking mode any exception from `future.result()` triggers the
+  `post_publish_failure` hook; non-blocking mode never does).
 - `worker.py` — `Worker` bootstraps consumption per subscription
   (`ThreadScheduler`, `THREADS_PER_SUBSCRIPTION`), restarts done/cancelled
   futures in `_wait_forever`, checks connectivity against the configured

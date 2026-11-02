@@ -78,7 +78,8 @@ class BaseMiddleware(metaclass=WarnDeprecatedHooks):
     def post_publish_failure(
         self, topic: str, exception: Exception, message: Any
     ) -> None:
-        """Called after publishing fails.
+        """Called after publishing fails, on any error raised while waiting for
+        the publish result (blocking mode only), not just timeouts.
         :param topic:
         :param exception:
         :param message:
