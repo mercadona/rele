@@ -23,3 +23,4 @@ docs/_build
 !.github/
 !.github
 !.codecov.yml
+!.out-of-scope/
