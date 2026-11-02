@@ -124,7 +124,8 @@ serializing your Python data structure to a json object when publishing.
 
 Default: 60 seconds
 
-Ack deadline for all subscribers in seconds.
+Ack deadline for all subscribers in seconds. A subscription can override it
+with ``@sub(..., ack_deadline=120)``; see :ref:`ack-deadline`.
 
 .. seealso:: The `Google Pub/Sub documentation <https://cloud.google.com/pubsub/docs/subscriber>`_
     which states that *The subscriber has a configurable, limited amount of time --

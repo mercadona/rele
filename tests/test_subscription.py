@@ -422,3 +422,26 @@ class TestDecorator:
         )(lambda data, **kwargs: None)
 
         assert subscription.retry_policy == RetryPolicy(1, 10)
+
+    def test_ack_deadline_is_applied_when_specified(self):
+        subscription = sub(topic="topic", prefix="rele", ack_deadline=120)(
+            lambda data, **kwargs: None
+        )
+
+        assert subscription.ack_deadline == 120
+
+    def test_ack_deadline_is_none_when_not_specified(self):
+        subscription = sub(topic="topic", prefix="rele")(lambda data, **kwargs: None)
+
+        assert subscription.ack_deadline is None
+
+    @pytest.mark.parametrize("ack_deadline", [10, 600])
+    def test_ack_deadline_accepts_range_boundaries(self, ack_deadline):
+        subscription = Subscription(None, topic="topic", ack_deadline=ack_deadline)
+
+        assert subscription.ack_deadline == ack_deadline
+
+    @pytest.mark.parametrize("ack_deadline", [-1, 0, 9, 601])
+    def test_ack_deadline_out_of_range_raises(self, ack_deadline):
+        with pytest.raises(ValueError, match="ack_deadline must be between 10 and 600"):
+            Subscription(None, topic="topic", ack_deadline=ack_deadline)
