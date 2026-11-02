@@ -27,7 +27,7 @@ lifecycle moment in middleware hooks. Publishing goes through a process-wide
 - `middleware.py` — global `_middlewares` list, `run_middleware_hook`
   dispatch, `BaseMiddleware` with all hook signatures. Implementations in
   `contrib/`: logging (default), verbose logging, Django DB connection
-  management, Flask app-context, unrecoverable-exception ack.
+  management, Flask app-context, unrecoverable-exception ack, retryable-exception nack.
 - `config.py` — `Config` parses the `RELE` settings dict; `setup()` also
   initializes the global publisher and registers middleware.
   `load_subscriptions_from_paths` imports subs modules and applies global

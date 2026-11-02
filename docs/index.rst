@@ -81,6 +81,7 @@ ___________
     guides/filters
     guides/emulator
     guides/unrecoverable_middleware
+    guides/retryable_middleware
 
 
 Configuration

@@ -1,5 +1,6 @@
 from .flask_middleware import FlaskMiddleware  # noqa
 from .logging_middleware import LoggingMiddleware  # noqa
+from .retryable_middleware import RetryableMiddleWare  # noqa
 from .unrecoverable_middleware import UnrecoverableMiddleWare  # noqa
 from .verbose_logging_middleware import VerboseLoggingMiddleware  # noqa
 
