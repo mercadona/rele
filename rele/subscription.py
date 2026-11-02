@@ -12,6 +12,9 @@ FilterBy = Callable[..., bool]
 
 logger = logging.getLogger(__name__)
 
+MIN_ACK_DEADLINE = 10
+MAX_ACK_DEADLINE = 600
+
 
 class Subscription:
     """The Subscription class
@@ -47,8 +50,10 @@ class Subscription:
         filter_by: FilterBy | Iterable[FilterBy] | None = None,
         backend_filter_by: str | None = None,
         retry_policy: RetryPolicy | None = None,
+        ack_deadline: int | None = None,
     ) -> None:
         self._validate_filter_by(filter_by)
+        self._validate_ack_deadline(ack_deadline)
 
         self._func = func
         self.topic = topic
@@ -57,6 +62,17 @@ class Subscription:
         self._filters = self._init_filters(filter_by)
         self.backend_filter_by = backend_filter_by
         self.retry_policy = retry_policy
+        self._ack_deadline = ack_deadline
+
+    def _validate_ack_deadline(self, ack_deadline: int | None) -> None:
+        if ack_deadline is None:
+            return
+
+        if not MIN_ACK_DEADLINE <= ack_deadline <= MAX_ACK_DEADLINE:
+            raise ValueError(
+                f"ack_deadline must be between {MIN_ACK_DEADLINE} and "
+                f"{MAX_ACK_DEADLINE} seconds."
+            )
 
     def _validate_filter_by(
         self, filter_by: FilterBy | Iterable[FilterBy] | None
@@ -91,6 +107,10 @@ class Subscription:
 
     def set_prefix(self, prefix: str) -> None:
         self._prefix = prefix
+
+    @property
+    def ack_deadline(self) -> int | None:
+        return self._ack_deadline
 
     @property
     def filter_by(self) -> Iterable[FilterBy] | None:
@@ -171,6 +191,7 @@ def sub(
     filter_by: FilterBy | Iterable[FilterBy] | None = None,
     backend_filter_by: str | None = None,
     retry_policy: RetryPolicy | None = None,
+    ack_deadline: int | None = None,
 ) -> Callable[[Callable[..., Any]], Subscription]:
     """Decorator function that makes declaring a PubSub Subscription simple.
 
@@ -217,6 +238,9 @@ def sub(
                       functions that filters the messages to be processed by
                       the sub regarding their attributes.
     :param retry_policy: obj :class:`~rele.retry_policy.RetryPolicy`
+    :param ack_deadline: int An optional ack deadline in seconds (10 to 600)
+                         for this subscription. Overrides the global
+                         ``ACK_DEADLINE`` setting.
     :return: :class:`~rele.subscription.Subscription`
     """
 
@@ -245,6 +269,7 @@ def sub(
             filter_by=filter_by,
             backend_filter_by=backend_filter_by,
             retry_policy=retry_policy,
+            ack_deadline=ack_deadline,
         )
 
     return decorator

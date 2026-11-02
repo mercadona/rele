@@ -147,7 +147,7 @@ class Subscriber:
         request: dict[str, Any] = {
             "name": subscription_path,
             "topic": topic_path,
-            "ack_deadline_seconds": self._ack_deadline,
+            "ack_deadline_seconds": subscription.ack_deadline or self._ack_deadline,
         }
 
         if subscription.backend_filter_by:
@@ -164,19 +164,28 @@ class Subscriber:
         self, subscription_path: str, topic_path: str, subscription: Subscription
     ) -> None:
         retry_policy = subscription.retry_policy or self._retry_policy
+        ack_deadline = subscription.ack_deadline
 
-        if not retry_policy:
+        if not retry_policy and not ack_deadline:
             return
 
-        update_mask = FieldMask(paths=["retry_policy"])
-
-        client_retry_policy = self._build_gcloud_retry_policy(retry_policy)
-
+        paths: list[str] = []
         gcloud_subscription = pubsub_v1.types.Subscription(
             name=subscription_path,
             topic=topic_path,
-            retry_policy=client_retry_policy,
         )
+
+        if retry_policy:
+            paths.append("retry_policy")
+            gcloud_subscription.retry_policy = self._build_gcloud_retry_policy(
+                retry_policy
+            )
+
+        if ack_deadline:
+            paths.append("ack_deadline_seconds")
+            gcloud_subscription.ack_deadline_seconds = ack_deadline
+
+        update_mask = FieldMask(paths=paths)
 
         self._client.update_subscription(
             request={"subscription": gcloud_subscription, "update_mask": update_mask}

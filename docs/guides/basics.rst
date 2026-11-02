@@ -107,6 +107,28 @@ To access this attribute you can use ``kwargs``.
               f"published at {kwargs['published_at']}.")
 
 
+.. _ack-deadline:
+
+Ack deadline
+____________
+
+By default every subscription uses the global ``ACK_DEADLINE`` setting. To give a
+single subscription its own deadline, pass ``ack_deadline`` (in seconds, between 10
+and 600, the range Pub/Sub accepts) to ``@sub``:
+
+.. code:: python
+
+    @sub(topic='photo-uploaded', ack_deadline=120)
+    def long_running_sub(data, **kwargs):
+        ...
+
+The value is applied when the subscription is created and also when it already
+exists, so changing it in code updates the existing subscription. Subscriptions
+that do not set ``ack_deadline`` are unaffected: they use the global value on
+creation and are left untouched on update. Out-of-range values raise a
+``ValueError`` when the subscription is declared.
+
+
 .. _consuming:
 
 Consuming

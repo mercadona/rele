@@ -461,6 +461,103 @@ class TestSubscriber:
 
         client_update_subscription.assert_not_called()
 
+    @patch.object(SubscriberClient, "create_subscription")
+    def test_creates_subscription_with_subscription_ack_deadline_over_global(
+        self, client_create_subscription, project_id, subscriber
+    ):
+        subscriber.update_or_create_subscription(
+            Subscription(None, topic=f"{project_id}-test-topic", ack_deadline=120)
+        )
+
+        request = client_create_subscription.call_args.kwargs["request"]
+        assert request["ack_deadline_seconds"] == 120
+
+    @patch.object(
+        SubscriberClient,
+        "create_subscription",
+        side_effect=exceptions.AlreadyExists("Subscription already exists"),
+    )
+    @patch.object(SubscriberClient, "update_subscription")
+    def test_subscription_is_updated_with_ack_deadline_when_already_exists(
+        self,
+        client_update_subscription,
+        client_create_subscription,
+        project_id,
+        subscriber,
+    ):
+        subscription_path = (
+            f"projects/{project_id}/subscriptions/{project_id}-test-topic"
+        )
+        topic_path = f"projects/{project_id}/topics/{project_id}-test-topic"
+
+        subscriber.update_or_create_subscription(
+            Subscription(None, topic=f"{project_id}-test-topic", ack_deadline=120)
+        )
+
+        client_update_subscription.assert_called_once_with(
+            request={
+                "subscription": pubsub_v1.types.Subscription(
+                    name=subscription_path,
+                    topic=topic_path,
+                    ack_deadline_seconds=120,
+                ),
+                "update_mask": FieldMask(paths=["ack_deadline_seconds"]),
+            }
+        )
+
+    @patch.object(
+        SubscriberClient,
+        "create_subscription",
+        side_effect=exceptions.AlreadyExists("Subscription already exists"),
+    )
+    @patch.object(SubscriberClient, "update_subscription")
+    def test_update_mask_includes_retry_policy_and_ack_deadline_when_both_set(
+        self,
+        client_update_subscription,
+        client_create_subscription,
+        project_id,
+        subscriber,
+    ):
+        subscriber.update_or_create_subscription(
+            Subscription(
+                None,
+                topic=f"{project_id}-test-topic",
+                retry_policy=RetryPolicy(10, 50),
+                ack_deadline=120,
+            )
+        )
+
+        request = client_update_subscription.call_args.kwargs["request"]
+        assert list(request["update_mask"].paths) == [
+            "retry_policy",
+            "ack_deadline_seconds",
+        ]
+        assert request["subscription"].ack_deadline_seconds == 120
+
+    @patch.object(
+        SubscriberClient,
+        "create_subscription",
+        side_effect=exceptions.AlreadyExists("Subscription already exists"),
+    )
+    @patch.object(SubscriberClient, "update_subscription")
+    def test_update_mask_excludes_ack_deadline_when_subscription_does_not_set_it(
+        self,
+        client_update_subscription,
+        client_create_subscription,
+        project_id,
+        subscriber,
+    ):
+        subscriber.update_or_create_subscription(
+            Subscription(
+                None,
+                topic=f"{project_id}-test-topic",
+                retry_policy=RetryPolicy(10, 50),
+            )
+        )
+
+        request = client_update_subscription.call_args.kwargs["request"]
+        assert list(request["update_mask"].paths) == ["retry_policy"]
+
 
 class TestSubscriberConsume:
     @pytest.fixture
