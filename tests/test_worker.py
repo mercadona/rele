@@ -1,3 +1,4 @@
+import logging
 import socket
 import time
 from concurrent import futures
@@ -11,6 +12,7 @@ from google.cloud.pubsub_v1.subscriber.futures import StreamingPullFuture
 from google.cloud.pubsub_v1.subscriber.scheduler import ThreadScheduler
 
 from rele import Subscriber, Worker, sub
+from rele.config import Config
 from rele.middleware import register_middleware
 from rele.retry_policy import RetryPolicy
 from rele.subscription import Callback
@@ -64,6 +66,22 @@ def worker_with_three_threads(config):
         default_ack_deadline=60,
         threads_per_subscription=3,
         default_retry_policy=config.retry_policy,
+    )
+
+
+@pytest.fixture
+def worker_without_subscription_management(config):
+    subscriptions = (sub_stub,)
+    return Worker(
+        subscriptions,
+        config.client_options,
+        config.gc_project_id,
+        config.credentials,
+        config.gc_storage_region,
+        default_ack_deadline=60,
+        threads_per_subscription=10,
+        default_retry_policy=config.retry_policy,
+        manage_subscriptions=False,
     )
 
 
@@ -134,6 +152,49 @@ class TestWorker:
         assert isinstance(scheduler, ThreadScheduler)
         assert isinstance(scheduler._executor, futures.ThreadPoolExecutor)
         mock_wait_forever.assert_called_once()
+
+    @patch.object(Worker, "_wait_forever")
+    def test_run_consumes_without_creating_subscriptions_when_management_is_disabled(
+        self,
+        mock_wait_forever,
+        mock_consume,
+        mock_create_subscription,
+        worker_without_subscription_management,
+        caplog,
+    ):
+        with caplog.at_level(logging.INFO, logger="rele.worker"):
+            worker_without_subscription_management.run_forever()
+
+        mock_create_subscription.assert_not_called()
+        mock_consume.assert_called_once_with(
+            subscription_name="rele-some-cool-topic",
+            callback=ANY,
+            scheduler=ANY,
+        )
+        mock_wait_forever.assert_called_once()
+        disabled_logs = [
+            record
+            for record in caplog.records
+            if record.levelno == logging.INFO
+            and "Subscription management is disabled" in record.getMessage()
+        ]
+        assert len(disabled_logs) == 1
+
+    def test_setup_does_not_create_subscriptions_when_management_is_disabled(
+        self, mock_create_subscription, worker_without_subscription_management
+    ):
+        worker_without_subscription_management.setup()
+
+        mock_create_subscription.assert_not_called()
+
+    def test_setup_creates_subscriptions_when_management_is_enabled_by_default(
+        self, mock_create_subscription, worker
+    ):
+        assert worker.manage_subscriptions is True
+
+        worker.setup()
+
+        mock_create_subscription.assert_called_once_with(sub_stub)
 
     @patch.object(Worker, "_wait_forever")
     @pytest.mark.usefixtures("mock_consume", "mock_create_subscription")
@@ -378,8 +439,22 @@ class TestCreateAndRun:
             60,
             2,
             RetryPolicy(5, 30),
+            True,
         )
         mock_worker.return_value.run_forever.assert_called_once_with()
+
+    def test_passes_manage_subscriptions_from_config_to_the_worker(self, mock_worker):
+        config = Config(
+            {
+                "GC_CREDENTIALS_PATH": "tests/dummy-pub-sub-credentials.json",
+                "MANAGE_SUBSCRIPTIONS": False,
+            }
+        )
+        subscriptions = (sub_stub,)
+        create_and_run(subscriptions, config)
+
+        manage_subscriptions = mock_worker.call_args[0][8]
+        assert manage_subscriptions is False
 
     def test_passes_the_config_credentials_to_the_worker(
         self, config_with_retry_policy, mock_worker

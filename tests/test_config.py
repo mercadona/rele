@@ -149,6 +149,7 @@ class TestConfig:
             "THREADS_PER_SUBSCRIPTION": 7,
             "ACK_DEADLINE": 120,
             "FILTER_SUBS_BY": [filter_by_english],
+            "MANAGE_SUBSCRIPTIONS": False,
         }
 
         config = Config(settings)
@@ -164,6 +165,7 @@ class TestConfig:
         assert config.threads_per_subscription == 7
         assert config.ack_deadline == 120
         assert config.filter_by == [filter_by_english]
+        assert config.manage_subscriptions is False
 
     def test_uses_project_id_from_settings_when_given(self):
         settings = {
@@ -212,6 +214,7 @@ class TestConfig:
         assert config.middleware == ["rele.contrib.LoggingMiddleware"]
         assert config.encoder == json.JSONEncoder
         assert config.publisher_blocking is False
+        assert config.manage_subscriptions is True
 
     def test_returns_no_project_id_when_default_creds_have_none(self):
         class UserAdcCredentials:

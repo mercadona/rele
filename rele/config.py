@@ -55,6 +55,7 @@ class Config:
         self._credentials: Any = None
         self.retry_policy: RetryPolicy | None = setting.get("DEFAULT_RETRY_POLICY")
         self.client_options: dict[str, Any] | None = setting.get("CLIENT_OPTIONS")
+        self.manage_subscriptions: bool = setting.get("MANAGE_SUBSCRIPTIONS", True)
 
     @property
     def encoder(self) -> type[json.JSONEncoder]:
